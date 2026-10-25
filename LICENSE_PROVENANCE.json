@@ -159,7 +159,7 @@
       }
     },
     "new_fp8": {
-      "status": "three local exports complete; HF destination not selected; not published",
+      "status": "Two Base/SFT row exports selected for public Andylinux/MOSS-Image-Kohaku-FP8; files uploading/verification pending. Each supports FP8/16-bit compute. The old separate Base weight-only export remains legacy local, not a third public artifact.",
       "manifest": "docs/huggingface/conversion_manifest.json",
       "hashes": "docs/huggingface/SHA256SUMS",
       "source_revision_policy": "Do not invent source revisions where conversion manifest marks them unconfirmed"
@@ -171,8 +171,10 @@
       "component": "ssiu/flash-attention-turing local Turing bundle",
       "source_head": "9ef98fcb506bb1e2fe3cece50935e2935bf6b124",
       "license_status": "No confirmed license for the pinned Turing repository implementation; CUTLASS/NVIDIA texts do not license the entire combined binary",
-      "policy": "Do not bundle, mirror, upload or redistribute the Turing binary/source bundle. Existing explicit local optional use remains separate; default auto does not require it.",
-      "adapter_scope": "Our independently authored adapter remains in the source package; no upstream bundle bytes are implied by its presence"
+      "policy": "Turing binaries remain excluded from the GitHub/Registry source-code archive. The user explicitly authorized a separate fixed GitHub Release asset; publication is pending actual ZIP URL/bytes/SHA256 and complete source/build/NOTICE/component-license inventory. Manager install.py may prepare only the exact ABI-matched asset using optional_binary_manifest.json. User authorization does not change the recorded unconfirmed upstream repository license status.",
+      "adapter_scope": "Independent adapter remains in the source package. Optional artifact preserves actual pinned sources, original available license/NOTICE texts and build facts; no blanket open-source license or new GPU/workflow qualification is inferred.",
+      "cutlass_head": "df18f5e4f5de76bed8be1de8e4c245f2f5ec3020"
     }
-  ]
+  ],
+  "external_optional_binary_manifest": "optional_binary_manifest.json; source/archive/per-file hashes, ABI, recorded source/license status and user distribution authorization. Pending publication data must never be downloaded."
 }

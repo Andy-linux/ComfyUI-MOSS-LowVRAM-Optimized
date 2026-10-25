@@ -13,9 +13,11 @@
 - A GitHub Actions secret is optional for a future CI publishing path and is not
   currently set by this preparation. Manual publication can use the private local
   credential; never commit it, print it or put it in workflow JSON.
-- Only the destination HF namespace/repository for the **three new FP8 files**
-  remains user-unselected. `tool.moss_release.ModelRepository` stays empty until a
-  real HF destination is chosen; a GitHub URL is not an HF model repository.
+- The FP8 destination is now [Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8).
+  Only **two Base/SFT row checkpoints** are in the public upload scope. Their
+  upload is in progress; require actual immutable commit/revision, bytes and SHA256
+  before enabling downloads. One row file supports the FP8 / 16-bit compute choice.
+  The old separate Base weight-only export stays legacy local, not a third upload.
 
 Existing public W5/W6 already live in
 [Andylinux/MOSS-Image-SFT-W5A8-W6A8](https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8),
@@ -43,9 +45,13 @@ missing HF identity or bypass a structural/metadata failure. Record actual outpu
   destination. Keep upstream filename unchanged and do not accept legacy v1 merely
   because its old basename matches.
 - Keep Torch/CUDA outside automatic replacement. Check platform-specific Triton,
-  optional Sage and exact hardware/precision boundaries. The unlicensed historical
-  Turing bundle is not distributable and is not required by auto attention.
-- Completed: all seven exact current UI/API graphs passed normal-step HTTP
+  optional Sage and exact hardware/precision boundaries. The historical Turing
+  bundle is separately user-authorized for a GitHub Release, with actual archive
+  publication still pending. Preserve its unconfirmed upstream license status and
+  actual source/build/component-license/NOTICE inventory. Source-code packages
+  exclude all such binaries; the fixed optional manifest drives install-stage
+  preparation only. Auto does not require it.
+- Historical archived evidence: all seven earlier exact UI/API graphs passed normal-step HTTP
   execution, including exact public SFT 01, Original TE directory 04, W5/W6 and
   versioned TE-v2 selectors. See `docs/PUBLICATION_VALIDATION.md` and its full JSON.
   Windows tests 62/62 and official CLI 1.23.0 passed; E702/S102/S307 findings were
@@ -68,21 +74,78 @@ missing HF identity or bypass a structural/metadata failure. Record actual outpu
   subsequently changed only Note text; `docs/validation/workflow-note-lineage.json`
   links tested/release UI SHA256 and unchanged API SHA256, with execution settings,
   links, node IDs and model metadata unchanged. Do not rewrite old run hashes.
-- Keep templates flat under `example_workflows/`; retain the six stable class IDs.
+- Keep templates flat under `example_workflows/`; retain the six legacy class IDs
+  and the separately added unified configuration node. Make `00_moss_lowvram.json`
+  the sole user template. Old01–07 belong only to tests/historical_workflows,
+  excluded from Registry packaging; do not link them as active share templates.
   Do not enable legacy `moss-optimized`/`ComfyUI-KohakuMOSS` and the new Registry
   pack simultaneously. Update/migrate one installation; the existing folder name
   may remain for launcher compatibility. Preserve any local `models.local.json`
   privately when migrating, never in the published archive.
   Insert genuine `cnr_id`/`ver` only after publishing and installing the real
   Registry version, then re-export and validate the resulting JSON/PNG artifacts.
-- Check clean install and missing-model behavior separately for Desktop and
-  self-hosted deployment. Original TE requires the explicit multi-file downloader;
-  ordinary model download metadata does not install all tokenizer/config files.
+- Validate the new 00 entry independently: changing Base/SFT, DiT storage/compute,
+  TE format/compute, budget and VAE must create the correct selected asset plan.
+  Its GUI preparation must fetch only the selected assets and prepare the complete
+  Original TE directory, including tokenizer/config. Old `properties.models`
+  metadata alone does not promise that complete directory. Changes in model family
+  must not silently change prompt/seed/sampling; suggested sampling is explicit.
+- Direct hook baseline check passed on Windows Python3.12.13 / Torch2.10+cu130 /
+  Manager4.2.2, initially missing Triton and accelerate: requirements processing
+  and install.py both returned exit 0. Keep this separate from UI-discovered
+  clean Manager installation, which remains pending its own complete record.
+- Check clean Manager installation and missing-model behavior separately for
+  Desktop and self-hosted deployment. Start with missing plugin and missing Triton,
+  not pre-seeded candidate files. For Manager4.2.2 on Windows, record UI discovery,
+  queue state, next-start prestartup requirements/install.py logs, final versions,
+  node registration, GUI preparation and restart state. A local staged hook test
+  is useful separate evidence, never a fresh Manager installation claim.
+- Confirm genuine Registry/Manager indexing before claiming workflow import →
+  missing-node install. The default new Manager has no arbitrary Git URL route;
+  a public repository alone is insufficient. Avoid promising a Fix Dependencies
+  button: old UI uses Try fix/Reinstall, while new UI comes from the frontend.
+  Default normal policy can reject fix (high+); never lower security for the demo.
+- Keep dependency automation separate from runtime support: Windows auto-preparation
+  covers the exact x64 Python3.12/Torch2.10.0+cu130/SM89 stack and the explicitly
+  historical SM75 policy. SM75 is not newly qualified; RTX50 remains pending and
+  RTX30 has no full-workflow promise. Unknown combinations get truthful diagnostics,
+  not blind latest installs or Torch/CUDA/Python replacement. Dependency checks
+  and inference must never execute pip; Manager install.py is the preparation phase.
 - Inspect git-tracked archive contents and `.comfyignore`: no weights, local model
   mappings, credentials, private receipts, environments, transient caches or
-  unlicensed binaries. Preserve tokenizer/runtime resources and license texts.
+  any embedded optional binaries. Separately authorized release assets must retain
+  their real source/license/build inventory and may not leak private paths or GPU
+  identifiers. Preserve tokenizer/runtime resources and license texts.
 - Use valid X.Y.Z versioning; do not attempt to overwrite an already published
   Registry version.
+
+## New-path validation scope
+
+- Shared FP8 probe03 passed eight actual GPU requests: Base/SFT × FP8/16-bit × two,
+  each 512²/two steps/decode on 4070TiSUPER with cudaMallocAsync. Eight CPU tests had
+  zero skips; 263-layer q/scale pointers, hashes and bytes stayed unchanged. This
+  is a shared-load/compute contract test, not normal-step image quality or speed.
+- Recorded delta04 Windows 137/137 unit tests passed with zero skips; GUI unit 32
+  passed. The frozen Turing helper separately passed 8 focused tests and the actual
+  17-member ZIP pure validation on Windows. Do not describe that focused run as
+  a new137-test full-suite execution or as SM75 GPU workload qualification.
+- Candidate-service GUI 19 checks passed; job c0f6b40e6dc84e04bc19dc374ac81572 was
+  ready by reusing renamed/subfolder W5, subfolder TE-v2 alias and registered
+  extra-root VAE: zero model network downloads. Prompt 94fd4b29-a191-4ec0-977b-2f01326b2d6d
+  succeeded at 1024²/16 steps/default SFT W5/TE W8A16/seed314159265 and saved
+  MOSS/00_moss_lowvram_00001_.png. Log execution interval 25.76s is one observation,
+  not a general speed guarantee. See docs/GUIDED_SETUP_VALIDATION.md.
+- Earlier independent Chrome context run03 GUI 16 checks covered relationships,
+  Original TE nine files, metadata and 24-value serialization without download or
+  prompt. Neither UI round performed a genuine missing-plugin Manager install.
+  Keep clean-Python preparation, candidate reused-model generation and actual
+  empty-baseline Manager installation separate; the last remains pending.
+- Turing draft ZIP/inventory assets uploaded and remote digest checked, but remain
+  private draft; do not enable the optional manifest before public verification.
+- Public HF target exists but two-row file uploads are still in progress with no
+  remote completion record for both weights. GitHub
+  remains nonpublic and Registry publication has not occurred. Record actual
+  immutable responses before updating those states.
 
 ## Explicit publishing only
 
@@ -106,7 +169,8 @@ Official references:
 - [Security standards: no runtime pip](https://docs.comfy.org/registry/standards)
 - [Templates and Desktop/browser model placement](https://docs.comfy.org/interface/features/template)
 
-Preparation and current execution validation are complete. The operator records
-actual source-upload progress only after receiving its result; this checklist
-does not predict a push. Repository public visibility, the three FP8 destination
-and Registry publication remain distinct decisions.
+The earlier seven-graph execution evidence remains complete within its recorded
+scope. New unified-node and clean Manager lifecycle validation require their own
+actual results. The operator records source upload, two-row FP8 upload, repository
+visibility and Registry publication only after receiving their real responses;
+this checklist does not predict their outcome.

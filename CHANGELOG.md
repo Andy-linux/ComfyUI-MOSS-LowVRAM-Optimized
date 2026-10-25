@@ -9,13 +9,23 @@
 - Prefer ComfyUI's `cudaMallocAsync` mechanism with a startup probe and a fresh
   native-allocator process when that mechanism is unsupported. Integrate model
   admission, VRAM budgets, transfer scheduling, and unload behavior.
-- Include seven portable UI workflows, pinned model references, and an explicit
-  size/SHA256-verified downloader for complete model assets.
+- Add one unified configuration/preparation workflow, with the seven earlier
+  precision examples retained. Separate stored weight formats, actual arithmetic,
+  and floating boundary precision; preserve all six earlier internal node IDs.
+- Prepare selected models in the ComfyUI server's registered model directories
+  through an explicit GUI confirmation, with pinned versions, size/SHA256 checks,
+  progress, retries, verified-file reuse, and complete nine-file Original TE sets.
+- Permit reversible isolation of a confirmed corrupt same-name model only after
+  the GUI has shown that repair plan and the user confirms it.
+- Share each Base/SFT row FP8 checkpoint between FP8 and 16-bit activation modes,
+  without requantizing its stored weights; separate session/cache identities.
+- Prepare supported Triton dependencies in the Manager installation lifecycle,
+  including the Windows restart stage, without runtime pip or replacing Torch.
 - Add environment diagnostics at installation, in the model node, and before
   prompt execution. Preserve the host Torch/CUDA installation.
 - Preserve upstream licenses, component provenance, and modification records.
 
 Publication status and measured hardware scope are recorded in
 `RELEASE_CHECKLIST.md` and `docs/ENVIRONMENT_SUPPORT.md`. A release candidate is
-not a Registry publication; optional FP8 downloads remain unavailable until an
-actual model repository and immutable file metadata have been recorded.
+not a Registry publication. Public download links are enabled only after the
+actual model upload and immutable file metadata have been verified.

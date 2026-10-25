@@ -1,5 +1,10 @@
 # Publishing-round validation — 2026-10-25
 
+> Historical archived01–07 release-candidate evidence. These graphs now live only in
+> tests/historical_workflows and do not ship as user templates. This record does
+> not qualify the new00 GUI, shared-row activation switch, or clean Manager install.
+> Original measurements, counts and docs/validation receipts below remain unchanged.
+
 **Preparation validation completed: all seven exact workflow JSON pairs passed
 normal-step ComfyUI HTTP execution.** This is an execution result, not a statement
 that GitHub code was pushed, the repository became public, an HF model repository

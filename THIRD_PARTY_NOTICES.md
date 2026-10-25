@@ -50,16 +50,34 @@ Model weights are external assets with their own upstream terms, pinned in
 package. W5/W6 already exist at `Andylinux/MOSS-Image-SFT-W5A8-W6A8`,
 revision `bfb77cb73ae7acb4f788d50d4043c2d71989b0a7`; the operator verified
 their hashes against the local files. Index these files rather than re-uploading.
-Three new local FP8 exports await a selected HF destination. Checkpoint conversion is inference preparation,
-not training. Integration modifications are summarized in the root `NOTICE`.
+Two Base/SFT FP8 row checkpoints target the public repository
+`Andylinux/MOSS-Image-Kohaku-FP8`; file upload/verification is still in progress.
+Each row file supports FP8 or 16-bit compute. The older separate Base weight-only
+export remains legacy local and is not a third public upload. Checkpoint conversion
+is inference preparation, not training. Integration modifications are summarized
+in the root `NOTICE`.
 
-## Optional Turing binary excluded
+## Optional Turing bundle — separately authorized distribution
 
-The local `ssiu/flash-attention-turing` bundle records source commit
-`9ef98fcb506bb1e2fe3cece50935e2935bf6b124` without a confirmed repository
-license. Available CUTLASS/NVIDIA terms cover those respective components, not
-automatically the Turing implementation or its combined compiled binary. This
-package does not distribute, mirror or upload that source/binary bundle. The
-independently authored local integration adapter remains; its presence does not
-include or authorize the upstream implementation. Default auto does not require
-this bundle. See `docs/DISTRIBUTION_INVENTORY.md` for per-artifact decisions.
+The user explicitly authorized distributing the self-built SM75 bundle as a
+separate GitHub Release. The source/Registry code archive still excludes all
+Turing binaries. Manager's installation phase may prepare only the exact fixed
+public asset described by `optional_binary_manifest.json`; actual ZIP publication
+and URL/hash verification remain pending, not implied by this notice.
+
+The pinned `ssiu/flash-attention-turing` source commit is
+`9ef98fcb506bb1e2fe3cece50935e2935bf6b124`, with CUTLASS submodule
+`df18f5e4f5de76bed8be1de8e4c245f2f5ec3020`. Available build records report
+no source patch. No LICENSE or repository license declaration was confirmed at
+the pinned Turing HEAD. Actual CUTLASS/NVIDIA terms cover their respective
+components; they are not asserted to license the entire Turing implementation
+or combined binary. User authorization does not change that upstream fact or
+create a blanket open-source license.
+
+The separate release is to preserve actual source archives, build records,
+portable binary/source hashes, original component license texts and notices.
+Private machine paths, GPU identifiers and benchmark caches are not publication
+payloads. Installation is restricted to Windows x64 / CPython3.12 /
+Torch2.10.0+cu130 / SM75 and preserves default auto if optional preparation fails.
+The adapter's historical dense FP16 evidence is not new full-workflow validation.
+See `docs/DISTRIBUTION_INVENTORY.md` for artifact decisions.

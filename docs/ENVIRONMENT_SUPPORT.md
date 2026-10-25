@@ -39,8 +39,9 @@ exact public model choices and new W8A8/FP8 integrations. They are not current
 release requalification. The new 06 W5 and 07 W6 workflow files now have their own successful current
 SM89 HTTP executions, recorded in `PUBLICATION_VALIDATION.md`; that does not
 constitute a new SM75 run. In particular, a historical W5 PASS is not a W6,
-FP8, A8-TE or all-profile PASS. Current full release evidence remains the separate
-SM89/RTX 4070 Ti SUPER ledger in `../RELEASE_VALIDATION.md`.
+FP8, A8-TE or all-profile PASS. Earlier normal-step runtime evidence remains the separate
+SM89/RTX 4070 Ti SUPER ledger in `../RELEASE_VALIDATION.md`; it is not reassigned
+to the new00 interface or shared-row activation switch.
 
 ## Mode boundaries
 
@@ -53,17 +54,22 @@ SM89/RTX 4070 Ti SUPER ledger in `../RELEASE_VALIDATION.md`.
   contracts. Preserve their separate receipts and FP16 conditioning boundary.
 - Optional attention backends are build-specific. The ordinary `auto` path uses
   PyTorch SDPA and does not require a private Flash or Sage binary.
-- The historical locally built Turing bundle has source without a LICENSE. It
-  is **not distributed**, linked as a public download, or installed automatically.
-  Do not infer distribution permission from local successful execution.
+- The user authorized the self-built Turing bundle as a separate GitHub Release.
+  The pinned upstream source still has no confirmed repository LICENSE; preserve
+  the actual source/build/component-license/NOTICE records without claiming
+  blanket clearance. The source package excludes binaries. Installation-stage
+  preparation requires the real fixed public manifest and exact SM75 ABI; the
+  local ZIP and 17-member manifest are ready, but public visibility is pending;
+  no public-download completion or new SM75 GPU test is claimed.
+  Neither this authorization nor local execution is new GPU qualification.
 
 ## Install-time dependencies
 
 The current package requires **Python >=3.12**. Use the Python environment that
 starts ComfyUI. Normal Python requirements belong
 in the package's declared dependencies and `requirements.txt`; keep them in sync.
-They currently include `accelerate`, transformers, safetensors, einops, NumPy,
-Pillow and comfy-kitchen. The actual release stack uses Python 3.12; a lower-bound
+They currently include `diffusers>=0.41.0,<0.42`, `accelerate`, transformers,
+safetensors, einops, NumPy, Pillow and comfy-kitchen. The actual release stack uses Python 3.12; a lower-bound
 declaration does not qualify every newer Python or dependency version.
 Use a platform-appropriate Triton stack compatible with the existing Torch/CUDA
 and Python ABI. Do not replace users' Torch/CUDA merely to install this node pack.
@@ -82,7 +88,7 @@ download optional binaries. This follows the official
 [Manager installation lifecycle](https://docs.comfy.org/custom-nodes/backend/manager).
 
 Any future precompiled binary must identify OS, architecture, Python ABI, Torch,
-CUDA build, source revision, build procedure, SHA256 and license. Prefer existing
+CUDA build, source revision, build procedure, SHA256 and recorded license status. Prefer existing
 upstream artifacts when available. A wheel is not a model file and does not belong
 in workflow `properties.models`.
 

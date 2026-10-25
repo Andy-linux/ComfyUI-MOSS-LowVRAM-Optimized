@@ -10,7 +10,7 @@
 
 本项目执行量化权重加载、文本编码与图像推理；离线 FP8 导出是格式转换／量化，不进行训练。
 
-代码包不包含模型权重、Torch/CUDA、编译器或可选注意力二进制。当前发布候选的实际验证环境为 Windows、RTX 4070 Ti SUPER（SM89，16 GB）、Python 3.12、Torch 2.10.0+cu130、ComfyUI 0.41.0。具体通过的组合和限制见 `RELEASE_VALIDATION.md`；显存 profile 是同一张卡上的进程预算，不代表已经在每种物理小显存卡上验收。
+代码包不包含模型权重、Torch/CUDA 或可选注意力二进制。Manager 的安装阶段仅为明确匹配的宿主准备固定 Triton、便携 Python 开发文件及独立可选注意力资产；导入节点、环境检查和推理不会安装依赖。当前发布候选的实际验证环境为 Windows、RTX 4070 Ti SUPER（SM89，16 GB）、Python 3.12、Torch 2.10.0+cu130、ComfyUI 0.41.0。具体通过的组合和限制见 `RELEASE_VALIDATION.md`；显存 profile 是同一张卡上的进程预算，不代表已经在每种物理小显存卡上验收。
 
 ## 模型与计算模式
 
@@ -31,30 +31,54 @@ TE 的 conditioning 输出边界仍为 CPU FP16，与原始权重 dtype、线性
 
 Kohaku 的 `fp8_compute` 提供激活量化的 FP8 路径；`fp8_weight_only` 保持 A16。实际计算仍由上游按形状选择，也可能走反量化后的 16 位分支。一个 FP8 checkpoint 的存储 dtype 不能单独证明每个形状都执行 FP8 Tensor Core。诊断见 `tools/probe_fp8_dispatch.py`。不支持没有格式说明、随意改 dtype 的“FP8 文件”。
 
-## 安装与依赖
+## 默认使用：一个工作流完成配置与模型准备
 
-1. 将本目录放入 `ComfyUI/custom_nodes/kohaku-moss-lowvram-optimized/`，或者在真实 Registry 发布后通过 Manager 安装。
-2. 使用 **启动 ComfyUI 的同一个 Python** 安装 `requirements.txt`。
-3. 使用 Python 3.12 或更高版本，按显卡、平台和 Torch/CUDA 组合准备 Triton。RTX20 的历史实测组合使用 Triton 3.2；RTX40 的当前实测组合使用 Triton 3.6，不能给两者统一安装最新版。具体状态见 [环境支持表](docs/ENVIRONMENT_SUPPORT.md)。
-4. 准备模型文件，重启 ComfyUI，在模板浏览器打开本节点的示例。
+1. 在已启用官方 ComfyUI Manager 的 ComfyUI 中导入
+   [00 · MOSS 统一入口](example_workflows/00_moss_lowvram.json)，或从模板浏览器打开它。
+2. 如果提示缺少节点，通过 Manager 安装真实已收录/发布的本节点包。
+   仅 GitHub 公开并不保证默认新 Manager 能发现它；发布结果以实际 Registry/Manager 收录为准。
+3. 点击 Manager 的 **Restart / 重启**，等待启动依赖准备完成。
+   Windows Manager 4.2.2 会把安装步骤安排到下次启动，UI 队列成功不代表依赖已经安装。
+4. 在 **MOSS · 配置与准备** 配置节点选择 Base/SFT、DiT 存储和计算、TE 格式和计算、
+   显存 profile、注意力与 VAE。点击 **Prepare / check selected configuration**。
+5. 在弹窗查看环境、所选模型的路径/大小/校验状态与下载来源，确认后点击下载。
+   只准备当前所选组合；已有文件按状态复用，冲突文件不会被覆盖。Original TE 会按完整资产准备分片、
+   配置和 tokenizer。切换配置后先刷新计划，重新确认所需文件。
+6. 检查通过后生成。Base 建议 50 步、SFT 建议 16 步；切换系列不会擅自修改提示词、seed 或采样设置。
+   需要同步建议值时，显式点击 **Apply recommended sampling parameters**。
 
-**升级已有安装时先检查重复包。** 六个内部node class IDs保持不变；不要同时启用
-旧`moss-optimized`、`ComfyUI-KohakuMOSS`目录和新的Registry包，否则可能重复注册
-同一组class IDs。更新或迁移现有一份安装即可。本机已有的`moss-optimized`目录可
-为启动器兼容继续使用，目录名不必等于新的仓库/Registry品牌。需要迁移时先私下
-备份`models.local.json`，再按需要恢复到唯一启用的安装；不要把私人映射提交发布。
+以上默认流程无需终端命令。弹窗不能在插件或 Manager 尚未安装时自举安装它们。
+尚未上架的发布候选可由维护者隔离验证，但这不能算新用户 Manager 安装闭环已验收。
 
-```bash
-python -m pip install -r requirements.txt
-python tools/check_environment.py
-```
+### 依赖准备范围
 
-当前包要求 **Python ≥3.12**。普通依赖包含`accelerate`、transformers、safetensors、
-einops、NumPy、Pillow和comfy-kitchen；`requirements.txt`与pyproject保持一致。
-Python版本下界是安装条件，当前实际验收版本仍为3.12，不代表未来所有Python/
-Torch组合已测试。Triton按平台显式准备，不会把现有Torch/CUDA替换成另一套。
+常规依赖包含 `diffusers>=0.41.0,<0.42`：上游编码器会直接导入其 `AutoencoderKLFlux2`，因此即使从TE加载开始也需要此依赖；Manager会与其余requirements一起准备，环境检查会提前报告缺失或版本不匹配。
 
-显式 A8 TE 需要 CUDA SM80+；本候选的 FP8 计算要求 SM89+。低预算双缓冲及 Sage 等新增路径实际验收以 SM89 为准。可选 Flash/Sage 不会在导入或运行节点时自动安装。`auto` 使用 PyTorch SDPA；`Flash` 只允许实际 Flash 内核，不会悄悄换成其他注意力后端。详见 `docs/portable_attention_dependencies.md`。
+当前自动准备的 Windows 精确组合为 **x64 Python 3.12、Torch 2.10.0+cu130、CUDA build 13.0、SM89**，
+缺少 Triton 时由 Manager 安装 `triton-windows==3.6.0.post26`。SM75 仅提供历史 Python3.12 /
+Torch2.10+cu130 / Triton3.2.0.post21 配对的准备策略，明确不是本次发布的实卡复验。
+Linux 仅依据现有 Torch 包元数据中适用的精确 Triton 依赖准备，不声明工作流已验收。
+其他宿主组合会显示诊断；本插件不会替换 Python、Torch 或 CUDA，也不安装“最新 Triton”。
+Python ≥3.12 的声明是最低安装条件，不代表所有后续 Python/Torch/GPU 组合已测试或可自动准备。
+
+仍缺依赖时，先重启执行待处理任务，再查看当前 Manager 实际可见的维护入口。
+4.2.2 旧界面的名称为 **Try fix / Reinstall**；默认新界面由独立 frontend 提供，
+不保证存在名为 Fix Dependencies 的按钮。安全策略拒绝维护操作时，请使用
+[官方 ComfyUI Desktop](https://www.comfy.org/download) / 宿主图形维护流程，不降低安全级别。
+完整步骤、固定版本、便携 Python 开发文件校验和故障边界见
+[安装指南](docs/INSTALLATION_GUIDE.md)及[运行环境支持表](docs/ENVIRONMENT_SUPPORT.md)。
+自动准备状态与运行时环境检查分开：自动安装策略不覆盖某个既有环境，不等于该环境不能运行。
+
+**升级已有安装时先检查重复包。** 原六个内部 node class IDs 保持兼容，新统一配置节点为新增入口；
+不要同时启用旧 `moss-optimized`、`ComfyUI-KohakuMOSS` 与新的 Registry 包。
+更新或迁移唯一一份安装，既有目录名可为启动器兼容保留。迁移前私下备份
+`models.local.json`，不要把私人映射提交发布。
+
+显式 A8 TE 需要 CUDA SM80+；本候选的 FP8 计算要求 SM89+。低预算双缓冲及 Sage 等路径的
+实际验收以 SM89 为准。可选 Flash/Sage 不在导入或运行节点时安装。
+`auto` 使用 PyTorch SDPA；`Flash` 只允许实际 Flash 内核。
+精确SM89组合会在Manager安装阶段尝试固定公开Sage wheel，失败保持auto。用户已授权将自编SM75 Turing包作为独立GitHub Release分发；上游固定commit没有已确认仓库许可的事实继续披露，实际组件LICENSE/NOTICE与来源构建记录一并保留，不伪造开放许可。Turing ZIP及17成员清单已生成，draft的两个asset已上传并核对远端digest；Release仍为private draft，独立清单保持publish_pending，不提前下载。
+见 [注意力依赖说明](docs/portable_attention_dependencies.md)。
 
 ## 模型下载与路径
 
@@ -68,25 +92,14 @@ ComfyUI/models/vae/
 
 节点通过 ComfyUI 的 `folder_paths` 查找文件，支持 `extra_model_paths.yaml`。代码没有固定 F 盘路径。已有模型可在节点的 checkpoint 下拉框中选择；也可在不分发的 `models.local.json` 中为 asset ID 配置本机路径。文件模式、Base/SFT 来源要与所选模式一致，两者相同的 shape 不能用来判定权重身份。
 
-`model_manifest.json` 为公开文件记录完整 HF revision、精确字节数、SHA256、目标位置、格式和来源许可。下载器是独立的显式操作：
+`model_manifest.json` 为公开文件记录完整 HF revision、精确字节数、SHA256、目标位置、格式和来源许可。
+默认请使用统一配置节点的准备弹窗；选择 SFT W5 / Sumomo INT8 TE v2 / 原 MOSS VAE 时只准备这组资产，
+不下载所有精度。独立维护下载器的旧默认组仍为 Base INT8 + INT8 TE + 原 VAE，合计
+14,116,205,080 bytes（约14.12 GB十进制），与新00工作流的默认配置应分别理解。
 
-```bash
-# 只查看需要哪些文件以及大小；不下载、不写入
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --dry-run
-
-# Base INT8 + INT8 TE + 原 MOSS VAE
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets base_w8 te_int8 vae
-
-# 原始 TE：四个分片、index/config 和 tokenizer 一起准备
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets te_original
-
-# 对已经下载的文件只做本地校验
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets base_w8 te_int8 vae --verify-only
-```
-
-默认公开组合为 14,116,205,080 bytes（约 14.12 GB 十进制），不是所有可选权重的总大小。现有相同文件会验证后复用；不匹配的已有文件不会被覆盖。下载先写临时文件，验证大小和 hash 后发布到目标路径。缺少 revision/hash 的待发布自有权重不能通过此工具伪装成可下载文件。
-
-Original HF TE 目录是 `models/text_encoders/MOSS-Image-Base/text_encoder/`，同级为 `tokenizer/`。完整映射见 `MODEL_FILES.md`。
+下载先写临时文件，验证大小与 SHA256 后发布到目标路径。Original HF TE 的目标目录为
+`models/text_encoders/MOSS-Image-Base/text_encoder/`，同级为 `tokenizer/`。
+完整映射、维护者 CLI 选项及资产状态见 [MODEL_FILES.md](MODEL_FILES.md)。
 
 ## FP8 本地导出
 
@@ -96,7 +109,7 @@ Original HF TE 目录是 `models/text_encoders/MOSS-Image-Base/text_encoder/`，
 python tools/export_fp8.py --source /path/to/moss_image_base_bf16.safetensors --output /path/to/ComfyUI/models/diffusion_models/moss_image_base_kohaku_fp8_row.safetensors --variant base --precision fp8_compute --recipe row --device cuda:0
 ```
 
-SFT 使用其自身原始文件或 HF transformer 目录，并指定 `--variant sft`。weight-only 格式使用 `--precision fp8_weight_only`。导出不训练、不下载，不覆盖已有输出，也不把已经量化的文件当作原始 BF16 再量化。输出附带 recipe 和转换 receipt；发布前还应记录源与目标 hash。
+SFT 使用其自身原始文件或 HF transformer 目录，并指定 `--variant sft`。公开分发范围为 Base/SFT 两份 row checkpoint；统一节点对同一 row 文件选择 FP8 或 16-bit 计算，不为计算开关重复下载权重。旧的独立 weight-only 导出仅为 legacy local 兼容，不作为第三份公开模型。导出不训练、不下载，不覆盖已有输出，也不把已经量化的文件当作原始 BF16 再量化。输出附带 recipe 和转换 receipt；发布前还应记录源与目标 hash。
 
 ## CUDA 内存分配器
 
@@ -112,66 +125,50 @@ python tools/launch_comfy_allocator.py --comfy-main /path/to/ComfyUI/main.py -- 
 
 offload、VAE 预估、原始 payload 双缓冲、锁页 chunk 与卸载清理均保留。GPU 内存池与 CPU pinned pool 是两套分配机制，切换 CUDA 后端不会自动替代 host-cache 生命周期管理。
 
-## 分享工作流
+## 分享唯一工作流
 
-可以分享 `example_workflows/*.json`，或者分享带 Comfy 工作流 metadata 的输出 PNG。它们携带图和参数，**不携带模型、节点源码或 Python 环境**。
+当前唯一用户模板为 [00 · MOSS统一配置与准备](example_workflows/00_moss_lowvram.json)。
+一个配置节点涵盖Base/SFT、DiT存储与计算、TE格式与计算、显存预算、注意力及VAE，
+无需为每种精度另选JSON。默认SFT W5、Sumomo v2 INT8 TE / W8A16、auto注意力、FP32 VAE，
+1024²、16步；Base建议50步，建议采样参数仅经显式按钮应用。
 
-本包当前提供**七个UI模板及对应API图**。普通生成同时连接PreviewImage和SaveImage，
-Controls默认为idle。SFT示例16步，Base示例50步；FP8模板明确要求本地导出或等待
-真实HF发布。W5/W6直接索引现有公开权重，不重复上传。
+分享该JSON或带Comfy工作流metadata的输出PNG会携带图与参数，**不会携带模型、节点源码或Python环境**。
+安装节点后使用GUI准备当前所选资产；它会查找现有注册模型路径，后台核验完整SHA256，
+匹配文件可原位复用，缺失才下载。改名或上游原名文件不凭名字自动视为正确版本；
+错误目标文件需用户明确确认保留旧字节后再下载。Original TE按完整目录准备，不依赖普通Download all
+重建其分片、config/index与tokenizer。详见[分享与文件准备](docs/SHARING_WORKFLOWS.md)。
 
-**本轮七份精确JSON均已通过正常步数HTTP/API执行**，包括01精确公开SFT fused文件、
-04显式Original TE目录、06/07新W5/W6图及版本化TE v2别名。API文件SHA保持与执行
-回执一致；UI模板随后仅更新了不执行的Note说明文字，前后SHA链见
-[Note文本变更记录](docs/validation/workflow-note-lineage.json)，节点ID、链接、设置及
-模型metadata完全不变，原执行回执SHA保留。请求携带UI工作流供PNG metadata保存。
-另已在实际Windows/Chrome **v4最终前端检查中通过06导入及真实按钮/dialog操作**：9节点、
-20个原输入持久化widget及两个临时widget，状态settled；按钮callback刷新并打开报告，
-显示4070 Ti SUPER和cudaMallocAsync，六项dialog检查全部通过，关闭后dialog移除，
-序列化的20个输入值不变。无console errors、无`POST /prompt`。使用最终Note版06，
-环境label/displayName均为“环境状态：依赖检查通过”，实际2×截图确认可见；全部旧v3
-检查及新label检查通过。v3虽通过数据/dialog检查，但disabled文本value被前端隐藏，
-本次仅`web/environment.js`改用官方支持的label，readonly/name/value和20输入不变，
-06 UI SHA不变，无GPU/runtime改动，不重算62测试或7图。
-详见[最终前端回执](docs/validation/frontend-final-20261025.json)，
-[v3回执](docs/validation/frontend-dialog-20261025.json)保留先前按钮验证及显示问题。
-这不是生成测试，
-也不是其余六图逐一浏览器认证；七图GPU执行是独立证据。本轮新图没有新增
-人工画质认证。以下旧PNG继续作为带原图的历史样例，不冒充
-本轮新生成图片。完整数据见[本轮验证](docs/PUBLICATION_VALIDATION.md)。
+INT8 TE v2的推荐目标别名为 `text_encoders/moss-image-qwen35-int8-convrot-v2.safetensors`，
+避免与同上游basename的旧v1混淆。GUI也可核验并复用其他注册名称下的同一份精确v2字节，
+不要求仅为改名再下载8.45GB文件。Base/SFT FP8各一份row文件共享FP8/16-bit计算，
+只切换计算不重复下载权重；公开下载仍以真实上传完成后的固定revision/hash清单为准。
 
-| 模板 | 当前JSON | 样例及验证边界 |
-|---|---|---|
-| SFT W8，显式公开fused文件 | [工作流](example_workflows/01_sft_w8_legacy_1024.json) | 当前16步PASS；[旧auto历史PNG](docs/samples/01_sft_w8_legacy_1024.png) |
-| Base W8 | [工作流](example_workflows/02_base_w8_standard_1024.json) | 当前50步PASS；[历史PNG](docs/samples/02_base_w8_standard_1024.png) |
-| Base Kohaku FP8 row | [工作流](example_workflows/03_base_fp8_row_standard_1024.json) | 当前50步PASS；[历史PNG](docs/samples/03_base_fp8_row_standard_1024.png) |
-| Base + Original BF16 TE目录 | [工作流](example_workflows/04_base_w8_original_bf16_te_1024.json) | 当前50步PASS；[旧auto目录历史PNG](docs/samples/04_base_w8_original_bf16_te_1024.png) |
-| Base + W8A8 TE | [工作流](example_workflows/05_base_w8_real_w8a8_te_1024.json) | 当前50步PASS；[历史PNG](docs/samples/05_base_w8_real_w8a8_te_1024.png) |
-| SFT W5低显存，4 GB进程profile | [工作流](example_workflows/06_sft_w5_lowvram_1024.json) | 当前16步PASS并在格式化后复跑；FP32 VAE |
-| SFT W6低显存，6 GB进程profile | [工作流](example_workflows/07_sft_w6_lowvram_1024.json) | 当前16步PASS；FP16-fixed、W8A16 TE、FP32 VAE |
+旧01–07图已移到 `tests/historical_workflows/`，仅为GitHub历史测试fixture，
+由 `.comfyignore` 排除Registry包，不再作为用户模板或当前分享方案。
+尚未注册时不写假的 `cnr_id`；真实发布、安装后再导出真实包ID与版本信息。
 
-本轮Windows单元测试**62/62通过**；官方Comfy CLI **1.23.0**验证通过，E702/S102/
-S307选定检查零发现。模型清单先核验14个已有公开文件38,776,396,306字节，再下载并
-核验公开SFT W8的5,413,698,958字节，共15个公开文件44,190,095,264字节。执行使用
-既有Windows Python环境，但节点/模型目录隔离、无`models.local.json`及私人注意力包；
-这不等于新装OS/Python依赖验收。32文件格式化前后AST完全相同，01与06另有格式化后
-运行记录。集成耗时只保留观察，不作为速度benchmark。
+## 验证范围
 
-公开模型的 `properties.models` 包含下载 URL、目标目录及 hash，帮助支持该功能的客户端显示缺失模型。ComfyUI Desktop 与普通网页部署的下载、放置行为不完全相同；独立下载器提供确定的文件路径和验证流程。JSON 无法替别人保证驱动、Triton、可选二进制和模型全部自动安装。
+新增共享FP8路径已完成一次明确范围的Windows GPU验证：RTX4070TiSUPER / SM89、
+cudaMallocAsync，**Base/SFT × FP8/16-bit × 两次，共8个请求**，每次512²、2步采样并解码。
+8项CPU测试通过且无skip；263层的q/scale指针、哈希及字节保持不变。
+这验证同一row文件切换计算模式和相关加载契约，**不是完整步数画质认证或速度benchmark**。
 
-当前七图的单文件metadata均匹配实际widget文件名。Original TE须用
-`--assets te_original`完整准备分片、index/config及tokenizer；04的模型metadata
-仅列DiT和VAE，不能依靠前端Download all安装整个TE目录。详见
-[工作流分享说明](docs/SHARING_WORKFLOWS.md)。
+Windows候选服务上的通用00已通过 **19项GUI检查**：准备作业全部ready，原位复用三份预存模型
+（子目录中改名的W5、子目录TE v2别名、注册extra-root VAE），**模型网络下载为0**。
+随后默认SFT W5 / TE W8A16、1024²、16步、seed314159265的真实prompt成功，输出
+`MOSS/00_moss_lowvram_00001_.png`。日志执行区间25.76秒仅为这次观察，不是通用速度承诺。
 
-INT8 TE v1与v2在上游使用同一basename，仅按文件名检查可能把旧v1误当成v2。
-本包将精确v2文件下载/选择为
-`text_encoders/moss-image-qwen35-int8-convrot-v2.safetensors`，metadata和widget均
-使用这个本地别名。上游URL中的原始文件名、revision及SHA不变；普通浏览器下载
-可能仍使用上游原名，需按此别名改名并用下载器`--verify-only`核验。该改名不修改
-权重字节。此前精确v2的独立API PASS保持原范围；本轮七图另有各自精确JSON执行回执。
+此前独立Chrome context run03通过16项联动、Original TE九文件、metadata和24值序列化检查；
+该run03没有download/prompt。此前delta04的Windows137/137单元通过、0skip，GUI相关32项通过；
+冻结Turing helper又完成独立8项focused测试及真实17成员ZIP纯校验，均通过，不等于重新运行全套137项，也不是SM75 GPU采样验证。
+干净Python基线上的requirements/install.py及固定Sage隔离准备已通过；**候选服务复用已有模型的
+生成成功与真正空Manager基线安装是独立证据**。公开Registry发现→安装→重启闭环仍待完成。
+完整参数、作业/prompt标识及边界见[统一00验证](docs/GUIDED_SETUP_VALIDATION.md)。
 
-尚未注册的节点不会写假的 `cnr_id`。正式注册后，从已安装 Registry 版本导出最终模板，以携带真实节点包 ID 和版本。
+历史01–07图的正常步数HTTP执行、62项测试及旧前端检查继续按各自记录范围保留，
+不移用为新00或新增计算路径的验证。[历史发布候选验证](docs/PUBLICATION_VALIDATION.md)和
+`docs/validation/` 原始回执、数值与SHA链不改写。旧PNG不作为本轮新图或当前推荐分享模板。
 
 ## 发布状态
 
@@ -185,15 +182,20 @@ python tools/validate_release.py --publication
 Registry Publisher `xianbei`的公开状态已确认为**Active**。本地加密凭证读取/
 解密检查已成功；**PAT在Registry服务上的认证仍未验证**，不能据此宣称已可发布。
 尚无用于这项PAT认证检查的官方只读验证端点，不探测可能产生写入的发布接口，
-文档也不包含凭证内容。三个自制FP8文件的目标HF repo仍待用户选择，不能将GitHub
-URL当作HF模型仓库。此说明不声称本轮已经推送、上传或注册。
+文档也不包含凭证内容。两份自制FP8 row的目标已确定为
+[Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8)，
+上传进程仍在运行，尚无远端两权重完成记录；下载是否启用以固定revision/hash的实际清单为准。旧weight-only不纳入本次公开分发。
+这些准备信息不替代GitHub推送、HF文件提交或Registry注册的真实回执。
 
-准备内容及本轮执行验收已完成。源码上传进度、仓库可见性和Registry实际发布结果见
+新增00的候选服务复用/生成已通过；此前01–07图证据保留原范围。真正新用户Manager安装闭环尚待完成。
+已在Windows独立基线（Python3.12.13、Torch2.10+cu130、Manager4.2.2，初始缺少Triton与accelerate）
+完成requirements与install.py直接执行，两者退出码均为0；这证明安装钩子可在该基线运行，
+**不等于经过Manager UI发现、安装和重启的端到端验收**。源码上传进度、仓库可见性和Registry实际发布结果见
 [发布计划](docs/PUBLISHING_PLAN_ZH.md)及操作者后续的真实回执；不从本地验证通过推断
 这些外部写入已完成。当前验证数据记录Registry发布未尝试。
 
 20系仅保留历史2080 Ti **22 GB物理显存卡**的W5 auto端到端回执，4g/6g是软件
-预算，不是物理4/6GB卡。当前版本未实卡复测；40系是当前SM89验收，50系待补，
+预算，不是物理4/6GB卡。当前版本未实卡复测；40系是当前SM89验收，50系待补，30系未承诺整流程支持，
 Linux未测。详见[分代支持与历史证据](docs/ENVIRONMENT_SUPPORT.md)。
 
 根协议为 `LICENSE` 中的 KohakuMoss License 1.0；必须保留 Kohaku 品牌及组件许可。原始模型、转换产物、tokenizer 和可选依赖的许可范围见 `NOTICE`、`THIRD_PARTY_NOTICES.md` 和 `LICENSE_PROVENANCE.json`。发布应使用本轮整理的干净源码历史，不公开私有旧 baseline。发布步骤见 `RELEASE_CHECKLIST.md`。

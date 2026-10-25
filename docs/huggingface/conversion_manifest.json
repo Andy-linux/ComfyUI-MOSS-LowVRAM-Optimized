@@ -1,8 +1,8 @@
 {
-  "schema_version": 1,
-  "status": "DRAFT_NOT_PUBLISHED",
-  "public_repo_id": null,
-  "scope": "Three FP8 DiT files only; no text encoder, tokenizer, VAE, models cache or W5/W6 artifacts included",
+  "schema_version": 2,
+  "status": "UPLOAD_PREPARED",
+  "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
+  "scope": "Two shared row FP8 DiT checkpoints: Base and SFT. Runtime activation policy selects FP8-compute or 16-bit weight-only; no training, TE, VAE, tokenizer or binary bundle.",
   "sources": [
     {
       "id": "base_bf16",
@@ -12,14 +12,15 @@
       "repo_id": "Comfy-Org/MOSS-Image",
       "repo_filename": "diffusion_models/moss_image_base_bf16.safetensors",
       "snapshot_revision": null,
-      "revision_status": "local download snapshot not independently confirmed; file identity fixed by SHA256"
+      "revision_status": "This immutable public snapshot contains matching source bytes (size and LFS SHA256 verified); historical download-session revision remains unconfirmed.",
+      "matched_source_revision": "24147db865fcdc207270f844777587223fed8d6e"
     },
     {
       "id": "sft_bf16_shards",
       "repo_id": "OpenMOSS-Team/MOSS-Image-SFT",
       "repo_subfolder": "transformer",
       "snapshot_revision": null,
-      "revision_status": "not confirmed; do not substitute a text-encoder revision or current main",
+      "revision_status": "This immutable public snapshot contains matching source bytes (size and LFS SHA256 verified); historical download-session revision remains unconfirmed.",
       "files": [
         {
           "id": "sft_source_diffusion_pytorch_model-00001-of-00003.safetensors",
@@ -39,7 +40,8 @@
           "bytes": 189549184,
           "sha256": "11f637ab17c7093344a6110a1e87ffda8e56558dc55183d8e790222cfcdcf52d"
         }
-      ]
+      ],
+      "matched_source_revision": "f972bd4b4b9e3852133cc5da954d87bc32cd8fb9"
     }
   ],
   "outputs": [
@@ -59,12 +61,17 @@
       "weight_codes": "float8_e4m3fn",
       "weight_scale": "float32 per output row",
       "format_metadata": "kohakumoss_fp8 JSON: recipe=row, layers list",
-      "activation_policy": "quantized dynamically by FP8-compute path; vendor may choose w16 fallback",
-      "public_repo_id": null,
+      "activation_policy": "Selected at inference: fp8 requests dynamic FP8-compute (vendor may select W16); 16bit reuses the same row weight codes/scales with FP16/BF16 activations.",
+      "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
       "public_revision": null,
       "download_url": null,
       "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
-      "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32"
+      "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32",
+      "supported_runtime_modes": [
+        "fp8",
+        "16bit"
+      ],
+      "runtime_validation_status": "FP8 compute has existing limited real-model coverage; new explicit row-to-A16 switching awaits current integration test receipts."
     },
     {
       "id": "moss_image_sft_kohaku_fp8_row",
@@ -82,35 +89,17 @@
       "weight_codes": "float8_e4m3fn",
       "weight_scale": "float32 per output row",
       "format_metadata": "kohakumoss_fp8 JSON: recipe=row, layers list",
-      "activation_policy": "quantized dynamically by FP8-compute path; vendor may choose w16 fallback",
-      "public_repo_id": null,
+      "activation_policy": "Selected at inference: fp8 requests dynamic FP8-compute (vendor may select W16); 16bit reuses the same row weight codes/scales with FP16/BF16 activations.",
+      "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
       "public_revision": null,
       "download_url": null,
       "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
-      "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32"
-    },
-    {
-      "id": "moss_image_base_kohaku_fp8_weight_only",
-      "file": "moss_image_base_kohaku_fp8_weight_only.safetensors",
-      "bytes": 5346415987,
-      "sha256": "03a31fb8a7c2e196b3b0c3b02849442d40503ead10cdf9f9f4bce543525c1c54",
-      "variant": "base",
-      "source_id": "base_bf16",
-      "precision": "fp8_weight_only",
-      "recipe": "row",
-      "quantized_linear_count": 263,
-      "dgrad": false,
-      "training_performed": false,
-      "source_files_modified": false,
-      "weight_codes": "float8_e4m3fn",
-      "weight_scale": "float32 per output row",
-      "format_metadata": "per-layer comfy_quant JSON: format=float8_e4m3fn, convrot=false; no kohakumoss_fp8 record",
-      "activation_policy": "16-bit activations; weight-only path, not W8A8 FP8 compute",
-      "public_repo_id": null,
-      "public_revision": null,
-      "download_url": null,
-      "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
-      "nonquantized_tensor_policy": "BF16 and KEEP_FP32-sensitive FP32 tensors; rope FP32"
+      "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32",
+      "supported_runtime_modes": [
+        "fp8",
+        "16bit"
+      ],
+      "runtime_validation_status": "FP8 compute has existing limited real-model coverage; new explicit row-to-A16 switching awaits current integration test receipts."
     }
   ],
   "conversion": {
@@ -184,12 +173,37 @@
   },
   "excluded_local_assets": [
     "q5_ridge_gptq.safetensors",
-    "q6_direct.safetensors"
+    "q6_direct.safetensors",
+    "moss_image_base_kohaku_fp8_weight_only.safetensors"
   ],
   "publish_prerequisites": [
-    "Select an authorized HF namespace and repository; replace null publication fields only with real upload results",
-    "Carry upstream Apache-2.0 license text and applicable notices into the model repository",
-    "Attach actual conversion/runtime receipts and verify artifact hashes after upload",
-    "Confirm source snapshot revisions if available; retain content hashes regardless"
+    "Upload only the two row files and companion model documentation to the confirmed repository",
+    "Verify published byte sizes and LFS SHA256 and record immutable weight revision",
+    "Record actual row-to-A16 validation before claiming that runtime path passed"
+  ],
+  "legacy_local_exports_not_published": [
+    {
+      "id": "moss_image_base_kohaku_fp8_weight_only",
+      "file": "moss_image_base_kohaku_fp8_weight_only.safetensors",
+      "bytes": 5346415987,
+      "sha256": "03a31fb8a7c2e196b3b0c3b02849442d40503ead10cdf9f9f4bce543525c1c54",
+      "variant": "base",
+      "source_id": "base_bf16",
+      "precision": "fp8_weight_only",
+      "recipe": "row",
+      "quantized_linear_count": 263,
+      "dgrad": false,
+      "training_performed": false,
+      "source_files_modified": false,
+      "weight_codes": "float8_e4m3fn",
+      "weight_scale": "float32 per output row",
+      "format_metadata": "per-layer comfy_quant JSON: format=float8_e4m3fn, convrot=false; no kohakumoss_fp8 record",
+      "activation_policy": "16-bit activations; weight-only path, not W8A8 FP8 compute",
+      "public_repo_id": null,
+      "public_revision": null,
+      "download_url": null,
+      "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
+      "nonquantized_tensor_policy": "BF16 and KEEP_FP32-sensitive FP32 tensors; rope FP32"
+    }
   ]
 }
