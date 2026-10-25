@@ -3,10 +3,10 @@
 ## 当前身份与实际状态
 
 - 正式包ID：`kohaku-moss-lowvram-optimized`；展示为 **MOSS LowVRAM Optimized**，使用KohakuMoss推理组件。
-- GitHub目标：[Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized)。目前尚未转为public；推送、可见性及Release结果以操作者真实回执为准。
+- GitHub目标：[Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized)。已公开，已确认源码提交 `523e1e68190d1a17138b2189ad24349e175d938d`；后续清单启用修改保留各自同步提交。
 - Registry Publisher `xianbei`公开状态Active；Registry包尚未发布。此前本地加密凭证可读取/解密，不等于PAT服务端认证已通过；不借无必要写入试探认证。
 - 两份Base/SFT FP8 row目标已确定为公开 [Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8)，模型文件仍在上传/核验中。一个row文件共享FP8/16-bit计算；旧独立weight-only仅legacy local，不是第三份上传。
-- 用户已明确授权自编SM75 Turing bundle作为独立GitHub Release。真实ZIP与清单两个asset已上传draft并核对远端digest；Release仍为private draft，保持publish_pending，不声称新用户已可下载。源码包不内嵌binary。
+- 用户已明确授权自编SM75 Turing bundle作为独立GitHub Release。Release 423709338已公开、非draft；root匿名HTTP200完整下载43,707,834 bytes与SHA779e2bf8…匹配远端digest，清单已启用public。源码包不内嵌binary。
 
 根KohakuMoss LICENSE、NOTICE与原vendor/组件许可证字节保持不变；命名与组件scope继续保留。
 上游Turing固定HEAD未确认仓库许可的事实不变，用户分发授权不被描述为上游开放许可。
@@ -21,9 +21,9 @@ Windows精确自动准备组合为x64 Python3.12/Torch2.10+cu130，SM89对应固
 公开Sage；SM75使用明确标记历史配对的Triton3.2，Turing仅在其独立真实清单完整后准备。
 SM89不会下载/导入SM75 Turing。未知宿主给诊断，不盲装最新版，不为安装演示降低Manager安全级别。
 
-Turing独立资产计划tag为 `turing-sm75-cp312-cu130-v1`，文件名
-`moss-turing-flash-cp312-torch210-cu130-sm75-win_amd64.zip`。这些是固定目标名称，
-本地ZIP生成不等于公共Release已创建/上传。ZIP根直接对应turing_bundle，保留真实源码归档、构建记录、
+Turing已公开的独立资产tag为 `turing-sm75-cp312-cu130-v1`，文件名
+`moss-turing-flash-cp312-torch210-cu130-sm75-win_amd64.zip`。这些是已确认公开的固定资产名称；
+匿名完整下载与远端digest核验均已通过。ZIP根直接对应turing_bundle，保留真实源码归档、构建记录、
 portable MANIFEST、CUTLASS/NVIDIA原文、NOTICE及完整hash清单，去除私有路径/设备标识。
 固定Turing源HEAD `9ef98fcb506bb1e2fe3cece50935e2935bf6b124` 无已确认仓库LICENSE；
 不能把CUTLASS/NVIDIA许可扩大为整个组合binary的许可。

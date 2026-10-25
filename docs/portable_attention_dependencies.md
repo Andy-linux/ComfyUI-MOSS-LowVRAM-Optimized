@@ -35,7 +35,8 @@ UI排队成功不等于依赖安装成功。安装不替换Torch/CUDA/Python，�
 
 用户已授权将自编Turing bundle通过独立GitHub Release分发。源码/Registry代码包不内嵌
 其binary；真实本地ZIP与17成员清单已完成，固定Release目标和bytes/hash均已填入
-`optional_binary_manifest.json`，公共可见性尚待确认，因此保持publish_pending、不提前下载。
+`optional_binary_manifest.json`。Release 423709338已公开、非draft；匿名完整HTTP200下载
+确认43,707,834 bytes及固定SHA256，与远端digest一致，清单已启用public。
 清单固定发布URL、整体bytes/SHA256、逐成员hash、source commit与真实license/build/NOTICE记录。
 
 源commit `9ef98fcb506bb1e2fe3cece50935e2935bf6b124` 未确认仓库LICENSE/许可声明；

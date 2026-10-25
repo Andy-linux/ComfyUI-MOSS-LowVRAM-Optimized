@@ -77,7 +77,7 @@ Python ≥3.12 的声明是最低安装条件，不代表所有后续 Python/Tor
 显式 A8 TE 需要 CUDA SM80+；本候选的 FP8 计算要求 SM89+。低预算双缓冲及 Sage 等路径的
 实际验收以 SM89 为准。可选 Flash/Sage 不在导入或运行节点时安装。
 `auto` 使用 PyTorch SDPA；`Flash` 只允许实际 Flash 内核。
-精确SM89组合会在Manager安装阶段尝试固定公开Sage wheel，失败保持auto。用户已授权将自编SM75 Turing包作为独立GitHub Release分发；上游固定commit没有已确认仓库许可的事实继续披露，实际组件LICENSE/NOTICE与来源构建记录一并保留，不伪造开放许可。Turing ZIP及17成员清单已生成，draft的两个asset已上传并核对远端digest；Release仍为private draft，独立清单保持publish_pending，不提前下载。
+精确SM89组合会在Manager安装阶段尝试固定公开Sage wheel，失败保持auto。用户已授权将自编SM75 Turing包作为独立GitHub Release分发；上游固定commit没有已确认仓库许可的事实继续披露，实际组件LICENSE/NOTICE与来源构建记录一并保留，不伪造开放许可。Turing已作为[独立公开Release](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/tag/turing-sm75-cp312-cu130-v1)发布，匿名完整下载确认43,707,834 bytes及固定SHA256，与远端digest一致；独立清单已启用public，仅精确SM75宿主在Manager安装阶段准备。
 见 [注意力依赖说明](docs/portable_attention_dependencies.md)。
 
 ## 模型下载与路径
@@ -177,15 +177,17 @@ python tools/validate_release.py
 python tools/validate_release.py --publication
 ```
 
-本地检查与公开发布门槛分开。GitHub目标为
+本地检查与公开发布门槛分开。GitHub源码仓库已公开：
 [Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized)，
+已确认公开源码提交 `523e1e68190d1a17138b2189ad24349e175d938d`。Turing独立Release也已公开并完成匿名文件大小/hash核验；
+Registry仍未发布，真正空基线Manager安装仍待完成。
 Registry Publisher `xianbei`的公开状态已确认为**Active**。本地加密凭证读取/
 解密检查已成功；**PAT在Registry服务上的认证仍未验证**，不能据此宣称已可发布。
 尚无用于这项PAT认证检查的官方只读验证端点，不探测可能产生写入的发布接口，
 文档也不包含凭证内容。两份自制FP8 row的目标已确定为
 [Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8)，
 上传进程仍在运行，尚无远端两权重完成记录；下载是否启用以固定revision/hash的实际清单为准。旧weight-only不纳入本次公开分发。
-这些准备信息不替代GitHub推送、HF文件提交或Registry注册的真实回执。
+GitHub源码与Turing资产公开不代表HF权重上传或Registry注册完成。
 
 新增00的候选服务复用/生成已通过；此前01–07图证据保留原范围。真正新用户Manager安装闭环尚待完成。
 已在Windows独立基线（Python3.12.13、Torch2.10+cu130、Manager4.2.2，初始缺少Triton与accelerate）

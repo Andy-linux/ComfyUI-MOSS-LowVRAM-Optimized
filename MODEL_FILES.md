@@ -151,8 +151,9 @@ may perform queued preparation at the next restart. Runtime routes/checks never
 install packages. Sage is optional and not installed by the default workflow.
 RTX50 qualification remains pending; RTX30 full-workflow support is not promised.
 The user authorized a separate GitHub Release for the self-built SM75 Turing
-bundle; the source package still excludes its binaries. Exact archive public visibility is pending; the local 43,707,834-byte ZIP and 17-member optional
-manifest have been verified, but remain publish_pending until the public asset is confirmed. The pinned upstream repository has no
+bundle; the source package still excludes its binaries. The 43,707,834-byte ZIP and 17-member manifest are now public in the fixed GitHub
+Release. Anonymous complete HTTP200 download and remote asset digest matched
+the pinned SHA256, so strict-ABI Manager preparation is enabled. The pinned upstream repository has no
 confirmed license declaration; actual source/build/component-license/NOTICE
 records will be preserved without inventing blanket clearance. Manager prepares
 only the fixed strict-ABI artifact once published; default auto does not need it.

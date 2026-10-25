@@ -16,7 +16,7 @@ LICENSE/NOTICE字节不变。此清单记录工程分发决定，不作为额外
 | 新Base/SFT FP8 row | 两份文件，目标Andylinux/MOSS-Image-Kohaku-FP8已公开；文件仍上传/核验中 | 同一row文件切换FP8/16-bit计算；只有真实固定revision/hash后启用下载 |
 | 旧独立Base weight-only导出 | 仅legacy local，不是第三份公开模型 | 保留历史conversion/hash记录，不重复上传 |
 | 固定公开Sage wheel | 严格SM89宿主由Manager安装阶段准备到插件隔离目录 | 原发行URL、精确bytes/SHA256及原组件许可；源码包不内嵌wheel |
-| 自编SM75 Turing bundle | 用户已授权独立GitHub Release；真实ZIP发布仍待完成 | optional_binary_manifest.json固定URL/整体及逐文件hash/严格ABI，保留源码、构建、原许可和NOTICE；上游仓库许可未确认事实不变 |
+| 自编SM75 Turing bundle | 用户已授权且独立GitHub Release已公开；匿名完整下载大小/hash及远端digest确认 | optional_binary_manifest.json固定URL/整体及逐文件hash/严格ABI，保留源码、构建、原许可和NOTICE；上游仓库许可未确认事实不变 |
 | Torch/CUDA/Python | ComfyUI宿主拥有，不随源码包分发或自动替换 | Manager仅按窄策略补Triton/开发文件；未知组合给诊断 |
 | prompt预编码张量、校准cache、latent、编译cache | 不作为公开默认运行依赖 | 普通工作流实时运行TE，不要求benchmark缓存 |
 

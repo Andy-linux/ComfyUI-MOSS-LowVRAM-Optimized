@@ -2,7 +2,7 @@
 
 本页记录新增00工作流的实际验证，和历史01–07回执分别保存。
 下列结果不等于新机器从公开Registry完成缺节点安装，亦不表示模型首次网络下载已经测试。
-GitHub仍未public，Registry尚未发布；公共HF目标已建立，但两份row权重仍上传中，尚无远端两权重完成记录。
+GitHub源码与Turing Release已公开，Registry尚未发布；公共HF目标已建立，但两份row权重仍上传中，尚无远端两权重完成记录。
 
 ## 候选服务上的GUI准备与正常步数生成
 
@@ -47,10 +47,11 @@ Windows候选服务上的唯一用户工作流 `example_workflows/00_moss_lowvra
 
 ## 可选Turing资产与公共状态
 
-独立draft Release的两个asset已上传，root已核对远端GitHub digest。
+[Turing独立Release](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/tag/turing-sm75-cp312-cu130-v1) 已公开、非draft，Release ID423709338；root已核对远端asset digest。
 Turing ZIP为43,707,834 bytes，SHA256：
 `779e2bf85ae347a50200b372eb79481bce069a0392856cd09e9f0b8dbd0fcae7`。
-该Release仍为 **private draft**，不是新用户可访问的公开下载；独立清单保持publish_pending。
+Root随后不带Authorization匿名完整下载得到HTTP200，精确大小/hash均匹配；
+独立清单已改public，严格匹配SM75宿主可在Manager安装阶段准备。公开资产不等于Manager闭环已完成。
 
 资产保留真实source/build/NOTICE及原CUTLASS/NVIDIA许可文本。源Turing固定HEAD未确认仓库
 LICENSE的事实继续披露，用户授权分发不被描述为补造上游许可。

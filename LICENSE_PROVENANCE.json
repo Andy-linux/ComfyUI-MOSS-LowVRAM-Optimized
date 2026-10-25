@@ -171,10 +171,10 @@
       "component": "ssiu/flash-attention-turing local Turing bundle",
       "source_head": "9ef98fcb506bb1e2fe3cece50935e2935bf6b124",
       "license_status": "No confirmed license for the pinned Turing repository implementation; CUTLASS/NVIDIA texts do not license the entire combined binary",
-      "policy": "Turing binaries remain excluded from the GitHub/Registry source-code archive. The user explicitly authorized a separate fixed GitHub Release asset; publication is pending actual ZIP URL/bytes/SHA256 and complete source/build/NOTICE/component-license inventory. Manager install.py may prepare only the exact ABI-matched asset using optional_binary_manifest.json. User authorization does not change the recorded unconfirmed upstream repository license status.",
+      "policy": "Turing binaries remain excluded from the GitHub/Registry source-code archive. The separately user-authorized GitHub Release423709338 (tag turing-sm75-cp312-cu130-v1) is public and not draft. Root verified anonymous HTTP200 complete43707834-byte download and SHA256779e2bf85ae347a50200b372eb79481bce069a0392856cd09e9f0b8dbd0fcae7, matching the remote digest. Manager install.py may prepare only the exact ABI-matched asset using optional_binary_manifest.json. User authorization and public artifact identity do not change the recorded unconfirmed upstream repository license status.",
       "adapter_scope": "Independent adapter remains in the source package. Optional artifact preserves actual pinned sources, original available license/NOTICE texts and build facts; no blanket open-source license or new GPU/workflow qualification is inferred.",
       "cutlass_head": "df18f5e4f5de76bed8be1de8e4c245f2f5ec3020"
     }
   ],
-  "external_optional_binary_manifest": "optional_binary_manifest.json; source/archive/per-file hashes, ABI, recorded source/license status and user distribution authorization. Pending publication data must never be downloaded."
+  "external_optional_binary_manifest": "optional_binary_manifest.json; Turing public fixed asset with source/archive/per-file hashes, strict ABI, recorded source/license status and user distribution authorization. No runtime installation or blanket license/workload qualification is inferred."
 }

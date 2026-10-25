@@ -78,8 +78,8 @@ Torch、CUDA、Python，不修改全局环境变量。已匹配的 Triton 不重
 安装器使用 `optional_binary_manifest.json` 独立记录来源commit、原始许可状态、
 实际组件LICENSE/NOTICE、构建记录与每个ZIP成员的精确bytes/SHA256。
 真实本地ZIP为43,707,834 bytes，SHA256与完整17成员表已写入独立清单；
-draft两个asset已上传并核对远端digest，但Release仍为private draft；当前保持 `publish_pending`，不提前下载，
-也不声称已经发布或完成新SM75卡工作流验证。
+独立Release已公开、非draft；root匿名HTTP200完整下载的大小/SHA与远端digest全部匹配，
+清单已启用public。这个公开身份/完整性结果不声称完成新SM75 GPU工作流验证。
 
 只有Windows x64 / Python3.12 / Torch2.10.0+cu130 / CUDA13.0 / SM75匹配才计划安装；
 SM89不会安装或导入Turing包。ZIP根直接对应 `runtime/vendor/turing_bundle/`。

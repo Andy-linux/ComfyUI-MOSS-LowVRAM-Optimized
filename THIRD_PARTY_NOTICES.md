@@ -62,8 +62,11 @@ in the root `NOTICE`.
 The user explicitly authorized distributing the self-built SM75 bundle as a
 separate GitHub Release. The source/Registry code archive still excludes all
 Turing binaries. Manager's installation phase may prepare only the exact fixed
-public asset described by `optional_binary_manifest.json`; actual ZIP publication
-and URL/hash verification remain pending, not implied by this notice.
+public asset described by `optional_binary_manifest.json`. Release 423709338, tag
+`turing-sm75-cp312-cu130-v1`, is now public and not draft. Anonymous HTTP200 full
+download confirmed 43,707,834 bytes and the pinned SHA256, matching the remote
+asset digest. Public availability and identity do not confer blanket license
+clearance or new SM75 workload qualification.
 
 The pinned `ssiu/flash-attention-turing` source commit is
 `9ef98fcb506bb1e2fe3cece50935e2935bf6b124`, with CUTLASS submodule

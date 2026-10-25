@@ -193,7 +193,7 @@ class InstallPlanTests(unittest.TestCase):
             if platform == "linux":
                 facts["torch_requires"] = ["triton==3.6.0"]
             plan = installer.dependency_plan(facts)
-            self.assertFalse(plan["optional_steps"])
+            self.assertFalse(any(step["kind"] == "optional_sage" for step in plan["optional_steps"]))
             self.assertEqual(plan["optional_dependencies"]["sageattention"]["status"], "skipped")
 
     def test_sage_optional_failure_preserves_auto_success(self):

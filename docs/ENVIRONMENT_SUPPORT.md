@@ -59,8 +59,9 @@ to the new00 interface or shared-row activation switch.
   the actual source/build/component-license/NOTICE records without claiming
   blanket clearance. The source package excludes binaries. Installation-stage
   preparation requires the real fixed public manifest and exact SM75 ABI; the
-  local ZIP and 17-member manifest are ready, but public visibility is pending;
-  no public-download completion or new SM75 GPU test is claimed.
+  fixed 43,707,834-byte ZIP is now public/non-draft, and anonymous complete HTTP200
+  download matched its SHA and remote digest. Strict-ABI install preparation is
+  enabled; no new SM75 GPU qualification is inferred.
   Neither this authorization nor local execution is new GPU qualification.
 
 ## Install-time dependencies

@@ -3,7 +3,8 @@
 ## Confirmed identities and remaining publication boundary
 
 - GitHub target: [Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized).
-  This checklist does not assert that a push or visibility change occurred.
+  Public visibility is confirmed, including source commit
+  `523e1e68190d1a17138b2189ad24349e175d938d`; later source changes retain their own commits.
 - Registry package: `kohaku-moss-lowvram-optimized`; display name:
   **MOSS LowVRAM Optimized**, using KohakuMoss inference components.
 - Registry publisher: `xianbei`, public status **Active**. The local DPAPI-encrypted
@@ -46,8 +47,9 @@ missing HF identity or bypass a structural/metadata failure. Record actual outpu
   because its old basename matches.
 - Keep Torch/CUDA outside automatic replacement. Check platform-specific Triton,
   optional Sage and exact hardware/precision boundaries. The historical Turing
-  bundle is separately user-authorized for a GitHub Release, with actual archive
-  publication still pending. Preserve its unconfirmed upstream license status and
+  bundle is separately user-authorized and publicly released. Anonymous complete
+  download matched 43,707,834 bytes/SHA779e2bf8… and remote asset digest. Preserve
+  its unconfirmed upstream license status and
   actual source/build/component-license/NOTICE inventory. Source-code packages
   exclude all such binaries; the fixed optional manifest drives install-stage
   preparation only. Auto does not require it.
@@ -140,11 +142,12 @@ missing HF identity or bypass a structural/metadata failure. Record actual outpu
   prompt. Neither UI round performed a genuine missing-plugin Manager install.
   Keep clean-Python preparation, candidate reused-model generation and actual
   empty-baseline Manager installation separate; the last remains pending.
-- Turing draft ZIP/inventory assets uploaded and remote digest checked, but remain
-  private draft; do not enable the optional manifest before public verification.
+- Turing Release 423709338 is public/non-draft. Anonymous HTTP200 full ZIP download
+  matched 43,707,834 bytes and the full pinned SHA, as did remote asset digest.
+  The optional manifest is public; runtime code remains frozen and strict SM75.
 - Public HF target exists but two-row file uploads are still in progress with no
   remote completion record for both weights. GitHub
-  remains nonpublic and Registry publication has not occurred. Record actual
+  is now public, while Registry publication has not occurred. Record actual
   immutable responses before updating those states.
 
 ## Explicit publishing only

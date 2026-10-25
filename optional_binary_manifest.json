@@ -2,7 +2,7 @@
   "schema_version": 1,
   "packages": {
     "turing_flash": {
-      "status": "publish_pending",
+      "status": "public",
       "abi": {
         "platform": "win32",
         "machine": "x86_64",
@@ -127,7 +127,7 @@
           "role": "source"
         }
       ],
-      "notes": "The real local ZIP and complete17-member inventory were verified by the release packager. The fixed GitHub Release URL is the authorized target, not yet confirmed public. Keep publish_pending until root verifies the public asset. No SM75 GPU test is inferred."
+      "notes": "Public GitHub Release 423709338, tag turing-sm75-cp312-cu130-v1, is published and not draft. Root verified an anonymous HTTP 200 full download without Authorization: 43,707,834 bytes and SHA256 779e2bf85ae347a50200b372eb79481bce069a0392856cd09e9f0b8dbd0fcae7; remote asset digest matches. The complete 17-member source/build/NOTICE/component-license inventory is pinned. This establishes public artifact identity, not new SM75 GPU qualification or blanket upstream license clearance."
     }
   }
 }
