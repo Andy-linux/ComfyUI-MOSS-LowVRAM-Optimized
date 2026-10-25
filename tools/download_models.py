@@ -8,11 +8,17 @@ from urllib.request import Request, urlopen
 DEFAULT_MANIFEST = Path(__file__).resolve().parents[1] / "model_manifest.json"
 
 
-def digest(path):
+def digest(path, progress=None, total=None):
     h = hashlib.sha256()
+    size = 0
+    if progress:
+        progress({"phase": "verification", "bytes_done": 0, "bytes_total": total or path.stat().st_size})
     with path.open("rb") as f:
         for chunk in iter(lambda: f.read(8 * 1024**2), b""):
             h.update(chunk)
+            size += len(chunk)
+            if progress:
+                progress({"phase": "verification", "bytes_done": size, "bytes_total": total or path.stat().st_size})
     return h.hexdigest()
 
 
@@ -55,17 +61,17 @@ def checked_file(row, root):
     return target, url
 
 
-def verify(path, row):
+def verify(path, row, progress=None):
     return (
         path.is_file()
         and path.stat().st_size == row["size_bytes"]
-        and digest(path) == row["sha256"].lower()
+        and digest(path, progress, row["size_bytes"]) == row["sha256"].lower()
     )
 
 
-def install(row, root, *, verify_only=False):
+def install(row, root, progress=None, *, verify_only=False):
     target, url = checked_file(row, root)
-    if verify(target, row):
+    if verify(target, row, progress):
         return {"path": str(target), "status": "VERIFIED_EXISTING"}
     if verify_only:
         return {"path": str(target), "status": "MISSING_OR_MISMATCH"}
@@ -80,6 +86,8 @@ def install(row, root, *, verify_only=False):
         headers = {"User-Agent": "kohaku-moss-verified-downloader/1"}
         h = hashlib.sha256()
         size = 0
+        if progress:
+            progress({"phase": "download", "bytes_done": 0, "bytes_total": row["size_bytes"]})
         with (
             os.fdopen(handle, "wb") as out,
             urlopen(Request(url, headers=headers), timeout=60) as response,
@@ -90,8 +98,12 @@ def install(row, root, *, verify_only=False):
                     raise ValueError("Download exceeds pinned size")
                 h.update(block)
                 out.write(block)
+                if progress:
+                    progress({"phase": "download", "bytes_done": size, "bytes_total": row["size_bytes"]})
             out.flush()
             os.fsync(out.fileno())
+        if progress:
+            progress({"phase": "verification", "bytes_done": size, "bytes_total": row["size_bytes"]})
         if size != row["size_bytes"] or h.hexdigest() != row["sha256"].lower():
             raise ValueError("Downloaded size/SHA256 mismatch")
         # Publish only fully verified bytes; recheck an independently created target.
