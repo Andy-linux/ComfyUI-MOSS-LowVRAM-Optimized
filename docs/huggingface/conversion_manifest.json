@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "status": "DRAFT_NOT_PUBLISHED",
+  "public_repo_id": null,
+  "scope": "Three FP8 DiT files only; no text encoder, tokenizer, VAE, models cache or W5/W6 artifacts included",
+  "sources": [
+    {
+      "id": "base_bf16",
+      "file": "moss_image_base_bf16.safetensors",
+      "bytes": 10164655808,
+      "sha256": "cacd158728a1fb9e57c408a922b54752ec71fceb566b3821269927964e62b41f",
+      "repo_id": "Comfy-Org/MOSS-Image",
+      "repo_filename": "diffusion_models/moss_image_base_bf16.safetensors",
+      "snapshot_revision": null,
+      "revision_status": "local download snapshot not independently confirmed; file identity fixed by SHA256"
+    },
+    {
+      "id": "sft_bf16_shards",
+      "repo_id": "OpenMOSS-Team/MOSS-Image-SFT",
+      "repo_subfolder": "transformer",
+      "snapshot_revision": null,
+      "revision_status": "not confirmed; do not substitute a text-encoder revision or current main",
+      "files": [
+        {
+          "id": "sft_source_diffusion_pytorch_model-00001-of-00003.safetensors",
+          "file": "diffusion_pytorch_model-00001-of-00003.safetensors",
+          "bytes": 4991978016,
+          "sha256": "e40d3444940a0b0fd7cd45ba7959a5bd3d5efd7ddf87aae5ce4d87ce8aa03d01"
+        },
+        {
+          "id": "sft_source_diffusion_pytorch_model-00002-of-00003.safetensors",
+          "file": "diffusion_pytorch_model-00002-of-00003.safetensors",
+          "bytes": 4983137016,
+          "sha256": "d106da790ec2924ffd8af04b4ffa8f8de281a974b58e55649c3ec596dc8ef033"
+        },
+        {
+          "id": "sft_source_diffusion_pytorch_model-00003-of-00003.safetensors",
+          "file": "diffusion_pytorch_model-00003-of-00003.safetensors",
+          "bytes": 189549184,
+          "sha256": "11f637ab17c7093344a6110a1e87ffda8e56558dc55183d8e790222cfcdcf52d"
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "id": "moss_image_base_kohaku_fp8_row",
+      "file": "moss_image_base_kohaku_fp8_row.safetensors",
+      "bytes": 5174879864,
+      "sha256": "4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14",
+      "variant": "base",
+      "source_id": "base_bf16",
+      "precision": "fp8_compute",
+      "recipe": "row",
+      "quantized_linear_count": 263,
+      "dgrad": false,
+      "training_performed": false,
+      "source_files_modified": false,
+      "weight_codes": "float8_e4m3fn",
+      "weight_scale": "float32 per output row",
+      "format_metadata": "kohakumoss_fp8 JSON: recipe=row, layers list",
+      "activation_policy": "quantized dynamically by FP8-compute path; vendor may choose w16 fallback",
+      "public_repo_id": null,
+      "public_revision": null,
+      "download_url": null,
+      "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
+      "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32"
+    },
+    {
+      "id": "moss_image_sft_kohaku_fp8_row",
+      "file": "moss_image_sft_kohaku_fp8_row.safetensors",
+      "bytes": 5174879840,
+      "sha256": "06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862",
+      "variant": "sft",
+      "source_id": "sft_bf16_shards",
+      "precision": "fp8_compute",
+      "recipe": "row",
+      "quantized_linear_count": 263,
+      "dgrad": false,
+      "training_performed": false,
+      "source_files_modified": false,
+      "weight_codes": "float8_e4m3fn",
+      "weight_scale": "float32 per output row",
+      "format_metadata": "kohakumoss_fp8 JSON: recipe=row, layers list",
+      "activation_policy": "quantized dynamically by FP8-compute path; vendor may choose w16 fallback",
+      "public_repo_id": null,
+      "public_revision": null,
+      "download_url": null,
+      "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
+      "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32"
+    },
+    {
+      "id": "moss_image_base_kohaku_fp8_weight_only",
+      "file": "moss_image_base_kohaku_fp8_weight_only.safetensors",
+      "bytes": 5346415987,
+      "sha256": "03a31fb8a7c2e196b3b0c3b02849442d40503ead10cdf9f9f4bce543525c1c54",
+      "variant": "base",
+      "source_id": "base_bf16",
+      "precision": "fp8_weight_only",
+      "recipe": "row",
+      "quantized_linear_count": 263,
+      "dgrad": false,
+      "training_performed": false,
+      "source_files_modified": false,
+      "weight_codes": "float8_e4m3fn",
+      "weight_scale": "float32 per output row",
+      "format_metadata": "per-layer comfy_quant JSON: format=float8_e4m3fn, convrot=false; no kohakumoss_fp8 record",
+      "activation_policy": "16-bit activations; weight-only path, not W8A8 FP8 compute",
+      "public_repo_id": null,
+      "public_revision": null,
+      "download_url": null,
+      "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
+      "nonquantized_tensor_policy": "BF16 and KEEP_FP32-sensitive FP32 tensors; rope FP32"
+    }
+  ],
+  "conversion": {
+    "entry_point": "tools/export_fp8.py",
+    "implementation": "runtime/fp8_support.py using packaged Kohaku model IO, source quantization and stored APIs",
+    "kohaku_upstream_repository": "https://github.com/KohakuBlueleaf/KohakuMossTrainer",
+    "vendored_origin_commit": "5223637706bc3b847b27589ad18e9221226ffa93",
+    "origin_commit_is_exact_local_converter_revision": false,
+    "actual_conversion_device": null,
+    "actual_conversion_timestamp": null,
+    "unconfirmed_fields_policy": "null means not confirmed; no revision, command log or timing inferred from filenames",
+    "nonquantized_tensor_policy": "row-compute: BF16 floating tensors except rope.bands FP32; weight-only: live BF16/KEEP_FP32 dense dtypes retained, rope FP32",
+    "training_performed": false,
+    "original_sources_modified": false
+  },
+  "hash_measurement": {
+    "evidence_filename": "local-model-provenance.json",
+    "evidence_sha256": "33bbe05ca07a21615868c1cb9d97f12b7f85213f04268ff807c4cf740333e798",
+    "started_epoch": 1792939228.6271667,
+    "finished_epoch": 1792939249.4804726,
+    "hash_source": "operator-measured local source and output bytes; not recomputed from absent multi-GB weights in this staging environment"
+  },
+  "licenses": {
+    "weights": {
+      "declared_upstream": "apache-2.0",
+      "references": [
+        "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
+        "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT/blob/main/LICENSE"
+      ],
+      "retain_upstream_notices": true,
+      "new_copyright_owner_asserted": false
+    },
+    "converter_code": {
+      "license": "KohakuMoss License 1.0, October 2026 (Apache terms plus Section 10 naming requirement)",
+      "reference": "https://github.com/KohakuBlueleaf/KohakuMossTrainer/blob/5223637706bc3b847b27589ad18e9221226ffa93/LICENSE",
+      "separate_from_weight_license": true,
+      "output_exception": "Section 10 excludes models/adapters/images and other outputs produced by running the Work from its derivative-work naming requirement"
+    }
+  },
+  "validation": {
+    "platform": "Windows, NVIDIA SM89, PyTorch 2.10 CUDA 13.0 build",
+    "reported_scope": "limited 4g/8g profile smoke passes; not blanket coverage of all three artifacts or every profile",
+    "not_claimed": [
+      "lossless image quality",
+      "all shapes use native FP8 GEMM",
+      "FP8 is always faster",
+      "new 4 GB/8 GB hardware certification",
+      "Linux, SM75, SM86, SM90 or Blackwell qualification",
+      "full Base/SFT quality equivalence",
+      "public HF upload completed"
+    ],
+    "per_case_receipts": "See release validation and original execution receipts when published; no missing matrix entries invented",
+    "isolated_row_dispatch_probe": {
+      "evidence_source": "operator-reported independent real-weight six-case probe; full receipt not embedded here",
+      "layers": [
+        "q",
+        "ffn_up_gate",
+        "ffn_down"
+      ],
+      "M": [
+        64,
+        4096
+      ],
+      "case_count": 6,
+      "selected_backend": "triton configs in all six observed cases",
+      "row_quantization_kernel_count_per_case": 3,
+      "scaled_kernel_count_per_case": 3,
+      "w16_selected_in_observed_cases": false,
+      "scope_limit": "not full model/all shapes, not hardware-instruction certification, not throughput or quality benchmark"
+    }
+  },
+  "excluded_local_assets": [
+    "q5_ridge_gptq.safetensors",
+    "q6_direct.safetensors"
+  ],
+  "publish_prerequisites": [
+    "Select an authorized HF namespace and repository; replace null publication fields only with real upload results",
+    "Carry upstream Apache-2.0 license text and applicable notices into the model repository",
+    "Attach actual conversion/runtime receipts and verify artifact hashes after upload",
+    "Confirm source snapshot revisions if available; retain content hashes regardless"
+  ]
+}

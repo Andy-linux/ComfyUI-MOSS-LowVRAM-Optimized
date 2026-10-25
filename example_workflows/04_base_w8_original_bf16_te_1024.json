@@ -1,0 +1,569 @@
+{
+  "last_node_id": 9,
+  "last_link_id": 13,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "MOSSOptimizedSessionLoader",
+      "pos": [
+        20,
+        230
+      ],
+      "size": [
+        430,
+        740
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MOSS_SESSION",
+          "type": "MOSS_SESSION",
+          "links": [
+            1,
+            2,
+            6,
+            10
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MOSSOptimizedSessionLoader",
+        "models": [
+          {
+            "name": "moss-image-base-dit-int8-convrot.safetensors",
+            "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/resolve/16364ffd306244f33be05d64b34b47f6e15d0328/diffusion_models/moss-image-base-dit-int8-convrot.safetensors",
+            "directory": "diffusion_models",
+            "hash": "f47c21a1397f846fa0d01c75e4b88fa6088783b47171399a465d92b1769ba0eb",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "config.json",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/text_encoder/config.json",
+            "directory": "text_encoders/MOSS-Image-Base/text_encoder",
+            "hash": "b31ee18a242bcfcccbe740f825f6b1d3ae231b0655eeecb5de3e98d504b7d68c",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "model-00001-of-00004.safetensors",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/text_encoder/model-00001-of-00004.safetensors",
+            "directory": "text_encoders/MOSS-Image-Base/text_encoder",
+            "hash": "abfaa3d3a8612508c85ee8f6da9c734b862f10298b903765c4ad384177c32b0b",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "model-00002-of-00004.safetensors",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/text_encoder/model-00002-of-00004.safetensors",
+            "directory": "text_encoders/MOSS-Image-Base/text_encoder",
+            "hash": "9112637fa6bf4d07bafd6ae268852b18d3d0c1242f4ee901c5579006e5bd4894",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "model-00003-of-00004.safetensors",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/text_encoder/model-00003-of-00004.safetensors",
+            "directory": "text_encoders/MOSS-Image-Base/text_encoder",
+            "hash": "956f1ef51d0cfe610b0d22987c0b7821c36e3ce228abceccef523518bcf079dc",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "model-00004-of-00004.safetensors",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/text_encoder/model-00004-of-00004.safetensors",
+            "directory": "text_encoders/MOSS-Image-Base/text_encoder",
+            "hash": "9e21d20e8adde88c3e0b65d4a0d251f143d98ee9d52db36b4348361091e4e208",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "model.safetensors.index.json",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/text_encoder/model.safetensors.index.json",
+            "directory": "text_encoders/MOSS-Image-Base/text_encoder",
+            "hash": "0af6fa3fa36ba8dcbb6b7ad0325a36c5b1b69862a9a1f1486b1b80385bd8f5ee",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "chat_template.jinja",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/tokenizer/chat_template.jinja",
+            "directory": "text_encoders/MOSS-Image-Base/tokenizer",
+            "hash": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "tokenizer.json",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/tokenizer/tokenizer.json",
+            "directory": "text_encoders/MOSS-Image-Base/tokenizer",
+            "hash": "06b9509352d2af50381ab2247e083b80d32d5c0aba91c272ca9ff729b6a0e523",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "tokenizer_config.json",
+            "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/resolve/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/tokenizer/tokenizer_config.json",
+            "directory": "text_encoders/MOSS-Image-Base/tokenizer",
+            "hash": "bee8eba30f0eb4af73c0fe2cd06d0f89b657d7819941c438157ec42f7c80ea87",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "moss-image-vae.safetensors",
+            "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/resolve/16364ffd306244f33be05d64b34b47f6e15d0328/vae/moss-image-vae.safetensors",
+            "directory": "vae",
+            "hash": "c3bdf94dc67ec69b30ea9fe1fa8340085679cae64d019f7c7e4a9921f1a7f17a",
+            "hash_type": "SHA256"
+          }
+        ]
+      },
+      "widgets_values": [
+        "Base W8A8 INT8 ConvRot",
+        "8 GB",
+        "Original BF16",
+        "auto",
+        "auto",
+        "auto",
+        true,
+        false,
+        false,
+        "fp16_fixed",
+        "auto",
+        "bf16",
+        "auto",
+        false,
+        -1,
+        "staging",
+        3.0,
+        "moss-image-base-dit-int8-convrot.safetensors",
+        "auto",
+        "moss-image-vae.safetensors"
+      ],
+      "title": "Base W8 · original BF16 TE · 50 steps"
+    },
+    {
+      "id": 2,
+      "type": "MOSSOptimizedPairedTextEncode",
+      "pos": [
+        500,
+        230
+      ],
+      "size": [
+        450,
+        300
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "session",
+          "type": "MOSS_SESSION",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            3,
+            11
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            4,
+            12
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MOSSOptimizedPairedTextEncode"
+      },
+      "widgets_values": [
+        "A quiet riverside village at sunrise, soft golden light on wooden houses and willow trees, natural colors, detailed photography. 清晨的河畔村庄，金色阳光洒在木屋与垂柳上，宁静自然，细节清晰。",
+        ""
+      ]
+    },
+    {
+      "id": 3,
+      "type": "EmptyFlux2LatentImage",
+      "pos": [
+        500,
+        580
+      ],
+      "size": [
+        300,
+        150
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            5,
+            13
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyFlux2LatentImage"
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ]
+    },
+    {
+      "id": 4,
+      "type": "MOSSOptimizedSampler",
+      "pos": [
+        1000,
+        230
+      ],
+      "size": [
+        330,
+        350
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "session",
+          "type": "MOSS_SESSION",
+          "link": 2
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 3
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 4
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            7
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MOSSOptimizedSampler"
+      },
+      "widgets_values": [
+        314159265,
+        "fixed",
+        50,
+        3.0,
+        "euler",
+        "sgm_uniform",
+        5.0,
+        22
+      ]
+    },
+    {
+      "id": 5,
+      "type": "MOSSOptimizedVAEDecode",
+      "pos": [
+        1380,
+        230
+      ],
+      "size": [
+        360,
+        120
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "session",
+          "type": "MOSS_SESSION",
+          "link": 6
+        },
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            8,
+            9
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MOSSOptimizedVAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 6,
+      "type": "PreviewImage",
+      "pos": [
+        1000,
+        620
+      ],
+      "size": [
+        350,
+        380
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 8
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 7,
+      "type": "SaveImage",
+      "pos": [
+        1390,
+        620
+      ],
+      "size": [
+        350,
+        380
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 9
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "KohakuMOSS/04_base_w8_original_bf16_te_1024"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "MOSSOptimizedControls",
+      "pos": [
+        500,
+        780
+      ],
+      "size": [
+        450,
+        190
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "session",
+          "type": "MOSS_SESSION",
+          "link": 10
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 11
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 12
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 13
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MOSSOptimizedControls"
+      },
+      "widgets_values": [
+        "idle"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "Note",
+      "pos": [
+        20,
+        20
+      ],
+      "size": [
+        1720,
+        170
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Note"
+      },
+      "widgets_values": [
+        "Base W8 · original BF16 TE · 50 steps\n1024 × 1024 · fixed seed 314159265 · 50 steps · CFG 3 · Euler / sgm_uniform · shift 5 · SLG layer 22.\nAttention auto; VAE BF16 is an explicit precision tradeoff; TE memory auto. Manifest-listed download bytes: 22,468,789,822.\nLegacy INT8 ConvRot TE is W8A16. All conditioning outputs remain FP16. Public checkpoints are not claimed byte-identical to private R4 benchmark weights.\nOpening does not download models. Download all listed files first; for original HF TE keep text_encoder/ and sibling tokenizer/ directory structure. Controls stay idle; use the buttons for prewarm/unload.\nORIGINAL BF16: all four original shards + index/config + tokenizer required. te_checkpoint=auto resolves models/text_encoders/MOSS-Image-Base/text_encoder. This is dense original BF16 compute, with FP16 output conditioning. Other variants use FP16 compute."
+      ],
+      "title": "Read before queueing · 使用前必读"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "MOSS_SESSION"
+    ],
+    [
+      2,
+      1,
+      0,
+      4,
+      0,
+      "MOSS_SESSION"
+    ],
+    [
+      3,
+      2,
+      0,
+      4,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      4,
+      2,
+      1,
+      4,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      5,
+      3,
+      0,
+      4,
+      3,
+      "LATENT"
+    ],
+    [
+      6,
+      1,
+      0,
+      5,
+      0,
+      "MOSS_SESSION"
+    ],
+    [
+      7,
+      4,
+      0,
+      5,
+      1,
+      "LATENT"
+    ],
+    [
+      8,
+      5,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      9,
+      5,
+      0,
+      7,
+      0,
+      "IMAGE"
+    ],
+    [
+      10,
+      1,
+      0,
+      8,
+      0,
+      "MOSS_SESSION"
+    ],
+    [
+      11,
+      2,
+      0,
+      8,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      12,
+      2,
+      1,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      13,
+      3,
+      0,
+      8,
+      3,
+      "LATENT"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.8,
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "workflow_name": "Base W8 · original BF16 TE · 50 steps"
+  },
+  "version": 0.4
+}
