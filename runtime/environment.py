@@ -18,9 +18,11 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = {"torch": ("torch",), "triton": ("triton", "triton-windows"),
             "comfy_kitchen": ("comfy-kitchen",), "transformers": ("transformers",),
             "safetensors": ("safetensors",), "accelerate": ("accelerate",),
+            "diffusers": ("diffusers",),
             "einops": ("einops",), "xformers": ("xformers",),
             "sageattention": ("sageattention",), "flash_attn": ("flash-attn",)}
-MINIMUMS = {"transformers": ((5, 20, 1), (6, 0, 0), "transformers>=5.20.1,<6"),
+MINIMUMS = {"diffusers": ((0, 41, 0), (0, 42, 0), "diffusers>=0.41.0,<0.42"),
+            "transformers": ((5, 20, 1), (6, 0, 0), "transformers>=5.20.1,<6"),
             "safetensors": ((0, 8, 0), None, "safetensors>=0.8.0"),
             "einops": ((0, 8, 2), None, "einops>=0.8.2"),
             "comfy_kitchen": ((0, 2, 37), None, "comfy-kitchen>=0.2.37")}
@@ -67,6 +69,13 @@ def _package(name, distributions):
     return result
 
 
+def _turing_inventory():
+    spec = importlib.util.spec_from_file_location("moss_turing_inventory", Path(__file__).with_name("optional_turing.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.inventory()
+
+
 def _optional_dependencies(packages):
     result = {}
     for name, relative in (("xformers", "xformers034cu128/xformers"),
@@ -78,8 +87,11 @@ def _optional_dependencies(packages):
         loaded = sys.modules.get(name)
         loaded_origin = getattr(loaded, "__file__", None)
         conflict = bool(private and loaded_origin and path.resolve() not in Path(loaded_origin).resolve().parents)
+        turing = None
         if name == "turing_flash":
             conflict = False
+            turing = _turing_inventory()
+            private = turing["status"] == "installed"
         result[name] = {"status": "unvalidated" if private else public.get("status", "missing"),
                         "selected_source": "private" if private else "installed_package" if public.get("status") != "missing" and name in packages else None,
                         "private_present": private, "private_path": str(path),
@@ -89,7 +101,9 @@ def _optional_dependencies(packages):
         if conflict:
             result[name]["status"] = "incompatible"
         if name == "turing_flash":
-            result[name]["distribution_note"] = "optional local bundle; not shipped or recommended for redistribution while licensing is unresolved"
+            result[name]["installation"] = turing
+            result[name]["status"] = "unvalidated" if private else "incompatible" if turing["status"] == "conflict" else "missing"
+            result[name]["distribution_note"] = "User-authorized optional SM75 artifact; preserve recorded source/license status. Public manifest and per-file integrity required; presence is not new GPU qualification."
     return result
 
 
@@ -165,7 +179,7 @@ def evaluate_selection(report, selection):
     if _version_tuple(report.get("python_version", "")) < (3, 12):
         error("python_version", "This package requires Python >=3.12", "Use a compatible Python >=3.12 ComfyUI environment; no packages were automatically changed.")
     packages = report.get("packages", {})
-    for name in ("torch", "triton", "comfy_kitchen", "transformers", "safetensors", "accelerate", "einops"):
+    for name in ("torch", "triton", "comfy_kitchen", "transformers", "safetensors", "accelerate", "einops", "diffusers"):
         state = packages.get(name, {}).get("status", "missing")
         if state in ("missing", "incompatible"):
             error("dependency_" + name, f"{name}: {state}", f"Install/repair a compatible {name} in ComfyUI's Python; do not automatically replace torch.")
@@ -225,7 +239,7 @@ def evaluate_selection(report, selection):
         if sm == 75:
             d = deps.get("turing_flash", {})
             if not d.get("private_present"):
-                error("turing_flash_missing", "Optional SM75 Turing Flash bundle is not installed or distributed", "Choose auto; the local Turing bundle is not published while licensing is unresolved.")
+                error("turing_flash_missing", "Optional SM75 Turing Flash bundle is missing or its fixed inventory is not ready", "Choose auto, or complete the Manager installation-stage preparation for the published exact SM75 artifact; inspect its recorded source/license status.")
             elif report.get("platform") != "win32" or not str(report.get("python_version", "")).startswith("3.12.") or packages.get("torch", {}).get("version") != "2.10.0+cu130":
                 error("turing_flash_abi", "Local Turing adapter requires Windows CPython3.12 / Torch2.10.0+cu130", "Choose auto or use the exact locally qualified optional build.")
             else:

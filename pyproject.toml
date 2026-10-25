@@ -3,7 +3,7 @@ name = "kohaku-moss-lowvram-optimized"
 version = "0.1.0"
 description = "MOSS multi-precision inference, VRAM budgets, weight-transfer scheduling and ComfyUI workflows. Uses KohakuMoss inference components."
 requires-python = ">=3.12"
-dependencies = ["numpy", "Pillow", "einops>=0.8.2", "safetensors>=0.8.0", "transformers>=5.20.1,<6", "accelerate", "comfy-kitchen>=0.2.37"]
+dependencies = ["numpy", "Pillow", "einops>=0.8.2", "safetensors>=0.8.0", "transformers>=5.20.1,<6", "diffusers>=0.41.0,<0.42", "accelerate", "comfy-kitchen>=0.2.37"]
 license = { file = "LICENSE" }
 classifiers = ["Operating System :: Microsoft :: Windows", "Environment :: GPU :: NVIDIA CUDA"]
 # Root KohakuMoss License; distinct component scopes remain in NOTICE/provenance.
@@ -17,5 +17,5 @@ DisplayName = "MOSS LowVRAM Optimized"
 requires-comfyui = ">=0.41.0"
 
 [tool.moss_release]
-ModelRepository = ""
+ModelRepository = "Andylinux/MOSS-Image-Kohaku-FP8"
 LicenseReview = "component-inventory-reviewed"

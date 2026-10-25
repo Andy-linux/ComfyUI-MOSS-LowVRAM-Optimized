@@ -18,6 +18,7 @@ def report(sm=89, platform="win32"):
     packages["triton"]["version"] = "3.2.0.post21" if sm == 75 else "3.6.0"
     packages["comfy_kitchen"]["version"] = "0.2.37"
     packages["transformers"]["version"] = "5.20.1"
+    packages["diffusers"]["version"] = "0.41.0"
     packages["safetensors"]["version"] = "0.8.0"
     packages["einops"]["version"] = "0.8.2"
     return {
@@ -56,6 +57,8 @@ class PolicyTests(unittest.TestCase):
 
     def test_dependency_minimums_and_transformers_upper_bound(self):
         for name, version in (
+            ("diffusers", "0.40.9"),
+            ("diffusers", "0.42.0"),
             ("transformers", "5.20.0"),
             ("transformers", "6.0.0"),
             ("safetensors", "0.7.9"),
@@ -170,6 +173,9 @@ class PolicyTests(unittest.TestCase):
         self.assertEqual(r, before)
         r["packages"]["comfy_kitchen"]["status"] = "incompatible"
         self.assertIn("dependency_comfy_kitchen", self.codes(r, {}))
+        r = report()
+        r["packages"]["diffusers"]["status"] = "missing"
+        self.assertIn("dependency_diffusers", self.codes(r, {}))
 
 
 class InspectionTests(unittest.TestCase):
