@@ -1,0 +1,128 @@
+{
+  "1": {
+    "class_type": "MOSSOptimizedSessionLoader",
+    "inputs": {
+      "model": "Base W8A8 INT8 ConvRot",
+      "profile": "8 GB",
+      "text_encoder": "INT8 ConvRot · W8A8",
+      "attention": "auto",
+      "qkv_backend": "auto",
+      "ffn_tile": "auto",
+      "host_arena": true,
+      "adapter_cache": false,
+      "conditioning_memory": false,
+      "precision": "fp16_fixed",
+      "attention_head_group": "auto",
+      "vae_precision": "bf16",
+      "te_memory": "auto",
+      "vae_admission": false,
+      "resident_blocks": -1,
+      "payload_pinning": "staging",
+      "te_resident_gib": 3.0,
+      "dit_checkpoint": "moss-image-base-dit-int8-convrot.safetensors",
+      "te_checkpoint": "moss-image-qwen35-int8-convrot.safetensors",
+      "vae_checkpoint": "moss-image-vae.safetensors"
+    }
+  },
+  "2": {
+    "class_type": "MOSSOptimizedPairedTextEncode",
+    "inputs": {
+      "session": [
+        "1",
+        0
+      ],
+      "positive": "A quiet riverside village at sunrise, soft golden light on wooden houses and willow trees, natural colors, detailed photography. 清晨的河畔村庄，金色阳光洒在木屋与垂柳上，宁静自然，细节清晰。",
+      "negative": ""
+    }
+  },
+  "3": {
+    "class_type": "EmptyFlux2LatentImage",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    }
+  },
+  "4": {
+    "class_type": "MOSSOptimizedSampler",
+    "inputs": {
+      "session": [
+        "1",
+        0
+      ],
+      "positive": [
+        "2",
+        0
+      ],
+      "negative": [
+        "2",
+        1
+      ],
+      "latent_image": [
+        "3",
+        0
+      ],
+      "seed": 314159265,
+      "steps": 50,
+      "cfg": 3.0,
+      "sampler_name": "euler",
+      "scheduler": "sgm_uniform",
+      "shift": 5.0,
+      "slg_layer": 22
+    }
+  },
+  "5": {
+    "class_type": "MOSSOptimizedVAEDecode",
+    "inputs": {
+      "session": [
+        "1",
+        0
+      ],
+      "samples": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "filename_prefix": "KohakuMOSS/05_base_w8_real_w8a8_te_1024"
+    }
+  },
+  "8": {
+    "class_type": "MOSSOptimizedControls",
+    "inputs": {
+      "session": [
+        "1",
+        0
+      ],
+      "action": "idle",
+      "positive": [
+        "2",
+        0
+      ],
+      "negative": [
+        "2",
+        1
+      ],
+      "latent_image": [
+        "3",
+        0
+      ]
+    }
+  }
+}
