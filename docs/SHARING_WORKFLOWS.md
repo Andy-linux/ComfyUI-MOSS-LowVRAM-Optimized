@@ -87,6 +87,13 @@ UI/API scalar settings match, node rectangles do not overlap, and every model
 metadata entry matches the manifest URL/hash. All graphs contain 9 UI nodes and
 8 executable API nodes (the frontend Note is omitted from API prompts).
 
-These checks are static artifact validation. They do not claim a new generation,
-GPU timing, browser rendering or quality test; those remain the runtime owner's
-integration gates, especially for original TE, real A8 TE and local FP8 weights.
+The static checks were followed by actual ComfyUI HTTP execution on the validated
+Windows SM89 environment: all five templates completed their normal step counts
+(SFT 16, Base 50), including original BF16 TE, real W8A8 TE and Base FP8 row.
+PreviewImage and SaveImage produced ten valid PNGs. The five distributed SaveImage
+PNGs retain workflow and prompt metadata and were visually inspected for blank
+output and obvious tile seams. A separate public TE v2 request also completed.
+
+See `../RELEASE_VALIDATION.md` and `validation/results.json` for exact scope and
+receipts. These are execution and limited visual checks, not browser interaction
+automation, a throughput benchmark, or a general image-quality certification.

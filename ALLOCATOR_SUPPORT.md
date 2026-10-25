@@ -55,33 +55,27 @@ GPU empty_cache does not release cached pinned host RAM. Preserve the existing
 host-cache lifetime and bounded pinned-chunks fixes, including asynchronous-copy
 ownership. Close-session host cleanup remains separate from GPU pool trimming.
 
-## Session integration (owner edits session.py separately)
+## Integrated session behavior
 
-Import `admission` from `.allocator`. Replace the VAE fraction/raw arithmetic with:
+`runtime/session.py` uses `allocator.admission()` for the VAE memory plan and
+records the backend, logical budget, physical free memory and reusable pool
+backing in `last['VAE_memory_plan']['allocator']`. The helper applies the selected
+backend's accounting rules. When DynamicVRAM exposes externally mapped VAE
+weights, the session recomputes admission with `external_bytes` so those weights
+count once toward the logical budget.
 
-```
-plan = admission(torch, self.config.device,
-                 include_physical=self.config.qualified_vae_budget or self.config.vae_admission)
-allocator_available = plan['available_allocator_bytes']
-available = plan['effective_available_bytes']
-physical_free = plan['physical_free_bytes']
-reusable_cache = plan['reusable_allocator_cache_bytes']
-```
+`runtime/resources.py` and `runtime/vae_stage_budget.py` normalize the saved
+fraction before restoring it. Existing model-size, shape and hardware guards,
+offload decisions and bounded VAE-stage admission remain in place. The stage
+budget is an admission policy, not a measured physical-peak guarantee.
 
-Once dynamic VAE external mapped bytes are known, recompute the same helper with
-`external_bytes=external_mapped_bytes`; use its effective available value and add
-the entire backend-tagged plan to `last['VAE_memory_plan']['allocator']`. Preserve
-native legacy arithmetic if strict bit-for-bit admission-decision compatibility
-is required; apply the helper only to async in that case. Do not subtract external
-mapped bytes twice. Preserve the existing model-size/target-size qualifications.
-
-The existing `_dispose_dit`/unload call to `torch.cuda.empty_cache()` can stay: it
-trims the selected GPU allocator and can synchronize, so retain current lifecycle
-boundaries. It does not select native. Session close must still call
-`release_idle_host_cache()` after owned references and in-flight copies are safe.
-Any `vae_stage_budget.py` temporary fraction restoration also needs
-`restorable_fraction(raw)` before passing its saved value to the setter; this
-file is intentionally left for the session owner to integrate.
+`_dispose_dit` and unload keep their lifecycle-boundary `torch.cuda.empty_cache()`
+calls. Those trim the selected GPU allocator; they do not select native. Session
+close releases owned references and in-flight work before the separate
+`release_idle_host_cache()` path. The installed ComfyUI service completed an
+explicit unload under cudaMallocAsync, with the host allocator's current
+allocation count and allocated bytes both reported as zero. This does not claim
+that every process allocation or every cached statistic became zero.
 
 CPU checks:
 `python -m unittest discover -s tests -p test_allocator_support.py -v`.
@@ -94,4 +88,5 @@ or non-finite values, bases async bounds on allocated rather than reserved bytes
 never raises an enclosing cap, and closes its measurement window even on setter/
 restore errors. Without a fraction getter it measures only, preserving an unknown
 outer cap instead of restoring it incorrectly to 1.0. Native/XPU retain a reserved
-entry basis. Actual FP8 revalidation follows in the operator's GPU evidence.
+entry basis. The repeated real-weight FP8 probe passed all six observed cases;
+its scope and the normal workflow evidence are recorded in RELEASE_VALIDATION.md.

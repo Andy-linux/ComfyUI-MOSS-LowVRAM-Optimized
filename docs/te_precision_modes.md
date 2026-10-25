@@ -13,14 +13,16 @@ weight-only too. Thus the legacy INT8 ConvRot TE is **W8A16**, currently FP16.
 Legacy W4A8 checkpoint codes decode onto the INT8 grid and enter that same A16
 operator. Its name describes checkpoint format, not the actual GEMM activation.
 
-Do not change old UI labels' dispatch. New SessionConfig fields default to
-`te_mode="auto", compute_dtype="fp16"`, retaining existing numerical behavior.
+Old UI labels retain their original dispatch. The paired text session defaults
+to `te_mode="auto", compute_dtype="fp16"`, preserving existing numerical behavior.
 
-## Session/node integration (owned by caller)
+## Session and node integration
 
-Pass `SessionConfig(..., te_mode=mode, compute_dtype=dtype)` at session creation.
-Add BOTH fields to the outer session/config identity so switching modes replaces
-the TE and cannot reuse features from another mode. Values are case-sensitive.
+The node maps each TE selection to an asset, mode and compute dtype. The outer
+session configuration includes `te_mode` and `te_compute_dtype` in its identity,
+and passes them as `te_mode` and `compute_dtype` to the paired text session.
+Changing modes therefore selects a distinct TE session and feature-cache identity.
+Values are case-sensitive.
 
 | mode | input | numerical behavior |
 | --- | --- | --- |
@@ -58,34 +60,28 @@ availability/shape support is a GPU validation gate. This is a new quality/cost
 option, not a quality-preserving guarantee. The first implementation favors
 correct, inspectable dispatch over fused-kernel performance.
 
-## Receipts and required validation
+## Receipts and validation
 
-load_receipt.te_precision and each request receipt distinguish stored format,
+`load_receipt.te_precision` and each request receipt distinguish stored format,
 GEMM, activation bits/input dtype, output dtype, requested mode and attached A8
 base count. `a8_linear_calls` counts successfully executed INT8 dots for this
-request, proving the new path was exercised (legacy/A16 should report zero).
+request; legacy/A16 reports zero.
 
-Before enabling in ordinary UI:
+The final Windows SM89 validation ran all 41 component tests without skips.
+The TE numerical CPU checks include an independent integer reference, nonaligned
+padding, rotation and zero-input behavior. Real W8A8 and W4A8 requests each
+reported 200 attached A8 bases and 200 successful INT8 linear calls. Original
+BF16 and Original FP16 both completed real encoding and image execution, with
+CPU FP16 conditioning at the public output boundary. The normal 50-step Base
+workflow also passed with original BF16 TE and with explicit W8A8 TE. A separate
+request verified the exact public INT8 ConvRot v2 file used by the model manifest.
 
-1. Run `python -m unittest discover -s tests -p test_te_precision.py -v` with the
-   plugin's bundled Kohaku dependency environment. CPU checks include independent
-   integer reference, nonaligned M/N padding, rotation and zero-input behavior.
-2. On SM89, compare a8_linear with independent INT32 reference for FP16/BF16,
-   short M including 1/2 and representative TE K/N. Test no bias and zero rows.
-3. Load W8A16 and legacy auto from same INT8 file: verify q/scale bytes and
-   rotation equal; same dtype/layout should retain old numerical path.
-4. Run real W8A8/W4A8 ring requests twice, packed and single, cache miss/hit,
-   record positive a8_linear_calls, output shape/dtype, elapsed seconds, VRAM and
-   errors. Confirm original memory/ring release works after errors too.
-5. Load local HF original BF16 shards with ring, verify no visual tensors held,
-   and compare features to the same-source HF baseline. Separately test BF16
-   versus FP16 compute. Do not compare outputs without matching template/tokens.
-6. Compare final images with fixed seeds/prompts including Chinese, layout and
-   long text against original BF16. A8 changes quantization error and is optional.
-
-Local review environment has no torch: syntax/import compatibility checks pass;
-three numerical CPU tests are skipped and MUST be run by the GPU/runtime owner.
-No GPU timing or quality claim has been made here.
+These results establish the recorded execution paths on the tested build. They
+do not establish equality with a separate HF reference implementation, unchanged
+image quality, complete cache/error-path coverage, or support for every GPU.
+Broader quality evaluation should compare fixed seeds/prompts, including Chinese,
+layout and long text, against original BF16 using identical template/tokens.
+Full case scope is in `../RELEASE_VALIDATION.md` and `validation/results.json`.
 
 ## Dependencies and licensing
 

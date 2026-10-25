@@ -1,6 +1,7 @@
 # DiT checkpoint 集成接口
 
-本模块增加加载与离线导出能力；不修改节点注册、Session、资源调度或GPU准入。
+`runtime/checkpoints.py` 提供加载与离线导出接口；节点和 Session 已接入这些
+接口，Session 负责设备放置、资源调度和 GPU 准入。
 Base与SFT架构相同，无法通过shape可靠辨认模型身份。调用方必须提供模型来源与
 `variant`，不能仅凭文件名证明其确为Base。实际非量化张量全部来自传入checkpoint，
 不再借用SFT retained sidecar。加载沿用vendor compute dtype和KEEP_FP32规则，
@@ -73,7 +74,9 @@ payload字节分开。row/weight-only通常较小；MX包含自然scale与swizzl
 超过预算并明确拒绝，调用方需切换完整模型放置，或显式提高预算同时将它纳入显存
 准入。可传`cache.capture(..., fp8_side_buffer_budget_bytes=...)`，不会自动回退。
 旧INT8/W5/W6路径和pinned chunk生命周期保持原样。CPU fake调度测试不构成GPU
-认证；4G配置仍须root实际运行和核验峰值。
+认证。本次已在同一张16GB SM89卡上完成Base FP8 row的4g profile两步出图，
+以及W5、Base W8的4g profile短→长→短切换；这些是进程预算测试，不能写成
+物理4GB显卡认证。实际峰值与逐组合范围见 `../RELEASE_VALIDATION.md`。
 
 现有W5/W6 INT32特定投影patch不适用于FP8 base，必须跳过。各recipe可能有不同
 的activation/workspace开销，side-buffer预算不是整模型显存预算。
@@ -110,7 +113,10 @@ python -m unittest discover -s tests -p test_checkpoints.py -v
 标准库测试检查各recipe、异常scale、遗漏layer、两种qkv布局与rotation metadata。
 有torch/safetensors时另跑tiny backbone真实加载测试，核对原始codes、scale切片
 以及同源dense video_embedder。没有torch时该测试明确skip，不伪装为数值PASS。
-远端还需逐层W8A8比较、Base非量化参数核对、导出重载与实际普通UI图像测试。
+最终Windows环境已完成41项组件测试、17个直接执行案例和5个正常步数ComfyUI
+HTTP工作流，包括Base W8、Base FP8 row与原始/真实A8 TE。Base/SFT FP8 row
+及Base weight-only均有实际加载出图记录。上述记录不覆盖所有FP8 recipe、
+backend或shape，也不等同于完整模型数值/画质等价认证。
 
 ## 当前独立解包实现与历史边界
 
