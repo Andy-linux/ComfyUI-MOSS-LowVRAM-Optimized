@@ -91,12 +91,20 @@ Choose model family Base or SFT, storage **Kohaku FP8 row**, then FP8 or 16-bit
 activation arithmetic. Use Base's or SFT's appropriate sampling preset; these are
 different pretrained model variants, not interchangeable precision settings.
 
-Existing limited Windows SM89 FP8-compute inference and isolated dispatch probes
-are recorded in the node repository's release evidence. The new explicit row-to-A16
-switch is being integration-tested for this release; no completed result for that
-new path is claimed by this initial card. The node pack currently keeps the SM89+
-hardware gate for both shared modes. A16 weight-only storage alone is not a claim
-of support for an untested GPU architecture.
+The shared row modes completed a limited real-model check on Windows with an
+RTX 4070 Ti SUPER (SM89), PyTorch 2.10.0+cu130 and cudaMallocAsync: **Base/SFT ×
+FP8/16-bit × two requests = eight requests**, each at 512×512 with two sampling
+steps and VAE decoding. Conditioning, latents and decoded images were finite.
+All eight focused CPU tests executed and passed with no skips. For all 263
+quantized layers, activation selection preserved the q/scale pointers, SHA256
+values and registered tensor byte counts; the two modes reused the same stored
+row weights without requantization or a second full dense model. Session reuse
+and separation between activation modes were also checked.
+
+This short check is not a full-step image-quality assessment or a speed benchmark;
+it does not extend the separately recorded dispatch probes to every model shape.
+The node pack keeps the SM89+ hardware gate for both shared modes. A16 weight-only
+storage alone is not a claim of support for an untested GPU architecture.
 
 No lossless quality, speedup, full-shape native-FP8 coverage, or physical 4/8 GB card
 certification is claimed. A VRAM allocation profile is a software budget, not the

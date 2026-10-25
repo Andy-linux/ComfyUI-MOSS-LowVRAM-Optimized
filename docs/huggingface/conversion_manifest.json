@@ -71,7 +71,7 @@
         "fp8",
         "16bit"
       ],
-      "runtime_validation_status": "FP8 compute has existing limited real-model coverage; new explicit row-to-A16 switching awaits current integration test receipts."
+      "runtime_validation_status": "Limited real-model shared-row validation passed on Windows SM89: Base/SFT × fp8/16bit × two requests (eight total), each 512x512, two sampling steps and VAE decoding; conditioning/latent/image finite. Eight focused CPU tests passed with no skips; all 263 layers preserved q/scale pointers, hashes and registered tensor byte counts during activation selection. Not a full-step quality assessment or speed benchmark."
     },
     {
       "id": "moss_image_sft_kohaku_fp8_row",
@@ -99,7 +99,7 @@
         "fp8",
         "16bit"
       ],
-      "runtime_validation_status": "FP8 compute has existing limited real-model coverage; new explicit row-to-A16 switching awaits current integration test receipts."
+      "runtime_validation_status": "Limited real-model shared-row validation passed on Windows SM89: Base/SFT × fp8/16bit × two requests (eight total), each 512x512, two sampling steps and VAE decoding; conditioning/latent/image finite. Eight focused CPU tests passed with no skips; all 263 layers preserved q/scale pointers, hashes and registered tensor byte counts during activation selection. Not a full-step quality assessment or speed benchmark."
     }
   ],
   "conversion": {
@@ -140,8 +140,8 @@
     }
   },
   "validation": {
-    "platform": "Windows, NVIDIA SM89, PyTorch 2.10 CUDA 13.0 build",
-    "reported_scope": "limited 4g/8g profile smoke passes; not blanket coverage of all three artifacts or every profile",
+    "platform": "Windows, RTX 4070 Ti SUPER (SM89), PyTorch 2.10.0+cu130, cudaMallocAsync",
+    "reported_scope": "Shared row Base/SFT × fp8/16bit × two requests: eight 512x512 two-step samples with VAE decoding and finite conditioning/latents/images. Eight focused CPU tests passed with no skips. Not a full-step image-quality assessment, speed benchmark, or blanket profile/shape qualification.",
     "not_claimed": [
       "lossless image quality",
       "all shapes use native FP8 GEMM",
@@ -169,6 +169,44 @@
       "scaled_kernel_count_per_case": 3,
       "w16_selected_in_observed_cases": false,
       "scope_limit": "not full model/all shapes, not hardware-instruction certification, not throughput or quality benchmark"
+    },
+    "shared_row_integration_probe": {
+      "status": "PASS",
+      "case_count": 4,
+      "request_count": 8,
+      "variants": [
+        "base",
+        "sft"
+      ],
+      "activation_modes": [
+        "fp8",
+        "16bit"
+      ],
+      "requests_per_case": 2,
+      "width": 512,
+      "height": 512,
+      "sampling_steps": 2,
+      "vae_decoding": true,
+      "finite": {
+        "conditioning": true,
+        "latents": true,
+        "decoded_images": true
+      },
+      "focused_CPU_tests": {
+        "passed": 8,
+        "skipped": 0
+      },
+      "quantized_layers_checked": 263,
+      "activation_selection_invariants": {
+        "q_scale_pointers_unchanged": true,
+        "q_scale_SHA256_unchanged": true,
+        "registered_tensor_bytes_unchanged": true,
+        "requantization_performed": false,
+        "second_full_dense_model_created": false
+      },
+      "session_scope": "Repeated configuration reuse and separation between activation modes checked.",
+      "hardware_gate": "SM89+ remains required for both shared modes; no new architecture qualification inferred.",
+      "scope_limit": "Short finite/storage/session checks only; not full-step quality, image equivalence, speed benchmark, all-shape native-FP8 certification, or physical 4GB/8GB hardware qualification."
     }
   },
   "excluded_local_assets": [
@@ -179,7 +217,7 @@
   "publish_prerequisites": [
     "Upload only the two row files and companion model documentation to the confirmed repository",
     "Verify published byte sizes and LFS SHA256 and record immutable weight revision",
-    "Record actual row-to-A16 validation before claiming that runtime path passed"
+    "Preserve the completed limited shared-row integration scope; public upload/revision verification remains separate from runtime test completion"
   ],
   "legacy_local_exports_not_published": [
     {
