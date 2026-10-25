@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "superseded_by": "SOURCES.json",
+  "scope": "Compatibility pointer for existing vendor documentation. Current relative source/component inventory is SOURCES.json; private machine-path manifests are not distributed."
+}

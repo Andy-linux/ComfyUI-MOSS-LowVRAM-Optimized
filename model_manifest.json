@@ -1,0 +1,295 @@
+{
+  "schema_version": 1,
+  "default_assets": [
+    "base_w8",
+    "te_int8",
+    "vae"
+  ],
+  "metadata_source": "Live HF API ?blobs=true snapshot supplied by operator; immutable revisions and LFS SHA256, no weights downloaded.",
+  "assets": [
+    {
+      "id": "base_w8",
+      "status": "public",
+      "notes": "Default public Base INT8, separate Q/K/V; original validated community checkpoint.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/blob/16364ffd306244f33be05d64b34b47f6e15d0328/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream declaration is not a blanket source license"
+      },
+      "files": [
+        {
+          "repo_id": "SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI",
+          "revision": "16364ffd306244f33be05d64b34b47f6e15d0328",
+          "filename": "diffusion_models/moss-image-base-dit-int8-convrot.safetensors",
+          "size_bytes": 5413723800,
+          "sha256": "f47c21a1397f846fa0d01c75e4b88fa6088783b47171399a465d92b1769ba0eb",
+          "destination": "diffusion_models/moss-image-base-dit-int8-convrot.safetensors"
+        }
+      ]
+    },
+    {
+      "id": "base_w8_comfy",
+      "status": "public",
+      "notes": "Alternative fused-QKV packing; distinct file/hash, requires normalization; do not silently substitute.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream declaration is not a blanket source license"
+      },
+      "files": [
+        {
+          "repo_id": "Comfy-Org/MOSS-Image",
+          "revision": "24147db865fcdc207270f844777587223fed8d6e",
+          "filename": "diffusion_models/moss_image_base_int8_convrot.safetensors",
+          "size_bytes": 5413698958,
+          "sha256": "f601c1e1161915fb3fea003da0c1782e374dd960fbb3978bc0e4e3fa1f2d8e6f",
+          "destination": "diffusion_models/moss_image_base_int8_convrot.safetensors"
+        }
+      ]
+    },
+    {
+      "id": "sft_w8",
+      "status": "public",
+      "notes": "Public SFT INT8 fused variant; distinct from local benchmark weight; verify checkpoint compatibility before claiming R4 equality.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream declaration is not a blanket source license"
+      },
+      "files": [
+        {
+          "repo_id": "Comfy-Org/MOSS-Image",
+          "revision": "24147db865fcdc207270f844777587223fed8d6e",
+          "filename": "diffusion_models/moss_image_sft_int8_convrot.safetensors",
+          "size_bytes": 5413698958,
+          "sha256": "b4d1475bc7eeffd7b809e82ea13a1fba1fb85c4e18365af3813722faa5c0fe4f",
+          "destination": "diffusion_models/moss_image_sft_int8_convrot.safetensors"
+        }
+      ]
+    },
+    {
+      "id": "te_int8",
+      "status": "public",
+      "notes": "Pinned Sumomo v2 core-compatible keys; 8,452,959,908 bytes. Matches existing community asset name.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/blob/16364ffd306244f33be05d64b34b47f6e15d0328/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream declaration is not a blanket source license"
+      },
+      "files": [
+        {
+          "repo_id": "SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI",
+          "revision": "16364ffd306244f33be05d64b34b47f6e15d0328",
+          "filename": "text_encoders/moss-image-qwen35-int8-convrot.safetensors",
+          "size_bytes": 8452959908,
+          "sha256": "511379fd690d59f11f49c062a8a687b9a985e92faa48a098eb7c66ba505574fe",
+          "destination": "text_encoders/moss-image-qwen35-int8-convrot.safetensors"
+        }
+      ]
+    },
+    {
+      "id": "te_int8_comfy",
+      "status": "public",
+      "notes": "Alternative 9,748,121,532 bytes; NOT byte-identical to 8.45GB Sumomo TE. Do not relabel local measured TE as this file.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream declaration is not a blanket source license"
+      },
+      "files": [
+        {
+          "repo_id": "Comfy-Org/MOSS-Image",
+          "revision": "24147db865fcdc207270f844777587223fed8d6e",
+          "filename": "text_encoders/qwen3.5_9b_int8_convrot.safetensors",
+          "size_bytes": 9748121532,
+          "sha256": "32e3787472f708fa5f83624acbf5ef23f7fc89c439e05065ea57cfe5a97f025a",
+          "destination": "text_encoders/qwen3.5_9b_int8_convrot.safetensors"
+        }
+      ]
+    },
+    {
+      "id": "te_w4",
+      "status": "public",
+      "notes": "Optional public W4 TE; a different precision path, not default R4 INT8.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream declaration is not a blanket source license"
+      },
+      "files": [
+        {
+          "repo_id": "Comfy-Org/MOSS-Image",
+          "revision": "24147db865fcdc207270f844777587223fed8d6e",
+          "filename": "text_encoders/qwen3.5_9b_w4a8_gptq.safetensors",
+          "size_bytes": 7343591088,
+          "sha256": "4cc6a1543ad2061806da46f35f90cadb4801dcba246c44782cf42ec0feb6407c",
+          "destination": "text_encoders/qwen3.5_9b_w4a8_gptq.safetensors"
+        }
+      ]
+    },
+    {
+      "id": "vae",
+      "status": "public",
+      "notes": "Default original MOSS VAE, identical LFS bytes to original HF VAE.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/blob/16364ffd306244f33be05d64b34b47f6e15d0328/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream declaration is not a blanket source license"
+      },
+      "files": [
+        {
+          "repo_id": "SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI",
+          "revision": "16364ffd306244f33be05d64b34b47f6e15d0328",
+          "filename": "vae/moss-image-vae.safetensors",
+          "size_bytes": 249521372,
+          "sha256": "c3bdf94dc67ec69b30ea9fe1fa8340085679cae64d019f7c7e4a9921f1a7f17a",
+          "destination": "vae/moss-image-vae.safetensors"
+        }
+      ]
+    },
+    {
+      "id": "vae_flux2_small",
+      "status": "public",
+      "notes": "Alternative repack, different file/hash; not silently interchangeable based on similar file size.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream declaration is not a blanket source license"
+      },
+      "files": [
+        {
+          "repo_id": "Comfy-Org/MOSS-Image",
+          "revision": "24147db865fcdc207270f844777587223fed8d6e",
+          "filename": "vae/flux2-vae_small.safetensors",
+          "size_bytes": 249521340,
+          "sha256": "d8d52ba036475f5fb07c8b435e176d3d97ebfa82f0d1a1c317f9cc1e25bd013b",
+          "destination": "vae/flux2-vae_small.safetensors"
+        }
+      ]
+    },
+    {
+      "id": "te_original",
+      "status": "public",
+      "notes": "Original BF16 TE: all four shards plus index/config and tokenizer. Exact small-file SHA256 required; downloader refuses incomplete metadata.",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/blob/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/LICENSE"
+      },
+      "files": [
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "text_encoder/config.json",
+          "size_bytes": 2813,
+          "sha256": "b31ee18a242bcfcccbe740f825f6b1d3ae231b0655eeecb5de3e98d504b7d68c",
+          "destination": "text_encoders/MOSS-Image-Base/text_encoder/config.json"
+        },
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "text_encoder/model-00001-of-00004.safetensors",
+          "size_bytes": 4973910744,
+          "sha256": "abfaa3d3a8612508c85ee8f6da9c734b862f10298b903765c4ad384177c32b0b",
+          "destination": "text_encoders/MOSS-Image-Base/text_encoder/model-00001-of-00004.safetensors"
+        },
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "text_encoder/model-00002-of-00004.safetensors",
+          "size_bytes": 4988364288,
+          "sha256": "9112637fa6bf4d07bafd6ae268852b18d3d0c1242f4ee901c5579006e5bd4894",
+          "destination": "text_encoders/MOSS-Image-Base/text_encoder/model-00002-of-00004.safetensors"
+        },
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "text_encoder/model-00003-of-00004.safetensors",
+          "size_bytes": 4954202112,
+          "sha256": "956f1ef51d0cfe610b0d22987c0b7821c36e3ce228abceccef523518bcf079dc",
+          "destination": "text_encoders/MOSS-Image-Base/text_encoder/model-00003-of-00004.safetensors"
+        },
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "text_encoder/model-00004-of-00004.safetensors",
+          "size_bytes": 1869001848,
+          "sha256": "9e21d20e8adde88c3e0b65d4a0d251f143d98ee9d52db36b4348361091e4e208",
+          "destination": "text_encoders/MOSS-Image-Base/text_encoder/model-00004-of-00004.safetensors"
+        },
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "text_encoder/model.safetensors.index.json",
+          "size_bytes": 64641,
+          "sha256": "0af6fa3fa36ba8dcbb6b7ad0325a36c5b1b69862a9a1f1486b1b80385bd8f5ee",
+          "destination": "text_encoders/MOSS-Image-Base/text_encoder/model.safetensors.index.json"
+        },
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "tokenizer/chat_template.jinja",
+          "size_bytes": 7756,
+          "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+          "destination": "text_encoders/MOSS-Image-Base/tokenizer/chat_template.jinja"
+        },
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "tokenizer/tokenizer.json",
+          "size_bytes": 19989325,
+          "sha256": "06b9509352d2af50381ab2247e083b80d32d5c0aba91c272ca9ff729b6a0e523",
+          "destination": "text_encoders/MOSS-Image-Base/tokenizer/tokenizer.json"
+        },
+        {
+          "repo_id": "OpenMOSS-Team/MOSS-Image-Base",
+          "revision": "85975793d8b3d432f1b6e27f352abaa4c2a4c0d3",
+          "filename": "tokenizer/tokenizer_config.json",
+          "size_bytes": 1123,
+          "sha256": "bee8eba30f0eb4af73c0fe2cd06d0f89b657d7819941c438157ec42f7c80ea87",
+          "destination": "text_encoders/MOSS-Image-Base/tokenizer/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "id": "sft_w5",
+      "status": "local_only/publish_pending",
+      "local_filename": "q5_ridge_gptq.safetensors",
+      "notes": "No user HF namespace/repo supplied. No public URL/revision/hash invented; not downloadable.",
+      "files": [],
+      "local_artifact_bytes": 3630052176,
+      "local_artifact_sha256": "3f8a775e179a63a7511d469f08430b89f5807ebd181f37f4bbaea7d039096f82"
+    },
+    {
+      "id": "sft_w6",
+      "status": "local_only/publish_pending",
+      "local_filename": "q6_direct.safetensors",
+      "notes": "No user HF namespace/repo supplied. No public URL/revision/hash invented; not downloadable.",
+      "files": [],
+      "local_artifact_bytes": 4224594400,
+      "local_artifact_sha256": "dc5af59f22eb89320e457536ae90b170c6548c74a9fca584684139cf88018f87"
+    },
+    {
+      "id": "base_fp8",
+      "status": "local_only/publish_pending",
+      "local_filename": "moss_image_base_kohaku_fp8_row.safetensors",
+      "notes": "No user HF namespace/repo supplied. No public URL/revision/hash invented; not downloadable.",
+      "files": [],
+      "local_artifact_bytes": 5174879864,
+      "local_artifact_sha256": "4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14"
+    },
+    {
+      "id": "sft_fp8",
+      "status": "local_only/publish_pending",
+      "local_filename": "moss_image_sft_kohaku_fp8_row.safetensors",
+      "notes": "No user HF namespace/repo supplied. No public URL/revision/hash invented; not downloadable.",
+      "files": [],
+      "local_artifact_bytes": 5174879840,
+      "local_artifact_sha256": "06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862"
+    }
+  ],
+  "alternate_original_te_source": {
+    "repo_id": "OpenMOSS-Team/MOSS-Image-SFT",
+    "revision": "f972bd4b4b9e3852133cc5da954d87bc32cd8fb9",
+    "notes": "Four TE shard LFS hashes match Base snapshot; no automatic source substitution."
+  }
+}

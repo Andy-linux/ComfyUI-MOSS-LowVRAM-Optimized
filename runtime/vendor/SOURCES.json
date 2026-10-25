@@ -1,0 +1,2517 @@
+{
+  "schema_version": 1,
+  "scope": "Current distributed source components and selected known per-file hashes, relative to runtime/vendor. Not a full-runtime hash manifest; historical_copy_sha256 is the earlier copy evidence, current_sha256 only where this staging filesystem was read.",
+  "components": [
+    {
+      "name": "KohakuMoss",
+      "repository": "https://github.com/KohakuBlueleaf/KohakuMossTrainer",
+      "commit": "5223637706bc3b847b27589ad18e9221226ffa93",
+      "path": "kohaku_src",
+      "license": "../../licenses/KohakuMoss-LICENSE.txt",
+      "modification_scope": "Packaged upstream snapshot plus explicitly documented local inference integration; existing per-file headers retained"
+    },
+    {
+      "name": "OpenMOSS/MOSS-Image",
+      "repository": "https://github.com/OpenMOSS/MOSS-Image",
+      "commit": "0ee86ac9576a6b3f1ada73e0e02aab5c710a58da",
+      "path": "official_moss",
+      "license": "../../licenses/MOSS-Image-LICENSE.txt",
+      "modification_scope": "Local loader adaptation and checkpoint-key compatibility. Commit identifies origin, not a claim all local loader bytes equal that commit."
+    }
+  ],
+  "known_vendor_files": [
+    {
+      "path": "kohaku_src/kohakumoss/__init__.py",
+      "historical_copy_sha256": "d944f2ab12539319cc0f8bee48eca60ce47e1a70f03b46cca3878fc647128738",
+      "current_sha256": "d944f2ab12539319cc0f8bee48eca60ce47e1a70f03b46cca3878fc647128738"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/calls.py",
+      "historical_copy_sha256": "0b822d461e829db1b18a186e1420da77a4acbf1108b355c0d1c728714a6c76bf",
+      "current_sha256": "0b822d461e829db1b18a186e1420da77a4acbf1108b355c0d1c728714a6c76bf"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/devices.py",
+      "historical_copy_sha256": "c4042a2840b2b42ac195a909e0b58a44e0c8dce898dec43dc944d384a07677d3",
+      "current_sha256": "c4042a2840b2b42ac195a909e0b58a44e0c8dce898dec43dc944d384a07677d3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/imports.py",
+      "historical_copy_sha256": "ace9993a62a5f441d2a6965cac2b7dd82fba0dcd78deb7dec4adfcec641d30e4",
+      "current_sha256": "ace9993a62a5f441d2a6965cac2b7dd82fba0dcd78deb7dec4adfcec641d30e4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/io.py",
+      "historical_copy_sha256": "2aed6aa13429ecffe6009412d5ad6635d1a14b34674842c423752addbc54bb2b",
+      "current_sha256": "2aed6aa13429ecffe6009412d5ad6635d1a14b34674842c423752addbc54bb2b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/knobs.py",
+      "historical_copy_sha256": "69561bdb1644eca0c71de6b8fdaa9e0d811a386977ff1d045f1f0e4a3ae82834",
+      "current_sha256": "69561bdb1644eca0c71de6b8fdaa9e0d811a386977ff1d045f1f0e4a3ae82834"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/log.py",
+      "historical_copy_sha256": "70b66ebf085bfa5373afff48ef3cf30c8bc12a45a9826bf6d874370a4dce8eff",
+      "current_sha256": "70b66ebf085bfa5373afff48ef3cf30c8bc12a45a9826bf6d874370a4dce8eff"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/markdown.py",
+      "historical_copy_sha256": "ab1abd74e606975455a52e8500b30d13f7475eff2ec4506ac0d536cfb1f87f78",
+      "current_sha256": "ab1abd74e606975455a52e8500b30d13f7475eff2ec4506ac0d536cfb1f87f78"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/registry.py",
+      "historical_copy_sha256": "3f5389ca4fe92cc4139574aa4e0f7aa9767f3223d195734d3aebd33ce617a181",
+      "current_sha256": "3f5389ca4fe92cc4139574aa4e0f7aa9767f3223d195734d3aebd33ce617a181"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/runs.py",
+      "historical_copy_sha256": "7318b25ce4c238127c621b477dd7fc7cf82bf14e2c44c9e088ea0797cafbcfe0",
+      "current_sha256": "7318b25ce4c238127c621b477dd7fc7cf82bf14e2c44c9e088ea0797cafbcfe0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/script_schema.py",
+      "historical_copy_sha256": "58896136fe65352919506afb02fb838b90276bafe7d9f48ff101e52112dc05a2",
+      "current_sha256": "58896136fe65352919506afb02fb838b90276bafe7d9f48ff101e52112dc05a2"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/typecheck.py",
+      "historical_copy_sha256": "4919ece7e679c50865d21ad2d691f43258040850ada10094e6271d3ad50fc2f2",
+      "current_sha256": "4919ece7e679c50865d21ad2d691f43258040850ada10094e6271d3ad50fc2f2"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/units.py",
+      "historical_copy_sha256": "266e0d5d7e40240b1e6126e5251272ab0342aa58eeaaa9187512d57d61ddb45e",
+      "current_sha256": "266e0d5d7e40240b1e6126e5251272ab0342aa58eeaaa9187512d57d61ddb45e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/weak.py",
+      "historical_copy_sha256": "ed10d94dbf7dc129d0663522f7435a34afbc664e6642160d6a276f81cc959034",
+      "current_sha256": "ed10d94dbf7dc129d0663522f7435a34afbc664e6642160d6a276f81cc959034"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/__init__.py",
+      "historical_copy_sha256": "c554c12828519a02c6b2f39b531c14411dfe853d8764af1b2139ed7d609e24eb",
+      "current_sha256": "c554c12828519a02c6b2f39b531c14411dfe853d8764af1b2139ed7d609e24eb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/config.py",
+      "historical_copy_sha256": "846fcd36bef81fff59621cca440c3777f6b2ca953d5bbcf43ff85017f35bf1bf",
+      "current_sha256": "846fcd36bef81fff59621cca440c3777f6b2ca953d5bbcf43ff85017f35bf1bf"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/dataset.py",
+      "historical_copy_sha256": "7d5df671aebcb089d3856fa4d6d693fb4fa16027b85e3fec795815b04a7386cb",
+      "current_sha256": "7d5df671aebcb089d3856fa4d6d693fb4fa16027b85e3fec795815b04a7386cb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/importer.py",
+      "historical_copy_sha256": "5fc2fdab9c5509eef58532eba73587fca0176de5fa32464f79256b94fcbb5aae",
+      "current_sha256": "5fc2fdab9c5509eef58532eba73587fca0176de5fa32464f79256b94fcbb5aae"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/registry.py",
+      "historical_copy_sha256": "0321c2bdb863b19b3b1423236062b56d11b4ca01d11e2eda38e30efdcb6f0bc6",
+      "current_sha256": "0321c2bdb863b19b3b1423236062b56d11b4ca01d11e2eda38e30efdcb6f0bc6"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/scripting.py",
+      "historical_copy_sha256": "52b7ad0a67ba3c4d57dd421c31c50b00f4199868ec67491f2c587bea5ecf84cc",
+      "current_sha256": "52b7ad0a67ba3c4d57dd421c31c50b00f4199868ec67491f2c587bea5ecf84cc"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/seeds.py",
+      "historical_copy_sha256": "6839663c27024e70305ff334b3ba772e3f8edc899064ed72a10bc30d1303f81f",
+      "current_sha256": "6839663c27024e70305ff334b3ba772e3f8edc899064ed72a10bc30d1303f81f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/stats.py",
+      "historical_copy_sha256": "0973c358b50fcfe69bcafd65f19ba20b1aa9823ef49f52601b9808d35b00b2b8",
+      "current_sha256": "0973c358b50fcfe69bcafd65f19ba20b1aa9823ef49f52601b9808d35b00b2b8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/types.py",
+      "historical_copy_sha256": "77e9ef95ad24bc11e675198b588b6cdb0b62ab9c325d51e8ebdf0b4f17bae763",
+      "current_sha256": "77e9ef95ad24bc11e675198b588b6cdb0b62ab9c325d51e8ebdf0b4f17bae763"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/__init__.py",
+      "historical_copy_sha256": "77f815855fafe4f6a440e6cca08278b2f80f90921523fe839d5becea1440a5c1",
+      "current_sha256": "77f815855fafe4f6a440e6cca08278b2f80f90921523fe839d5becea1440a5c1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/cache_tag.py",
+      "historical_copy_sha256": "7e2da492175777f1843a8a503c2eff4a92790e56a6f2b9a87b4656818400ce6b",
+      "current_sha256": "7e2da492175777f1843a8a503c2eff4a92790e56a6f2b9a87b4656818400ce6b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/compile_setup.py",
+      "historical_copy_sha256": "a667773e618816f20308319f25a94eb37d67e154196c9c1116247f8cba811a86",
+      "current_sha256": "a667773e618816f20308319f25a94eb37d67e154196c9c1116247f8cba811a86"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/constraints.py",
+      "historical_copy_sha256": "ebf9a9e6807fff2bfe51f8180c07e8dc767a9f575ebc67d1eccb181307399d78",
+      "current_sha256": "ebf9a9e6807fff2bfe51f8180c07e8dc767a9f575ebc67d1eccb181307399d78"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/dist.py",
+      "historical_copy_sha256": "db04a5b2257e0120e532f1dddbdff4e2cc7ccc951ec8f78a1f6b2d28736ef432",
+      "current_sha256": "db04a5b2257e0120e532f1dddbdff4e2cc7ccc951ec8f78a1f6b2d28736ef432"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/dtypes.py",
+      "historical_copy_sha256": "d63c6efaa7baa081c5ca226d2ec50c7f25b91d7e19e553c89fbd831ddf3f0768",
+      "current_sha256": "d63c6efaa7baa081c5ca226d2ec50c7f25b91d7e19e553c89fbd831ddf3f0768"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/errors.py",
+      "historical_copy_sha256": "c1fa1434cfc6dd2e617ac41fa9a80b508d4606f788c89f0bb5fe77e3ffb43305",
+      "current_sha256": "a72b728fac03b3ad68543f58d17ccbd567ef0c7b55cfc27dec0e3c630806706f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/error_stats.py",
+      "historical_copy_sha256": "725b3303a4dde94dc809c93b9934abded2a6660fb915fa283e9c108a010914e9",
+      "current_sha256": "725b3303a4dde94dc809c93b9934abded2a6660fb915fa283e9c108a010914e9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/hadamard.py",
+      "historical_copy_sha256": "e0d6fc448a92a48853946df5cee4d61877d0c0cd3dc9e5aa2b1812568050b28d",
+      "current_sha256": "e0d6fc448a92a48853946df5cee4d61877d0c0cd3dc9e5aa2b1812568050b28d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/ops.py",
+      "historical_copy_sha256": "afdf3e457e2bb59b61083f9fc104c0d0445637db9ca054bfb9ae835bc41be91d",
+      "current_sha256": "afdf3e457e2bb59b61083f9fc104c0d0445637db9ca054bfb9ae835bc41be91d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/recording.py",
+      "historical_copy_sha256": "09470011f0ab1e590a67694098a1c30fbd87c506526c3c7ece3ec845f1296d92",
+      "current_sha256": "09470011f0ab1e590a67694098a1c30fbd87c506526c3c7ece3ec845f1296d92"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/registry.py",
+      "historical_copy_sha256": "a280bd6cc287213d65b5e072e348c9c8abeecd63ee7edcee39690316b8a33cab",
+      "current_sha256": "a280bd6cc287213d65b5e072e348c9c8abeecd63ee7edcee39690316b8a33cab"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/run_state.py",
+      "historical_copy_sha256": "2ff883615f1ed15dcb92554fc61f91dda1deae56b867c687f8a10db03b643303",
+      "current_sha256": "2ff883615f1ed15dcb92554fc61f91dda1deae56b867c687f8a10db03b643303"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/saved_ops.py",
+      "historical_copy_sha256": "d6106a812bab4165b60d3891e5b6ed849538fe18e3e992b1fa365b95aa0d04c0",
+      "current_sha256": "d6106a812bab4165b60d3891e5b6ed849538fe18e3e992b1fa365b95aa0d04c0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/status.py",
+      "historical_copy_sha256": "c23e1b19045b9d3b2a954bdae892a86e2d7de51b6bcec48424a4800699bc173f",
+      "current_sha256": "c23e1b19045b9d3b2a954bdae892a86e2d7de51b6bcec48424a4800699bc173f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/__init__.py",
+      "historical_copy_sha256": "d6a32550b30d41eaf06106567276c38224c1164621569750537b21d3687ce82a",
+      "current_sha256": "d6a32550b30d41eaf06106567276c38224c1164621569750537b21d3687ce82a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/__init__.py",
+      "historical_copy_sha256": "9073c2cd307501bbd5515facbbe68485b04629e500d3e5de2d30744d6006d5bd",
+      "current_sha256": "9073c2cd307501bbd5515facbbe68485b04629e500d3e5de2d30744d6006d5bd"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/doctor.py",
+      "historical_copy_sha256": "1e87ade546feb5f827c69abdbe3274e9b375703e08c3b1d5ddf50be50de5b01e",
+      "current_sha256": "1e87ade546feb5f827c69abdbe3274e9b375703e08c3b1d5ddf50be50de5b01e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/missing.py",
+      "historical_copy_sha256": "6e8a4f5982ebe7900aba25b1ce1774df1510416efb39149bdea7438d9152f110",
+      "current_sha256": "6e8a4f5982ebe7900aba25b1ce1774df1510416efb39149bdea7438d9152f110"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/tune.py",
+      "historical_copy_sha256": "1a62b251bae5d0fa0882bf540b59b0d3f1cc32526518fa7a62da9b5490e01ccf",
+      "current_sha256": "1a62b251bae5d0fa0882bf540b59b0d3f1cc32526518fa7a62da9b5490e01ccf"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/__init__.py",
+      "historical_copy_sha256": "64cedfd29965cb05402f531e72123b44e1400bd6d74b878d39d02d85da192a1f",
+      "current_sha256": "64cedfd29965cb05402f531e72123b44e1400bd6d74b878d39d02d85da192a1f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/__init__.py",
+      "historical_copy_sha256": "4f48a96a605c16e4940937e129920738eeedddaec538cb7eef11ff966b681a98",
+      "current_sha256": "4f48a96a605c16e4940937e129920738eeedddaec538cb7eef11ff966b681a98"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/knob_names.py",
+      "historical_copy_sha256": "ebbbbb5a1723bb2b1b81a5ecca25bc4e69253ee77a911c60b26b40240f1c957b",
+      "current_sha256": "ebbbbb5a1723bb2b1b81a5ecca25bc4e69253ee77a911c60b26b40240f1c957b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/specs.py",
+      "historical_copy_sha256": "658d774cff587232cf6ba4c110b3a11b4c3de636577a03e7e561eb2840dd8eed",
+      "current_sha256": "658d774cff587232cf6ba4c110b3a11b4c3de636577a03e7e561eb2840dd8eed"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/__init__.py",
+      "historical_copy_sha256": "8e8d9083bd634d20894f162acafc8003a563f5483a44dfeca79076830e06bd82",
+      "current_sha256": "8e8d9083bd634d20894f162acafc8003a563f5483a44dfeca79076830e06bd82"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/components.py",
+      "historical_copy_sha256": "1b2739089bbc6e6579a356c66b24bf53ffc786baf7783bc15c7fd775366e062d",
+      "current_sha256": "1b2739089bbc6e6579a356c66b24bf53ffc786baf7783bc15c7fd775366e062d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/grid.py",
+      "historical_copy_sha256": "1e4a1b9a45a8c6a50fb773de22ca37fe81d85db0221e4b29ebe7ee17986ce121",
+      "current_sha256": "1e4a1b9a45a8c6a50fb773de22ca37fe81d85db0221e4b29ebe7ee17986ce121"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/knobs.py",
+      "historical_copy_sha256": "812c65f9c499721bcf583d9da8294dd1409b45a1c78d0bd7bddadd465a4fac0c",
+      "current_sha256": "812c65f9c499721bcf583d9da8294dd1409b45a1c78d0bd7bddadd465a4fac0c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/loading.py",
+      "historical_copy_sha256": "4a8f3ebcac5a58e0008bfe68bd6bfe4f278f27a173d15b0bdd4169d30ba6d647",
+      "current_sha256": "4a8f3ebcac5a58e0008bfe68bd6bfe4f278f27a173d15b0bdd4169d30ba6d647"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/outputs.py",
+      "historical_copy_sha256": "d2f7d386381d4ec28a67d8d389cb6d85a27a8d2da7d8fb24ce00c1fef9c154b3",
+      "current_sha256": "d2f7d386381d4ec28a67d8d389cb6d85a27a8d2da7d8fb24ce00c1fef9c154b3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/peaks.py",
+      "historical_copy_sha256": "9771572f88fe76f96f02f469053661935ace6aac797bd94c0aa8c9798071104f",
+      "current_sha256": "9771572f88fe76f96f02f469053661935ace6aac797bd94c0aa8c9798071104f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/pipeline.py",
+      "historical_copy_sha256": "d80de1264a6838e9f153cc6c3fcdb8c1aaa3b83746e406e2ff748da895f4ce54",
+      "current_sha256": "d80de1264a6838e9f153cc6c3fcdb8c1aaa3b83746e406e2ff748da895f4ce54"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/placement_report.py",
+      "historical_copy_sha256": "6a5c35458a49a706be7d1d8f63791f90df48eaeb312eef92b70761d51fa50791",
+      "current_sha256": "6a5c35458a49a706be7d1d8f63791f90df48eaeb312eef92b70761d51fa50791"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/steplog.py",
+      "historical_copy_sha256": "9e02e6e3059e378d5d3e1a94897b159e81271101a97b32476ec59aa9a706138b",
+      "current_sha256": "9e02e6e3059e378d5d3e1a94897b159e81271101a97b32476ec59aa9a706138b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/inference/__init__.py",
+      "historical_copy_sha256": "52ed063408f9e3b45dda11af466f97eaad8833cf0ad393076ccc3e3f1dd10baa",
+      "current_sha256": "52ed063408f9e3b45dda11af466f97eaad8833cf0ad393076ccc3e3f1dd10baa"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/logging/log.py",
+      "historical_copy_sha256": "1e6607b12832823820b5a98829fbeedc0c1a7ff830923da0504f95189363c5d1",
+      "current_sha256": "1e6607b12832823820b5a98829fbeedc0c1a7ff830923da0504f95189363c5d1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/logging/sinks.py",
+      "historical_copy_sha256": "8b3c1382ed3de17a241850639c1ebd7d880abb31f378da0d33b2e4c88759e29e",
+      "current_sha256": "8b3c1382ed3de17a241850639c1ebd7d880abb31f378da0d33b2e4c88759e29e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/logging/__init__.py",
+      "historical_copy_sha256": "0f39d22eca6ef953a8691b5281faf48bef03293c3e2c48c1e7b227c1d4c5672b",
+      "current_sha256": "0f39d22eca6ef953a8691b5281faf48bef03293c3e2c48c1e7b227c1d4c5672b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/apply.py",
+      "historical_copy_sha256": "850914720e9c69161b34687a183e96ae4e18d614aba8998bf22aabbffc568a76",
+      "current_sha256": "850914720e9c69161b34687a183e96ae4e18d614aba8998bf22aabbffc568a76"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/catalog_table.py",
+      "historical_copy_sha256": "a268862de0f7d9eb4c7e5c3c7bee6b1592ce3b3a842327e6c7326d660dafd0a1",
+      "current_sha256": "a268862de0f7d9eb4c7e5c3c7bee6b1592ce3b3a842327e6c7326d660dafd0a1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/device_use.py",
+      "historical_copy_sha256": "67d5e3ea0ce8eda7368bd64b703569ea3074d6c091fcd91202354565957d7c56",
+      "current_sha256": "67d5e3ea0ce8eda7368bd64b703569ea3074d6c091fcd91202354565957d7c56"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/estimate.py",
+      "historical_copy_sha256": "31526c903ae74b5f3e5f9291cd9a494278cfd6079e784e27f50933babe950688",
+      "current_sha256": "31526c903ae74b5f3e5f9291cd9a494278cfd6079e784e27f50933babe950688"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/knob_map.py",
+      "historical_copy_sha256": "68c790e46279301b5062caf75bb597350bf6a69c06c04f155a6c6aead9ee5281",
+      "current_sha256": "68c790e46279301b5062caf75bb597350bf6a69c06c04f155a6c6aead9ee5281"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/planner.py",
+      "historical_copy_sha256": "f977705ce7713553286919bdc7f3b0523ad7f6c4b430726a9267a6791a30dfc0",
+      "current_sha256": "f977705ce7713553286919bdc7f3b0523ad7f6c4b430726a9267a6791a30dfc0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/profiles.py",
+      "historical_copy_sha256": "76fa14e4b5b4b8344e368f0d2547a6881f0575d5cb04dbac345b5a34d5fbcd8f",
+      "current_sha256": "76fa14e4b5b4b8344e368f0d2547a6881f0575d5cb04dbac345b5a34d5fbcd8f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/release.py",
+      "historical_copy_sha256": "b37377e3688478e9059c03bccbf2d4e9cd3e04cb76db1af1607cf7497de72602",
+      "current_sha256": "b37377e3688478e9059c03bccbf2d4e9cd3e04cb76db1af1607cf7497de72602"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/runners.py",
+      "historical_copy_sha256": "dbbc6262169da17a6092ded62f6a74720280c83440d2d9f5822cba48f2e98c04",
+      "current_sha256": "dbbc6262169da17a6092ded62f6a74720280c83440d2d9f5822cba48f2e98c04"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/timeline.py",
+      "historical_copy_sha256": "7763dd86aea3fcc1d5a7e5679663310f42c124c18734ee4dfdcaa4f99053abfa",
+      "current_sha256": "7763dd86aea3fcc1d5a7e5679663310f42c124c18734ee4dfdcaa4f99053abfa"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/memory/__init__.py",
+      "historical_copy_sha256": "427fd2cb63ce4c076493e800c10e4f9568f02839767ba0bdcbd20b517965d803",
+      "current_sha256": "427fd2cb63ce4c076493e800c10e4f9568f02839767ba0bdcbd20b517965d803"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/backbone.py",
+      "historical_copy_sha256": "d861ac3ba4c6d3c5b52f19b5ac85fc8c7f9a3d8c6e23b70a12c1119923c174f9",
+      "current_sha256": "d861ac3ba4c6d3c5b52f19b5ac85fc8c7f9a3d8c6e23b70a12c1119923c174f9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/block.py",
+      "historical_copy_sha256": "427536ab536930369db6631d64c78b070e4478099a041759d546195a8af4ee28",
+      "current_sha256": "427536ab536930369db6631d64c78b070e4478099a041759d546195a8af4ee28"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/build.py",
+      "historical_copy_sha256": "ee6573bd4046eaf4b9658ccdb21c820c7f0e1342f3163b8d79d6c5939c26a0f9",
+      "current_sha256": "ee6573bd4046eaf4b9658ccdb21c820c7f0e1342f3163b8d79d6c5939c26a0f9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/flops.py",
+      "historical_copy_sha256": "34396c68cd2e641434dfb4e9cb0a13b2c00d0716d99d277e7a556a30b9d5627e",
+      "current_sha256": "34396c68cd2e641434dfb4e9cb0a13b2c00d0716d99d277e7a556a30b9d5627e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/linear.py",
+      "historical_copy_sha256": "9cbd6ff987b5d49ffc91389cc15fa1fe1bdfee9b0cc3db1fb79fe561ceedda3a",
+      "current_sha256": "9cbd6ff987b5d49ffc91389cc15fa1fe1bdfee9b0cc3db1fb79fe561ceedda3a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/opset.py",
+      "historical_copy_sha256": "8596f4cdbfbffe345fe5b1a849947ebfdf1776e5c3ed29d832941e7a6460a539",
+      "current_sha256": "8596f4cdbfbffe345fe5b1a849947ebfdf1776e5c3ed29d832941e7a6460a539"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/runner.py",
+      "historical_copy_sha256": "cde2e0a3e753fc40882c66c563be16fb1cf5c5c9cace98c02b9e71cd0ccc8977",
+      "current_sha256": "cde2e0a3e753fc40882c66c563be16fb1cf5c5c9cace98c02b9e71cd0ccc8977"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/stream.py",
+      "historical_copy_sha256": "f4454e842b9bf7c8844ededbb164c303922cf5dd44856ec22d3884fb46d05775",
+      "current_sha256": "f4454e842b9bf7c8844ededbb164c303922cf5dd44856ec22d3884fb46d05775"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/text_block.py",
+      "historical_copy_sha256": "ad3137242d4561970b93cf5f507aafda018818a4444a17aa65b6ab1a1780ce9a",
+      "current_sha256": "ad3137242d4561970b93cf5f507aafda018818a4444a17aa65b6ab1a1780ce9a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/__init__.py",
+      "historical_copy_sha256": "bc23fa90644608286e0b101515074c6be8246e9c1594d2272cd873648a63aa13",
+      "current_sha256": "bc23fa90644608286e0b101515074c6be8246e9c1594d2272cd873648a63aa13"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/accel.py",
+      "historical_copy_sha256": "7f1ef9f13c91d5f5d1ad972ab4030d7466542ddb38a830f78fe7c8c13663cfd6",
+      "current_sha256": "7f1ef9f13c91d5f5d1ad972ab4030d7466542ddb38a830f78fe7c8c13663cfd6"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/activation.py",
+      "historical_copy_sha256": "a619dcbc2104900d9135393b1501f4379f606ac6ce5bf46ef762e9a6019ea9ef",
+      "current_sha256": "a619dcbc2104900d9135393b1501f4379f606ac6ce5bf46ef762e9a6019ea9ef"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/worker.py",
+      "historical_copy_sha256": "d0dd46419de9eb2e3ecb20410dfed2c9da178d1e14ec64cbc08708530fbc0c09",
+      "current_sha256": "d0dd46419de9eb2e3ecb20410dfed2c9da178d1e14ec64cbc08708530fbc0c09"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/__init__.py",
+      "historical_copy_sha256": "371c7780bb75cfd58d04eb1691a9bd8bdb09be9571926663ee59a4797cb2d80d",
+      "current_sha256": "371c7780bb75cfd58d04eb1691a9bd8bdb09be9571926663ee59a4797cb2d80d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/ddp.py",
+      "historical_copy_sha256": "ed8c7eea66715a0fefb8ec2957500c59629a107032d828b61aa120662dbfbe53",
+      "current_sha256": "ed8c7eea66715a0fefb8ec2957500c59629a107032d828b61aa120662dbfbe53"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/fsdp.py",
+      "historical_copy_sha256": "5b90e54885f5ed56a9035e779bcad515444f8c69285439537fcdacbd31f9a1a6",
+      "current_sha256": "5b90e54885f5ed56a9035e779bcad515444f8c69285439537fcdacbd31f9a1a6"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/launch.py",
+      "historical_copy_sha256": "4bd68e1227c99b7ee36fa7a325470c20d16431ed3c44dda8a58c01c30835426c",
+      "current_sha256": "4bd68e1227c99b7ee36fa7a325470c20d16431ed3c44dda8a58c01c30835426c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/__init__.py",
+      "historical_copy_sha256": "6dfecc61b5be57566d974524369382599f886318969c51f84bbaad94d92d1f76",
+      "current_sha256": "6dfecc61b5be57566d974524369382599f886318969c51f84bbaad94d92d1f76"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/precision/config.py",
+      "historical_copy_sha256": "5288d0d848ac4dd5049a67a94cbdd9922710e521b84c48f5f253215605eb22c9",
+      "current_sha256": "5288d0d848ac4dd5049a67a94cbdd9922710e521b84c48f5f253215605eb22c9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/precision/scaler.py",
+      "historical_copy_sha256": "3d76c55a20c3e10462c75147d35b1844121fa59d6a52cc8565c21da3d4af9649",
+      "current_sha256": "3d76c55a20c3e10462c75147d35b1844121fa59d6a52cc8565c21da3d4af9649"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/precision/__init__.py",
+      "historical_copy_sha256": "2fcdcb26ab718907dafb945f3ad5bf2aae493ca6374855884fa042755ba8154e",
+      "current_sha256": "2fcdcb26ab718907dafb945f3ad5bf2aae493ca6374855884fa042755ba8154e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/probe/official.py",
+      "historical_copy_sha256": "12b301f3427a622ef86783790544e9fc16501bed5aaf747a1b991126fcff0a94",
+      "current_sha256": "12b301f3427a622ef86783790544e9fc16501bed5aaf747a1b991126fcff0a94"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/probe/__init__.py",
+      "historical_copy_sha256": "ca6f6a74f14fbfcf587dcff69b742c7580ffb59c492242621430b265ceb9d734",
+      "current_sha256": "ca6f6a74f14fbfcf587dcff69b742c7580ffb59c492242621430b265ceb9d734"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/bind.py",
+      "historical_copy_sha256": "77edf9d6217ed2ae760a54632536295938f724e834ad917450d0699d184e19c5",
+      "current_sha256": "77edf9d6217ed2ae760a54632536295938f724e834ad917450d0699d184e19c5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/comfy.py",
+      "historical_copy_sha256": "d953b2504e508f61bac0d0a1a5a2f7f9c218c6c47234ce2c412cbcb7432ce040",
+      "current_sha256": "d953b2504e508f61bac0d0a1a5a2f7f9c218c6c47234ce2c412cbcb7432ce040"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/comfy_format.py",
+      "historical_copy_sha256": "5406b19cb6b23468a8ff84e4b159ec459920a191d82718606d70581e0f8d18b0",
+      "current_sha256": "5406b19cb6b23468a8ff84e4b159ec459920a191d82718606d70581e0f8d18b0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/compute.py",
+      "historical_copy_sha256": "7dffe208d9eb5e669f94bd5ef28b5109fac0b3887cb2f7a3cf85a6f9c3225485",
+      "current_sha256": "7dffe208d9eb5e669f94bd5ef28b5109fac0b3887cb2f7a3cf85a6f9c3225485"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/convert.py",
+      "historical_copy_sha256": "2a9d50756eba36755661f924faca2fc63d04ff24e5dc4e3e618497bceedadda4",
+      "current_sha256": "2a9d50756eba36755661f924faca2fc63d04ff24e5dc4e3e618497bceedadda4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/densify.py",
+      "historical_copy_sha256": "f6c537a28a74ee35a9868938bb2c18700a61f4683a300f1e8d2e791b1ac25425",
+      "current_sha256": "f6c537a28a74ee35a9868938bb2c18700a61f4683a300f1e8d2e791b1ac25425"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/embedding.py",
+      "historical_copy_sha256": "2c6497e0f39641a17085768bd5e0a9f4b49e1bb592e2c74f6e8c3d137ec03537",
+      "current_sha256": "2c6497e0f39641a17085768bd5e0a9f4b49e1bb592e2c74f6e8c3d137ec03537"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/source.py",
+      "historical_copy_sha256": "9b690ea242bf8aafc37e799d67830ed120b681f91749982a9daaa6c8c264ac84",
+      "current_sha256": "9b690ea242bf8aafc37e799d67830ed120b681f91749982a9daaa6c8c264ac84"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/stored.py",
+      "historical_copy_sha256": "ecfdd73b13812732d7380d84f57f07ad291b7ba70954f428351e4e5f79aeebdb",
+      "current_sha256": "ecfdd73b13812732d7380d84f57f07ad291b7ba70954f428351e4e5f79aeebdb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/stored_text.py",
+      "historical_copy_sha256": "9024decff76da875b0da14c5ca508915c0e0b594b91c3904069d358d140eba14",
+      "current_sha256": "9024decff76da875b0da14c5ca508915c0e0b594b91c3904069d358d140eba14"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/text.py",
+      "historical_copy_sha256": "e09cbeb252c3fd4193fb0ee4e73b8063d5d5cf4d47fd6b0b9fdab4022e6986e8",
+      "current_sha256": "e09cbeb252c3fd4193fb0ee4e73b8063d5d5cf4d47fd6b0b9fdab4022e6986e8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/w4a8.py",
+      "historical_copy_sha256": "a10a79193aa0fc790ecb6946ce699225132c40323f2deae36dee080fd59ef07e",
+      "current_sha256": "a10a79193aa0fc790ecb6946ce699225132c40323f2deae36dee080fd59ef07e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/weights.py",
+      "historical_copy_sha256": "da800d6b711344c2b321f08981d5360fe5f961f95df81b0cbe3efa9eb326dd8e",
+      "current_sha256": "da800d6b711344c2b321f08981d5360fe5f961f95df81b0cbe3efa9eb326dd8e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/quant/__init__.py",
+      "historical_copy_sha256": "85dee797eb622305de485bb351f9bd80ac5993420381f8083b3faa49688c1fc0",
+      "current_sha256": "85dee797eb622305de485bb351f9bd80ac5993420381f8083b3faa49688c1fc0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/context.py",
+      "historical_copy_sha256": "0fdce42e61413ff8b2ebfb2503cff7032d9471c174210d6708a5f0cfe49373b4",
+      "current_sha256": "0fdce42e61413ff8b2ebfb2503cff7032d9471c174210d6708a5f0cfe49373b4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/entry.py",
+      "historical_copy_sha256": "621544d5e66e0d0365df0f60f76d09feb91c3469e307f67b02b742f7d75f6c76",
+      "current_sha256": "621544d5e66e0d0365df0f60f76d09feb91c3469e307f67b02b742f7d75f6c76"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/exports.py",
+      "historical_copy_sha256": "866bd226cbd7ea99d7a5c8c88df5a5279e7b6dc32bf436a9f94bc8b812518e1e",
+      "current_sha256": "866bd226cbd7ea99d7a5c8c88df5a5279e7b6dc32bf436a9f94bc8b812518e1e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/full.py",
+      "historical_copy_sha256": "45633796ac84c7ccfcf65adbc92733c346e9f7d725cb85f30797b2bb0dd6bb80",
+      "current_sha256": "45633796ac84c7ccfcf65adbc92733c346e9f7d725cb85f30797b2bb0dd6bb80"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/knobs.py",
+      "historical_copy_sha256": "4a2251f99b3d678c76ae736a1d3ce83c6b72fb3480f0f86d518dd0663b649335",
+      "current_sha256": "4a2251f99b3d678c76ae736a1d3ce83c6b72fb3480f0f86d518dd0663b649335"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/layouts.py",
+      "historical_copy_sha256": "7a5eca15458a4629226361955ca5da1d5dcd2d81909914a12ae7127effb5a95a",
+      "current_sha256": "7a5eca15458a4629226361955ca5da1d5dcd2d81909914a12ae7127effb5a95a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/shutdown.py",
+      "historical_copy_sha256": "1e98369fde18aef129ef573cf89e556e058b212775951cce05b1ce8a28a8b4a8",
+      "current_sha256": "1e98369fde18aef129ef573cf89e556e058b212775951cce05b1ce8a28a8b4a8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/state.py",
+      "historical_copy_sha256": "07d12e7a91d475926bf95e03a870300c84175abd12033d559bc5fd254d391ce2",
+      "current_sha256": "07d12e7a91d475926bf95e03a870300c84175abd12033d559bc5fd254d391ce2"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/step.py",
+      "historical_copy_sha256": "f15349c0dd6d4329dc76bed89f486acf73c3e70d8374e0a50d3730d3d0460c78",
+      "current_sha256": "f15349c0dd6d4329dc76bed89f486acf73c3e70d8374e0a50d3730d3d0460c78"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/weights.py",
+      "historical_copy_sha256": "9d17f0aefba6dd62afbfd41eb104704c3fe36cbe34797826ef74e4a5ab3842f5",
+      "current_sha256": "9d17f0aefba6dd62afbfd41eb104704c3fe36cbe34797826ef74e4a5ab3842f5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/__init__.py",
+      "historical_copy_sha256": "c8841069cdb13d949ddfb10f3d243b6dedaeea5cb8fd38997ee0184abba6ca40",
+      "current_sha256": "c8841069cdb13d949ddfb10f3d243b6dedaeea5cb8fd38997ee0184abba6ca40"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/tuning/lengths.py",
+      "historical_copy_sha256": "5fe27a73f8e744baa6a72d71c82754cd14394f4b9109cbd06830523437a5927a",
+      "current_sha256": "5fe27a73f8e744baa6a72d71c82754cd14394f4b9109cbd06830523437a5927a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/tuning/prewarm.py",
+      "historical_copy_sha256": "566fe407c2cff02f49500aea1005d478c480a6180c18e67b5a9f6763765de188",
+      "current_sha256": "566fe407c2cff02f49500aea1005d478c480a6180c18e67b5a9f6763765de188"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/tuning/__init__.py",
+      "historical_copy_sha256": "ace4bef29ca3b92cf46710f698298a7f46ff7b0adc795f0f1cb4806f07f25b1f",
+      "current_sha256": "ace4bef29ca3b92cf46710f698298a7f46ff7b0adc795f0f1cb4806f07f25b1f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/types/arch.py",
+      "historical_copy_sha256": "45961de7ada9ee36fd3ef028b45f29f2fabea98b308776a58314d9142f256a94",
+      "current_sha256": "45961de7ada9ee36fd3ef028b45f29f2fabea98b308776a58314d9142f256a94"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/types/batch.py",
+      "historical_copy_sha256": "239362d305125ffad8aaaee9b056c2d780298c4f8f1d81be831e0b7e31f66db6",
+      "current_sha256": "239362d305125ffad8aaaee9b056c2d780298c4f8f1d81be831e0b7e31f66db6"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/types/context.py",
+      "historical_copy_sha256": "4b69048b9c44eabf66230d50507979e2d30c0de3e2f19229a92616670655c64b",
+      "current_sha256": "4b69048b9c44eabf66230d50507979e2d30c0de3e2f19229a92616670655c64b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/types/plans.py",
+      "historical_copy_sha256": "45363125f3e3f0aa029ce6be8815c72bc1324bb83e9a1ab6db0bec2f5dc0c29d",
+      "current_sha256": "45363125f3e3f0aa029ce6be8815c72bc1324bb83e9a1ab6db0bec2f5dc0c29d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/types/protocols.py",
+      "historical_copy_sha256": "cae3c508e17a09ff0f970e36a310a1f5a3ba072733ba61c47303b5617ff2857a",
+      "current_sha256": "cae3c508e17a09ff0f970e36a310a1f5a3ba072733ba61c47303b5617ff2857a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/types/seqinfo.py",
+      "historical_copy_sha256": "81c0d1f388a29d9f460cdf3b750131419ac77129606644e4d80c4878ff61b59d",
+      "current_sha256": "81c0d1f388a29d9f460cdf3b750131419ac77129606644e4d80c4878ff61b59d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/types/step.py",
+      "historical_copy_sha256": "ef21920f67548d14c828e57fc6f4a897d58d2dd058d36391de3a8de0c0464ef9",
+      "current_sha256": "ef21920f67548d14c828e57fc6f4a897d58d2dd058d36391de3a8de0c0464ef9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/types/__init__.py",
+      "historical_copy_sha256": "09073d0747d8c1c9d25d3fd4a65e54b45c2c0e5a1794208e16b6d348d0ca94db",
+      "current_sha256": "09073d0747d8c1c9d25d3fd4a65e54b45c2c0e5a1794208e16b6d348d0ca94db"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/weights/layout.py",
+      "historical_copy_sha256": "4b112f000f7362dad45af76e673ffb782bf5c8354d73d654dd64a540e9320c0d",
+      "current_sha256": "4b112f000f7362dad45af76e673ffb782bf5c8354d73d654dd64a540e9320c0d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/weights/__init__.py",
+      "historical_copy_sha256": "bbfbbf609cd3ce82cb16b57f833283d11c024c7aa3dee7ddd047387ec5bb06dd",
+      "current_sha256": "bbfbbf609cd3ce82cb16b57f833283d11c024c7aa3dee7ddd047387ec5bb06dd"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/autotuned.py",
+      "historical_copy_sha256": "5a7ce3b56376363f24bea555419c4e70ea6ee3c5fa013ffca8a8d5317efc7da2",
+      "current_sha256": "5a7ce3b56376363f24bea555419c4e70ea6ee3c5fa013ffca8a8d5317efc7da2"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/bodies.py",
+      "historical_copy_sha256": "01498d2f2052847b4c8a5b9dc5a48017f0b677656c41a9b01daff8348b1285db",
+      "current_sha256": "01498d2f2052847b4c8a5b9dc5a48017f0b677656c41a9b01daff8348b1285db"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/compose.py",
+      "historical_copy_sha256": "f514f8783f376ba92c1df6e986f728d065b48cd15e68914a86d58adde9536230",
+      "current_sha256": "f514f8783f376ba92c1df6e986f728d065b48cd15e68914a86d58adde9536230"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/context.py",
+      "historical_copy_sha256": "3fabbcb3ac92a7136ba6819866b9f44c93c0ea55f8f3cf8601c315f55818e64b",
+      "current_sha256": "3fabbcb3ac92a7136ba6819866b9f44c93c0ea55f8f3cf8601c315f55818e64b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/dora.py",
+      "historical_copy_sha256": "f9ca1de6c8e78f4047d4a520b656c96cf53ff5b70a376689cace89011e53a084",
+      "current_sha256": "f9ca1de6c8e78f4047d4a520b656c96cf53ff5b70a376689cace89011e53a084"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/eager.py",
+      "historical_copy_sha256": "d2230c774069063f20d9667258746af56fe1b298a3ccaa6459324b0f28104a85",
+      "current_sha256": "d2230c774069063f20d9667258746af56fe1b298a3ccaa6459324b0f28104a85"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/forwards.py",
+      "historical_copy_sha256": "cbfd1934492eead9a5a0bb70e9e624ec5bdc247e546bcd5ba9ea7f9420193019",
+      "current_sha256": "cbfd1934492eead9a5a0bb70e9e624ec5bdc247e546bcd5ba9ea7f9420193019"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/kernel_ops.py",
+      "historical_copy_sha256": "c642457355b69c71929aaa7a937e892d113b5ddcf3ef96f391001b4f4e590275",
+      "current_sha256": "c642457355b69c71929aaa7a937e892d113b5ddcf3ef96f391001b4f4e590275"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/ops.py",
+      "historical_copy_sha256": "4ba6a435722c2a33127c0833421d7c7741b95fa623746e8311cf5a1c18c06e75",
+      "current_sha256": "4ba6a435722c2a33127c0833421d7c7741b95fa623746e8311cf5a1c18c06e75"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/select.py",
+      "historical_copy_sha256": "59b41ff6584cb5da6a0689002aa854496b6a578f473b4934d6f49f3ef4ad3687",
+      "current_sha256": "59b41ff6584cb5da6a0689002aa854496b6a578f473b4934d6f49f3ef4ad3687"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/weight_ops.py",
+      "historical_copy_sha256": "682e3ff5fb819df1ede0e63ff6c145690a4e300164c5fb3e88227ab0c14dba14",
+      "current_sha256": "682e3ff5fb819df1ede0e63ff6c145690a4e300164c5fb3e88227ab0c14dba14"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/bind/__init__.py",
+      "historical_copy_sha256": "1e59971eaf6c131ae9e859c3ff2f675502523d40bce585c9e27fbc3e90eca5be",
+      "current_sha256": "1e59971eaf6c131ae9e859c3ff2f675502523d40bce585c9e27fbc3e90eca5be"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/build/apply.py",
+      "historical_copy_sha256": "8354412448d14a3352ff566be35d8dc706dd0425be62dc2a328e396d51aa57e0",
+      "current_sha256": "8354412448d14a3352ff566be35d8dc706dd0425be62dc2a328e396d51aa57e0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/build/config.py",
+      "historical_copy_sha256": "59c9740b7260b7858718213f6f688f2fb91130031c1473aa9ff727d05cfc6f94",
+      "current_sha256": "59c9740b7260b7858718213f6f688f2fb91130031c1473aa9ff727d05cfc6f94"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/build/network.py",
+      "historical_copy_sha256": "d146d2022de72fbf9165c5b34d0eac6f5d8fb7b1e7756991f8acb3c89795d252",
+      "current_sha256": "d146d2022de72fbf9165c5b34d0eac6f5d8fb7b1e7756991f8acb3c89795d252"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/build/presets.py",
+      "historical_copy_sha256": "780babb021d514e57986e2c9a1cb5547ef79cd666f9df50c58aae3fc23c60ef4",
+      "current_sha256": "780babb021d514e57986e2c9a1cb5547ef79cd666f9df50c58aae3fc23c60ef4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/build/target.py",
+      "historical_copy_sha256": "b29fee8caebb4fc95736c2addb76eb07961369be2961774a35775785adad4d3a",
+      "current_sha256": "b29fee8caebb4fc95736c2addb76eb07961369be2961774a35775785adad4d3a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/build/__init__.py",
+      "historical_copy_sha256": "6120c3ac8389b927b2c175de0617bf8b5d45f4503b39e8e9ec58618b9f188602",
+      "current_sha256": "6120c3ac8389b927b2c175de0617bf8b5d45f4503b39e8e9ec58618b9f188602"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/export/cli.py",
+      "historical_copy_sha256": "282433ccb79d8887cf21fe45a304902f339c5d93042c3a73672c0beaee176e27",
+      "current_sha256": "282433ccb79d8887cf21fe45a304902f339c5d93042c3a73672c0beaee176e27"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/export/convert.py",
+      "historical_copy_sha256": "d1f9ba780eaa33d14741e3393856ae6dd3af7869652d3a2f631897896aee6510",
+      "current_sha256": "d1f9ba780eaa33d14741e3393856ae6dd3af7869652d3a2f631897896aee6510"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/export/files.py",
+      "historical_copy_sha256": "3b4989709cc8a85ebb588d526f6a7adca0a1e99848f655b0233bf54fefb77f81",
+      "current_sha256": "3b4989709cc8a85ebb588d526f6a7adca0a1e99848f655b0233bf54fefb77f81"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/export/fused.py",
+      "historical_copy_sha256": "860b7597491fd8584a384f10bf6b969a60604f389c1c31034c17dbf119528489",
+      "current_sha256": "860b7597491fd8584a384f10bf6b969a60604f389c1c31034c17dbf119528489"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/export/merged.py",
+      "historical_copy_sha256": "67339b26132a911068805a71b17667bae58127c66405d4a2673f7ff02d9edb21",
+      "current_sha256": "67339b26132a911068805a71b17667bae58127c66405d4a2673f7ff02d9edb21"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/export/__init__.py",
+      "historical_copy_sha256": "4c547ef58e1e87654c12adcdc0e70a38424a155a647cd2d5c738cb155d13e356",
+      "current_sha256": "4c547ef58e1e87654c12adcdc0e70a38424a155a647cd2d5c738cb155d13e356"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/infer/formats.py",
+      "historical_copy_sha256": "eebf03ec43998db7d57c029d254405158011b36ea49cd7e0b50cdd32ebbd9d2c",
+      "current_sha256": "eebf03ec43998db7d57c029d254405158011b36ea49cd7e0b50cdd32ebbd9d2c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/infer/inference.py",
+      "historical_copy_sha256": "770cbd5b079f2b0ae3e914c9bae8af2e5ba37f92160c81d245c7362e4e0de8a9",
+      "current_sha256": "770cbd5b079f2b0ae3e914c9bae8af2e5ba37f92160c81d245c7362e4e0de8a9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/infer/stored.py",
+      "historical_copy_sha256": "aa0efac28d21aabade178e576cb7139908794d87bc8b034c9625d3ae9bb161c8",
+      "current_sha256": "aa0efac28d21aabade178e576cb7139908794d87bc8b034c9625d3ae9bb161c8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/infer/__init__.py",
+      "historical_copy_sha256": "07e533f437f39c99688318abb1ea94da45a29af5468ee7c9ce15cb96566b6585",
+      "current_sha256": "07e533f437f39c99688318abb1ea94da45a29af5468ee7c9ce15cb96566b6585"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/kinds/common.py",
+      "historical_copy_sha256": "f95ebbad3923ad94a7ed55882373e33cb705d2c8b8e40367fc016fdce8482b09",
+      "current_sha256": "f95ebbad3923ad94a7ed55882373e33cb705d2c8b8e40367fc016fdce8482b09"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/kinds/lowrank.py",
+      "historical_copy_sha256": "9a20e677e67e69326ff502fe65730e738a33b5ce0e9130822f5092e947bb18bd",
+      "current_sha256": "9a20e677e67e69326ff502fe65730e738a33b5ce0e9130822f5092e947bb18bd"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/kinds/other.py",
+      "historical_copy_sha256": "f3e5d6bf37bf7d5991ab8f09ebf042248223d4414c0cb9e9ca5ba7089fa16a35",
+      "current_sha256": "f3e5d6bf37bf7d5991ab8f09ebf042248223d4414c0cb9e9ca5ba7089fa16a35"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/kinds/record.py",
+      "historical_copy_sha256": "0e677bfc067b9b41e049aa86eaf3914583520656e5f4a7eb736ec2636d97ab5b",
+      "current_sha256": "0e677bfc067b9b41e049aa86eaf3914583520656e5f4a7eb736ec2636d97ab5b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/kinds/rotation.py",
+      "historical_copy_sha256": "870a8a0bb4b0a4caa0878a70478f5f2add8d387c5d89dab1f510cb6a81b54b9d",
+      "current_sha256": "870a8a0bb4b0a4caa0878a70478f5f2add8d387c5d89dab1f510cb6a81b54b9d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/kinds/__init__.py",
+      "historical_copy_sha256": "26cc270af538dea31050c055cee9252a7258749aa37f924d48c4b14b880ba8a4",
+      "current_sha256": "26cc270af538dea31050c055cee9252a7258749aa37f924d48c4b14b880ba8a4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/lycoris/backend.py",
+      "historical_copy_sha256": "75a835ea4501413c5dfabd1192f851b4fa2692f347f2bc8e954a94d62598cb18",
+      "current_sha256": "75a835ea4501413c5dfabd1192f851b4fa2692f347f2bc8e954a94d62598cb18"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/lycoris/tuning.py",
+      "historical_copy_sha256": "556da37a1d7e3fa990653337275b3fe4fac14a10da9f9f5719eea7538fc71821",
+      "current_sha256": "556da37a1d7e3fa990653337275b3fe4fac14a10da9f9f5719eea7538fc71821"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/lycoris/version.py",
+      "historical_copy_sha256": "200662038902254e358219a1e3f357ff4ebd8ef2f03955e900986117d06c4998",
+      "current_sha256": "200662038902254e358219a1e3f357ff4ebd8ef2f03955e900986117d06c4998"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/lycoris/__init__.py",
+      "historical_copy_sha256": "5d2a8e83596167804a8ace84e8de13b8688eccf9d62584b70968b31c2883fefd",
+      "current_sha256": "5d2a8e83596167804a8ace84e8de13b8688eccf9d62584b70968b31c2883fefd"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/train/adapter_set.py",
+      "historical_copy_sha256": "c30a9f5c9f856501a0c42853a1a8f8d4503f6aa5089504e06203ee2552abae31",
+      "current_sha256": "c30a9f5c9f856501a0c42853a1a8f8d4503f6aa5089504e06203ee2552abae31"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/train/groups.py",
+      "historical_copy_sha256": "d0a319ef358fa2761b9795927bfd5ea7cf1e96fa2bbb8b1f6cd72f2ceadbc0b0",
+      "current_sha256": "d0a319ef358fa2761b9795927bfd5ea7cf1e96fa2bbb8b1f6cd72f2ceadbc0b0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/train/norms.py",
+      "historical_copy_sha256": "f21137b2deb43227d6f794c1a0735bb3501eb4558ee4f2bb444b572d97fcd1ea",
+      "current_sha256": "f21137b2deb43227d6f794c1a0735bb3501eb4558ee4f2bb444b572d97fcd1ea"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/train/scope.py",
+      "historical_copy_sha256": "b71d4c586749ef5d18cc95a8ea26b52cffd7d48df9f7d154d1d4eae2e5ff77a3",
+      "current_sha256": "b71d4c586749ef5d18cc95a8ea26b52cffd7d48df9f7d154d1d4eae2e5ff77a3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/train/steps.py",
+      "historical_copy_sha256": "d6caf119764d3f2c957d777519a25f4a181a3f6b3b2de435830e5263f5e85eaa",
+      "current_sha256": "d6caf119764d3f2c957d777519a25f4a181a3f6b3b2de435830e5263f5e85eaa"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/train/tlora.py",
+      "historical_copy_sha256": "0087bcfb42845d8f2494059d61839e597ab005fbc8382bad43db527291257483",
+      "current_sha256": "0087bcfb42845d8f2494059d61839e597ab005fbc8382bad43db527291257483"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/adapters/train/__init__.py",
+      "historical_copy_sha256": "aacd8e220558783319cc49c6dfd2261012bb493f3fcc115813705c78f4f11ab9",
+      "current_sha256": "aacd8e220558783319cc49c6dfd2261012bb493f3fcc115813705c78f4f11ab9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/config/full.py",
+      "historical_copy_sha256": "bca03853e431833f3eb13408c649bb921b88764b1e0b0c5923483f49f67e1aad",
+      "current_sha256": "bca03853e431833f3eb13408c649bb921b88764b1e0b0c5923483f49f67e1aad"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/config/hardware.py",
+      "historical_copy_sha256": "7764c7a9dfe7ee7fb357764cf213953b25540ba9bf3e71723138d1e83be8db8b",
+      "current_sha256": "7764c7a9dfe7ee7fb357764cf213953b25540ba9bf3e71723138d1e83be8db8b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/config/main.py",
+      "historical_copy_sha256": "458d39da058b8ba225fd5a22f1b81488efa188d191f8fcef32ee5ed624d838ed",
+      "current_sha256": "458d39da058b8ba225fd5a22f1b81488efa188d191f8fcef32ee5ed624d838ed"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/config/presets.py",
+      "historical_copy_sha256": "40f69875a39f9b23aadd7a7390db006abfce09cff6b8e0b01e1c20b8ddcccf2a",
+      "current_sha256": "40f69875a39f9b23aadd7a7390db006abfce09cff6b8e0b01e1c20b8ddcccf2a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/config/starter.py",
+      "historical_copy_sha256": "47760d36cfce2c56d72993288f5a4d9cfc66d469b88ac11ee76bc9bd315904a9",
+      "current_sha256": "47760d36cfce2c56d72993288f5a4d9cfc66d469b88ac11ee76bc9bd315904a9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/config/validate.py",
+      "historical_copy_sha256": "a122c7cc3ef111488596a92fbc27b8b3dc633bab47a9560ad8d356e0c14b38a4",
+      "current_sha256": "a122c7cc3ef111488596a92fbc27b8b3dc633bab47a9560ad8d356e0c14b38a4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/cli/config/__init__.py",
+      "historical_copy_sha256": "811cc4e2f6c7508800f0c32ebfe8820d8880ed1b361aa9879625e7f57b0370e7",
+      "current_sha256": "811cc4e2f6c7508800f0c32ebfe8820d8880ed1b361aa9879625e7f57b0370e7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/objective/flow.py",
+      "historical_copy_sha256": "bf7fefef422e8e958a8c193c7097b193b8fcf4da744e5aa0ef72fe20ded4a25f",
+      "current_sha256": "bf7fefef422e8e958a8c193c7097b193b8fcf4da744e5aa0ef72fe20ded4a25f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/objective/loss.py",
+      "historical_copy_sha256": "be895ab95364c66c71d7974f8d14ca971d0ea691fb589d29eafdaa3061725f56",
+      "current_sha256": "be895ab95364c66c71d7974f8d14ca971d0ea691fb589d29eafdaa3061725f56"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/objective/normalize.py",
+      "historical_copy_sha256": "747c815ce367a0878f05d60291cf4da5c9ed620e666dc5d8327b4ba19ff63408",
+      "current_sha256": "747c815ce367a0878f05d60291cf4da5c9ed620e666dc5d8327b4ba19ff63408"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/objective/weighting.py",
+      "historical_copy_sha256": "62f1db8703b59891e78cef7ebe53c73b90d35d8bf586141a0ca6906e26795f56",
+      "current_sha256": "62f1db8703b59891e78cef7ebe53c73b90d35d8bf586141a0ca6906e26795f56"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/objective/__init__.py",
+      "historical_copy_sha256": "f7a30a89d564ed34ec74b9c7f75dd2f3a1a4ab36a31b7f9ab0e13081d2b1ec35",
+      "current_sha256": "f7a30a89d564ed34ec74b9c7f75dd2f3a1a4ab36a31b7f9ab0e13081d2b1ec35"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/sampling/sample.py",
+      "historical_copy_sha256": "61f79d190b0c2816fcbaf9b8920e863d1b409ac5ba1a7dd98effd5d3adfebdfb",
+      "current_sha256": "61f79d190b0c2816fcbaf9b8920e863d1b409ac5ba1a7dd98effd5d3adfebdfb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/sampling/schedule.py",
+      "historical_copy_sha256": "99cc5e2e8349595f351c9ccb4ab86164ad63cfdc2b8f290d116e3e79c986df5f",
+      "current_sha256": "99cc5e2e8349595f351c9ccb4ab86164ad63cfdc2b8f290d116e3e79c986df5f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/sampling/__init__.py",
+      "historical_copy_sha256": "7d41da001c9fbd2b7d2e5311aac2860dcbda9936ea2712fc817ce3a42049f586",
+      "current_sha256": "7d41da001c9fbd2b7d2e5311aac2860dcbda9936ea2712fc817ce3a42049f586"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/timestep/moss.py",
+      "historical_copy_sha256": "0d39fdabc196a4c364bbc4c16fe3beb0b5c1e70f0d83aed7e448b534db294864",
+      "current_sha256": "0d39fdabc196a4c364bbc4c16fe3beb0b5c1e70f0d83aed7e448b534db294864"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/timestep/shift.py",
+      "historical_copy_sha256": "61d20d5a924d68c1a35481be13e4a329e9e38a688e711f068af9b920daace3c0",
+      "current_sha256": "61d20d5a924d68c1a35481be13e4a329e9e38a688e711f068af9b920daace3c0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/timestep/simple.py",
+      "historical_copy_sha256": "3fe54a15d67eac1dc5591199b1939dc362973fc02cb820dd4e2b9b336b1fb6ce",
+      "current_sha256": "3fe54a15d67eac1dc5591199b1939dc362973fc02cb820dd4e2b9b336b1fb6ce"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/diffusion/timestep/__init__.py",
+      "historical_copy_sha256": "745f42bd4ac2b8d77ca24f9f8a36c216517c995231ef5cbe96d0f33ed5681b2e",
+      "current_sha256": "745f42bd4ac2b8d77ca24f9f8a36c216517c995231ef5cbe96d0f33ed5681b2e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/comfy_files.py",
+      "historical_copy_sha256": "5b593fc7e0dba4aeef5d74819e3c5eca884afba0ad764918fbee38b0e4d9b300",
+      "current_sha256": "5b593fc7e0dba4aeef5d74819e3c5eca884afba0ad764918fbee38b0e4d9b300"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/comfy_load.py",
+      "historical_copy_sha256": "289751125b03e31317f48ed79d957934f3644d117df845f7c2d55391d9b6d9be",
+      "current_sha256": "289751125b03e31317f48ed79d957934f3644d117df845f7c2d55391d9b6d9be"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/encoder.py",
+      "historical_copy_sha256": "8aa0c0b2dc649d9ec248484cd6d14d9b0a7b1a885a0f73e59934f42e408d6f00",
+      "current_sha256": "8aa0c0b2dc649d9ec248484cd6d14d9b0a7b1a885a0f73e59934f42e408d6f00"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/factory.py",
+      "historical_copy_sha256": "494c08071735704cd3f1a7ba289301d6d51a9c6e720c5c9ee441f55891d8f3e9",
+      "current_sha256": "494c08071735704cd3f1a7ba289301d6d51a9c6e720c5c9ee441f55891d8f3e9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/files.py",
+      "historical_copy_sha256": "263101060667d340e3b31b2d058a48e9e4d34f18ed57ee9fd4d9578dfaeac06f",
+      "current_sha256": "263101060667d340e3b31b2d058a48e9e4d34f18ed57ee9fd4d9578dfaeac06f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/forward.py",
+      "historical_copy_sha256": "047387a6657f8ddee7f4df60123e235eded79d1a6b43240e97993edfa98ff037",
+      "current_sha256": "047387a6657f8ddee7f4df60123e235eded79d1a6b43240e97993edfa98ff037"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/hf.py",
+      "historical_copy_sha256": "0d4371e2a60ad3101a70dc87051e31a3b557c41786c05b842a8921b2ab1a9ef1",
+      "current_sha256": "0d4371e2a60ad3101a70dc87051e31a3b557c41786c05b842a8921b2ab1a9ef1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/load.py",
+      "historical_copy_sha256": "52dfab4095a2b801120f4e9f1deba7a6a0c498501f64587a1b58c8dd5233d1b0",
+      "current_sha256": "52dfab4095a2b801120f4e9f1deba7a6a0c498501f64587a1b58c8dd5233d1b0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/plan.py",
+      "historical_copy_sha256": "e3df72e1131b343702a32e7ad509b1126edcf3dcd2853ffd1816623b12acbcba",
+      "current_sha256": "e3df72e1131b343702a32e7ad509b1126edcf3dcd2853ffd1816623b12acbcba"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/prewarm.py",
+      "historical_copy_sha256": "92b552bf088cdd23e0511774d34c929baf9b18bcb7c2880d3c7dfd0df2f2a768",
+      "current_sha256": "92b552bf088cdd23e0511774d34c929baf9b18bcb7c2880d3c7dfd0df2f2a768"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/tokens.py",
+      "historical_copy_sha256": "b19b47e42e991f36d7cd3a655353ac759c8505d6e363f599f43a605782d85c39",
+      "current_sha256": "b19b47e42e991f36d7cd3a655353ac759c8505d6e363f599f43a605782d85c39"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/__init__.py",
+      "historical_copy_sha256": "f4abffeea281fc2bdd78f537ff91a0053c0e7cb4495467db4c575dff0f0a28b5",
+      "current_sha256": "f4abffeea281fc2bdd78f537ff91a0053c0e7cb4495467db4c575dff0f0a28b5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/vae/comfy.py",
+      "historical_copy_sha256": "783cf1eaf0e9ede7223675d7f3359e7cdd52f9052f5284f50cb8f8a267da10fb",
+      "current_sha256": "783cf1eaf0e9ede7223675d7f3359e7cdd52f9052f5284f50cb8f8a267da10fb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/vae/__init__.py",
+      "historical_copy_sha256": "8daa5340fb70e35458a0937614d550b901d1498e6ab3bb8c43e2bb1b09c15366",
+      "current_sha256": "8daa5340fb70e35458a0937614d550b901d1498e6ab3bb8c43e2bb1b09c15366"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/chat_template.jinja",
+      "historical_copy_sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+      "current_sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/config.json",
+      "historical_copy_sha256": "b31ee18a242bcfcccbe740f825f6b1d3ae231b0655eeecb5de3e98d504b7d68c",
+      "current_sha256": "b31ee18a242bcfcccbe740f825f6b1d3ae231b0655eeecb5de3e98d504b7d68c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/LICENSE",
+      "historical_copy_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "current_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/NOTICE",
+      "historical_copy_sha256": "f9c5ac7118bd07868a4a9e1d9c72406905a0fc0e058f42bc28670e6254b5128e",
+      "current_sha256": "f9c5ac7118bd07868a4a9e1d9c72406905a0fc0e058f42bc28670e6254b5128e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/tokenizer_config.json",
+      "historical_copy_sha256": "bee8eba30f0eb4af73c0fe2cd06d0f89b657d7819941c438157ec42f7c80ea87",
+      "current_sha256": "bee8eba30f0eb4af73c0fe2cd06d0f89b657d7819941c438157ec42f7c80ea87"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/components/embed.py",
+      "historical_copy_sha256": "b438418c054de76047f072a8f8eec82a88fde3eb02ea13d05bdbd30af3b5411a",
+      "current_sha256": "b438418c054de76047f072a8f8eec82a88fde3eb02ea13d05bdbd30af3b5411a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/components/ffn.py",
+      "historical_copy_sha256": "5bbec9e4bf5a6f43a37052be8fb37cfcb8d5320186a751a30fcc2fbddc35deec",
+      "current_sha256": "5bbec9e4bf5a6f43a37052be8fb37cfcb8d5320186a751a30fcc2fbddc35deec"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/components/norm.py",
+      "historical_copy_sha256": "10345ef05ab594929a44dd6f91d115a29b4636190421222a3db2e84c2f8136fb",
+      "current_sha256": "10345ef05ab594929a44dd6f91d115a29b4636190421222a3db2e84c2f8136fb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/components/__init__.py",
+      "historical_copy_sha256": "2aff4a2f281e26fa3f816bcde4661db98bd52d66b01ff3126bc4ab7c9ee44a62",
+      "current_sha256": "2aff4a2f281e26fa3f816bcde4661db98bd52d66b01ff3126bc4ab7c9ee44a62"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/io/keymap.py",
+      "historical_copy_sha256": "e420285c42596e52ab7388fadf15ae2a238862312a1bc5170c13bf18e48b3b58",
+      "current_sha256": "e420285c42596e52ab7388fadf15ae2a238862312a1bc5170c13bf18e48b3b58"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/io/load.py",
+      "historical_copy_sha256": "9db436952c7e3d57395c0ec92c28db4156bbd23692b2e004d7a6cc6749e1ea57",
+      "current_sha256": "9db436952c7e3d57395c0ec92c28db4156bbd23692b2e004d7a6cc6749e1ea57"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/io/quant_source.py",
+      "historical_copy_sha256": "24ee32b5a56ef37e876920433c6187d3ff9e5ce2995e809e22cfb8391534a2e0",
+      "current_sha256": "24ee32b5a56ef37e876920433c6187d3ff9e5ce2995e809e22cfb8391534a2e0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/io/save.py",
+      "historical_copy_sha256": "742e74d684728e6219ba295599a141ce88d538219eaa88cb2c2b525d688666c6",
+      "current_sha256": "742e74d684728e6219ba295599a141ce88d538219eaa88cb2c2b525d688666c6"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/io/source.py",
+      "historical_copy_sha256": "c3f39fbd659807439111fb7e3890e5b4565c554b8b0301f313fe17e0f1b4072c",
+      "current_sha256": "c3f39fbd659807439111fb7e3890e5b4565c554b8b0301f313fe17e0f1b4072c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/io/__init__.py",
+      "historical_copy_sha256": "1a9eed12c778596b01a9f24cbcf18b40e953abc7f84e7bf19a0916115d59c35d",
+      "current_sha256": "1a9eed12c778596b01a9f24cbcf18b40e953abc7f84e7bf19a0916115d59c35d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/numerics/fold.py",
+      "historical_copy_sha256": "fdf46124a7e888b699f5d925e7c27e90e7f87b54d293ca70b8f56ba2d6271856",
+      "current_sha256": "fdf46124a7e888b699f5d925e7c27e90e7f87b54d293ca70b8f56ba2d6271856"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/numerics/fp16fix.py",
+      "historical_copy_sha256": "d37899993b26ad2513fff8c593738f5c6bfffc88048bf058171c8fb735ddab59",
+      "current_sha256": "d37899993b26ad2513fff8c593738f5c6bfffc88048bf058171c8fb735ddab59"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/numerics/keep_fp32.py",
+      "historical_copy_sha256": "92093606c0a774f1350efd789b893c322160e4767288f7011dc9e9aea507be43",
+      "current_sha256": "92093606c0a774f1350efd789b893c322160e4767288f7011dc9e9aea507be43"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/numerics/saturation.py",
+      "historical_copy_sha256": "fc10c1a82d5bcd8137b32281f9151541bc05e14981cca67bf96c1db662dcff05",
+      "current_sha256": "fc10c1a82d5bcd8137b32281f9151541bc05e14981cca67bf96c1db662dcff05"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/model/numerics/__init__.py",
+      "historical_copy_sha256": "3e0d7a9f25164aad3b81e71f8e75387d90a65fd5b1dcbff29ecce6a81da91567",
+      "current_sha256": "3e0d7a9f25164aad3b81e71f8e75387d90a65fd5b1dcbff29ecce6a81da91567"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/encoders/placement.py",
+      "historical_copy_sha256": "f3768cc7ad00c87a1dc1b670a49257dba3b145bbae67f525dfc700e0d2747f5a",
+      "current_sha256": "f3768cc7ad00c87a1dc1b670a49257dba3b145bbae67f525dfc700e0d2747f5a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/encoders/report.py",
+      "historical_copy_sha256": "57286c60d6fab051bb956095dd9bef2e0f16b38e27a86c2d9a732fa960d482e2",
+      "current_sha256": "57286c60d6fab051bb956095dd9bef2e0f16b38e27a86c2d9a732fa960d482e2"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/encoders/text.py",
+      "historical_copy_sha256": "eed00bd26d8b49eb4f1657a2e3dee96513a539b492ef7ed3fe07028c8c54b74c",
+      "current_sha256": "eed00bd26d8b49eb4f1657a2e3dee96513a539b492ef7ed3fe07028c8c54b74c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/encoders/text_memory.py",
+      "historical_copy_sha256": "2ffeada599717bc8d31f827694b3ea6a04e0b3f6d7747a6a1d2c6f39a3836036",
+      "current_sha256": "2ffeada599717bc8d31f827694b3ea6a04e0b3f6d7747a6a1d2c6f39a3836036"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/encoders/vae.py",
+      "historical_copy_sha256": "284cc76409ef8f84d66b49b0b6b6d3f250aeb125533836764d36ab0d4f170077",
+      "current_sha256": "284cc76409ef8f84d66b49b0b6b6d3f250aeb125533836764d36ab0d4f170077"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/encoders/__init__.py",
+      "historical_copy_sha256": "1f69155bd6cd6269a28b011639114d82548ea53657a2bb61826e8dc7eb7544f4",
+      "current_sha256": "1f69155bd6cd6269a28b011639114d82548ea53657a2bb61826e8dc7eb7544f4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/optim/cpu_optim.py",
+      "historical_copy_sha256": "a5bc505d59cfcd0faba3c5aeb04c718e5954ac756161c42fd21c72b17df5bd73",
+      "current_sha256": "a5bc505d59cfcd0faba3c5aeb04c718e5954ac756161c42fd21c72b17df5bd73"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/optim/fused_step.py",
+      "historical_copy_sha256": "1f443e89ceef7dd3b77790def8c90167b0994e62e31bafbd42d34adbaa717b64",
+      "current_sha256": "1f443e89ceef7dd3b77790def8c90167b0994e62e31bafbd42d34adbaa717b64"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/optim/gpu_adamw.py",
+      "historical_copy_sha256": "28079563e28ed360a892513ba8be341bdd45549be04c5dc2f7ee40138d6df32b",
+      "current_sha256": "28079563e28ed360a892513ba8be341bdd45549be04c5dc2f7ee40138d6df32b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/optim/grad.py",
+      "historical_copy_sha256": "f35be1e4fb766f69cfeeae7040c47e8aa715e1b4e33b0f3c85b05b4afbc31335",
+      "current_sha256": "f35be1e4fb766f69cfeeae7040c47e8aa715e1b4e33b0f3c85b05b4afbc31335"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/optim/host_acc.py",
+      "historical_copy_sha256": "8c841cf3c5d7825eb1dab0f2f4987d3f11291e8f6cf966af0366c72d5fb5f4a7",
+      "current_sha256": "8c841cf3c5d7825eb1dab0f2f4987d3f11291e8f6cf966af0366c72d5fb5f4a7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/optim/stream_optim.py",
+      "historical_copy_sha256": "eeb7536dac9fbcfb6716102005f32f59131f333ba28787156ddc8053845c53b5",
+      "current_sha256": "eeb7536dac9fbcfb6716102005f32f59131f333ba28787156ddc8053845c53b5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/optim/__init__.py",
+      "historical_copy_sha256": "bfa654bc5169f2e2b42f151f692d17ecacf5742c119c13074af054cff8595720",
+      "current_sha256": "bfa654bc5169f2e2b42f151f692d17ecacf5742c119c13074af054cff8595720"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/deferred.py",
+      "historical_copy_sha256": "fa0326a93471cfd1db73ace67bfc886af50a3b1f38708afa6042f08a61c6fd5f",
+      "current_sha256": "fa0326a93471cfd1db73ace67bfc886af50a3b1f38708afa6042f08a61c6fd5f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/layers.py",
+      "historical_copy_sha256": "64c295310b4268f26898f658cbed88cc9cf6b0d52efbc8ef8154aca1772416c4",
+      "current_sha256": "64c295310b4268f26898f658cbed88cc9cf6b0d52efbc8ef8154aca1772416c4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/shared.py",
+      "historical_copy_sha256": "1ec0edeec095d4816ea66e28dc1e3abe59da6e80faa741d4f8e43fc8e15fd6f1",
+      "current_sha256": "1ec0edeec095d4816ea66e28dc1e3abe59da6e80faa741d4f8e43fc8e15fd6f1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/stream.py",
+      "historical_copy_sha256": "4b0a371f6bdec5dc85fdb147f10148ff71a7ce53f7569b9e134bd37003416515",
+      "current_sha256": "4b0a371f6bdec5dc85fdb147f10148ff71a7ce53f7569b9e134bd37003416515"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streamed_weights.py",
+      "historical_copy_sha256": "20ba8d4cd788a384dd0c6a09a751e945511d971b2709b4df8262117fc4d08ee5",
+      "current_sha256": "20ba8d4cd788a384dd0c6a09a751e945511d971b2709b4df8262117fc4d08ee5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/__init__.py",
+      "historical_copy_sha256": "fd6f23c9dbff2b43f3de99c00919d84d2b86a36a11d714e1ea664ebf9acac56c",
+      "current_sha256": "fd6f23c9dbff2b43f3de99c00919d84d2b86a36a11d714e1ea664ebf9acac56c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streaming/copier.py",
+      "historical_copy_sha256": "689aa7feda8336626648170a6d42c6aa00dffb6da214fc3e7f04d73ea5ae6479",
+      "current_sha256": "689aa7feda8336626648170a6d42c6aa00dffb6da214fc3e7f04d73ea5ae6479"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streaming/device.py",
+      "historical_copy_sha256": "e6689a4d5596dd0a45c8d0c951c63527f58231d5cb4dcb8cc153323fd1573754",
+      "current_sha256": "e6689a4d5596dd0a45c8d0c951c63527f58231d5cb4dcb8cc153323fd1573754"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streaming/events.py",
+      "historical_copy_sha256": "07608c277959c11e5b7e61be7a13536608d0887cf890da7578b79a06472a3030",
+      "current_sha256": "07608c277959c11e5b7e61be7a13536608d0887cf890da7578b79a06472a3030"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streaming/grads.py",
+      "historical_copy_sha256": "178d86584e32abd3d068b8240760414ef100c3a77630c87a41ba55bd33ecf405",
+      "current_sha256": "178d86584e32abd3d068b8240760414ef100c3a77630c87a41ba55bd33ecf405"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streaming/reduce.py",
+      "historical_copy_sha256": "36800ba1e3be8d15cf1ab1188162538bac9d656cbce43e267c2770815dc443f9",
+      "current_sha256": "36800ba1e3be8d15cf1ab1188162538bac9d656cbce43e267c2770815dc443f9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streaming/ring.py",
+      "historical_copy_sha256": "4839165ab0cae4ff9d226d52839a546979b0c69913449b7f4b63e56727f99c2e",
+      "current_sha256": "4839165ab0cae4ff9d226d52839a546979b0c69913449b7f4b63e56727f99c2e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streaming/timing.py",
+      "historical_copy_sha256": "607b45a990107c31b9057a37a324a157c6ed89318fed77fc01e5cfac88b85b02",
+      "current_sha256": "607b45a990107c31b9057a37a324a157c6ed89318fed77fc01e5cfac88b85b02"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/offload/weights/streaming/__init__.py",
+      "historical_copy_sha256": "d9a4e920f3269ba89704246997a1d097a151b07e377372eb4af62d5ec557df13",
+      "current_sha256": "d9a4e920f3269ba89704246997a1d097a151b07e377372eb4af62d5ec557df13"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/pipeline/balance.py",
+      "historical_copy_sha256": "b161289b94680798a485eb8d5e03b0904a7c3ef19d3d0305b029489dfa9d738d",
+      "current_sha256": "b161289b94680798a485eb8d5e03b0904a7c3ef19d3d0305b029489dfa9d738d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/pipeline/distributed.py",
+      "historical_copy_sha256": "929d6d39618e2e42b6c81c8cce346811a3dee7a23e3e36b37314d5e0c1d95812",
+      "current_sha256": "929d6d39618e2e42b6c81c8cce346811a3dee7a23e3e36b37314d5e0c1d95812"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/pipeline/parts.py",
+      "historical_copy_sha256": "beb68a9994a82fecf2a87e14415a381c663e183ca8e7a145491c17f6de941a5a",
+      "current_sha256": "beb68a9994a82fecf2a87e14415a381c663e183ca8e7a145491c17f6de941a5a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/pipeline/split.py",
+      "historical_copy_sha256": "f881a53028f9225ac7050d366b945afec4f8de6fdeca0b4f03dc2261b35194ff",
+      "current_sha256": "f881a53028f9225ac7050d366b945afec4f8de6fdeca0b4f03dc2261b35194ff"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/pipeline/threaded.py",
+      "historical_copy_sha256": "51a4904c7c80e4d6652bb39165002d17a4afdd3962abd3ed919c622f48706866",
+      "current_sha256": "51a4904c7c80e4d6652bb39165002d17a4afdd3962abd3ed919c622f48706866"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/pipeline/__init__.py",
+      "historical_copy_sha256": "69a12fd86f987fc47b88b002253660dbb19033fe7441d0cd3b9196de586be2da",
+      "current_sha256": "69a12fd86f987fc47b88b002253660dbb19033fe7441d0cd3b9196de586be2da"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/telemetry/report.py",
+      "historical_copy_sha256": "cd3bc376e53da99dd50edd1cd0779aabc6eeadb86de168aed1ddac3e25944445",
+      "current_sha256": "cd3bc376e53da99dd50edd1cd0779aabc6eeadb86de168aed1ddac3e25944445"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/telemetry/selftest.py",
+      "historical_copy_sha256": "74311332854acf5ab307025b32333a5168a0d7fb9fdf97035db0312917def7ae",
+      "current_sha256": "74311332854acf5ab307025b32333a5168a0d7fb9fdf97035db0312917def7ae"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/telemetry/timeline.py",
+      "historical_copy_sha256": "fe7c5d83dc89147ebcd6f1fdf70d786dc3847a84a4ce1a2918ba58f19f3a240d",
+      "current_sha256": "fe7c5d83dc89147ebcd6f1fdf70d786dc3847a84a4ce1a2918ba58f19f3a240d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/telemetry/timing.py",
+      "historical_copy_sha256": "9222b8d810301344adbb7c3e4ea22694a7e6c4eae3db390e58157c595e7c22bc",
+      "current_sha256": "9222b8d810301344adbb7c3e4ea22694a7e6c4eae3db390e58157c595e7c22bc"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/telemetry/trace.py",
+      "historical_copy_sha256": "4d68a2a51ca0d23ade62ff04705c2063d5b3b9c7956e5dc9ef7a0ae62c46bd7b",
+      "current_sha256": "4d68a2a51ca0d23ade62ff04705c2063d5b3b9c7956e5dc9ef7a0ae62c46bd7b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/parallel/telemetry/__init__.py",
+      "historical_copy_sha256": "7a8b124a4a8d3d06ffe36d39a785256cb67b56db535367b76b70e545f967be0c",
+      "current_sha256": "7a8b124a4a8d3d06ffe36d39a785256cb67b56db535367b76b70e545f967be0c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/kernels.py",
+      "historical_copy_sha256": "2b1881dec261ef52f3a474f8f63e0a56597b97185913d8733fcffdd6cd740252",
+      "current_sha256": "2b1881dec261ef52f3a474f8f63e0a56597b97185913d8733fcffdd6cd740252"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/loop.py",
+      "historical_copy_sha256": "3262aaac823bca7acafc96ed652266b16ea90273b56784984de715fbc672f7e3",
+      "current_sha256": "3262aaac823bca7acafc96ed652266b16ea90273b56784984de715fbc672f7e3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/model.py",
+      "historical_copy_sha256": "7a451f29d6247b3c5bb1ddda9a97cb9c2ce818b03aa6b089595f9b68d7f813fe",
+      "current_sha256": "7a451f29d6247b3c5bb1ddda9a97cb9c2ce818b03aa6b089595f9b68d7f813fe"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/objective.py",
+      "historical_copy_sha256": "ba87d4c13c7bb3d7ebd5f4fb8af3660024dae81175e5b9539b5a6fe1328e657c",
+      "current_sha256": "ba87d4c13c7bb3d7ebd5f4fb8af3660024dae81175e5b9539b5a6fe1328e657c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/parallel.py",
+      "historical_copy_sha256": "096c44a0e2640c39796c1cebd1e577acd948b2e899b7c48d093f4ef554646a92",
+      "current_sha256": "096c44a0e2640c39796c1cebd1e577acd948b2e899b7c48d093f4ef554646a92"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/pipelines.py",
+      "historical_copy_sha256": "2747ee384abe0d1e706f827d6ad3fd5e63893c37e653a93d3603e4cdef712aba",
+      "current_sha256": "2747ee384abe0d1e706f827d6ad3fd5e63893c37e653a93d3603e4cdef712aba"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/shapes.py",
+      "historical_copy_sha256": "41f1b707b41d43852b00d65c87e80ca9ef2f425189f5a50eea5742643719b081",
+      "current_sha256": "41f1b707b41d43852b00d65c87e80ca9ef2f425189f5a50eea5742643719b081"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/text_estimate.py",
+      "historical_copy_sha256": "5b735bf135b627bfd7ba0dd92306da5a015d1dc46e4e17436e200121b121193a",
+      "current_sha256": "5b735bf135b627bfd7ba0dd92306da5a015d1dc46e4e17436e200121b121193a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/build/__init__.py",
+      "historical_copy_sha256": "10e6959844e802a3d330a21e9eb410a661c4b16cbdd38dfd57a4fbbf7ac183bf",
+      "current_sha256": "10e6959844e802a3d330a21e9eb410a661c4b16cbdd38dfd57a4fbbf7ac183bf"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/evaluate.py",
+      "historical_copy_sha256": "93779f98386e1e1170cc96f02024f776e5141241aa10d7d9d3c3e9d532b0e062",
+      "current_sha256": "93779f98386e1e1170cc96f02024f776e5141241aa10d7d9d3c3e9d532b0e062"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/finite.py",
+      "historical_copy_sha256": "484882eca8c080b29a728421df3adc41cbc7027a607c9aae6027fe7fcbf9e893",
+      "current_sha256": "484882eca8c080b29a728421df3adc41cbc7027a607c9aae6027fe7fcbf9e893"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/kernels.py",
+      "historical_copy_sha256": "ff847357ddd4e59b3545564eb33596813eb7cb8e8ea29a0ed259c425658c4ea4",
+      "current_sha256": "ff847357ddd4e59b3545564eb33596813eb7cb8e8ea29a0ed259c425658c4ea4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/monitor.py",
+      "historical_copy_sha256": "e1896a9fa5087ea42eb8f304afb936990e31fb6e68cb6358723bc62e4c7deffc",
+      "current_sha256": "e1896a9fa5087ea42eb8f304afb936990e31fb6e68cb6358723bc62e4c7deffc"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/progress.py",
+      "historical_copy_sha256": "c7e1fc53c7279855a932a5a08b1e2fb0b2f915fb3adda7bb425f580772ce1a79",
+      "current_sha256": "c7e1fc53c7279855a932a5a08b1e2fb0b2f915fb3adda7bb425f580772ce1a79"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/repro.py",
+      "historical_copy_sha256": "3e2d1c4e0316d87b3ca247eff1eed2beb81549bfe3d498c42fc0dc25c0eb1ab7",
+      "current_sha256": "3e2d1c4e0316d87b3ca247eff1eed2beb81549bfe3d498c42fc0dc25c0eb1ab7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/runner.py",
+      "historical_copy_sha256": "c9ee14a93db0f4ecdb27af0026298f911334b8584087faae217da384b1fd79d9",
+      "current_sha256": "c9ee14a93db0f4ecdb27af0026298f911334b8584087faae217da384b1fd79d9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/sampler.py",
+      "historical_copy_sha256": "dd305b52184ffca1e0073c258418cf1e46123a1342800e939646ef3ee1cf7770",
+      "current_sha256": "dd305b52184ffca1e0073c258418cf1e46123a1342800e939646ef3ee1cf7770"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/startup.py",
+      "historical_copy_sha256": "06d91ffff217c1a4703b69e6ef81ef78c4476797a17240e61bea392ed2a29c17",
+      "current_sha256": "06d91ffff217c1a4703b69e6ef81ef78c4476797a17240e61bea392ed2a29c17"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/transfer.py",
+      "historical_copy_sha256": "abc45882f0fc92aaf5294a475b0a3f609777a92ef35f203ab57b4ca03c85b9fe",
+      "current_sha256": "abc45882f0fc92aaf5294a475b0a3f609777a92ef35f203ab57b4ca03c85b9fe"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/callbacks/__init__.py",
+      "historical_copy_sha256": "316e4f01a5dcee3d60afd1fabf3cc91a8fc213174ec26fe15e3f9e8534774c3e",
+      "current_sha256": "316e4f01a5dcee3d60afd1fabf3cc91a8fc213174ec26fe15e3f9e8534774c3e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checkpoint/io.py",
+      "historical_copy_sha256": "54d7b038a3140fd3dc56af0885295e5f304d1cea33c9e0a4cde7ce3146bda577",
+      "current_sha256": "54d7b038a3140fd3dc56af0885295e5f304d1cea33c9e0a4cde7ce3146bda577"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checkpoint/manager.py",
+      "historical_copy_sha256": "c5db0073bacf2f86bdc0847793440e4509463f655ae34338cb187ca9fc617ca9",
+      "current_sha256": "c5db0073bacf2f86bdc0847793440e4509463f655ae34338cb187ca9fc617ca9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checkpoint/stream.py",
+      "historical_copy_sha256": "87fdde6b7307200b4a8239ad026ae0289c4479558b0c04f9981feed1c43b51b8",
+      "current_sha256": "87fdde6b7307200b4a8239ad026ae0289c4479558b0c04f9981feed1c43b51b8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checkpoint/__init__.py",
+      "historical_copy_sha256": "175fac6f5095738a4cabb3cfc74952a9f4c90d11e089d026e7cc680db4097a41",
+      "current_sha256": "175fac6f5095738a4cabb3cfc74952a9f4c90d11e089d026e7cc680db4097a41"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checks/encoders.py",
+      "historical_copy_sha256": "8433db9f9976c8f984ccd4f84188ef82eb1ec955711109837cfb7c6fd8efe703",
+      "current_sha256": "8433db9f9976c8f984ccd4f84188ef82eb1ec955711109837cfb7c6fd8efe703"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checks/objective.py",
+      "historical_copy_sha256": "c0e5c7168fe8ee6fd68f731ec447d49a6d23ea76120b31bede278458a0fba6cc",
+      "current_sha256": "c0e5c7168fe8ee6fd68f731ec447d49a6d23ea76120b31bede278458a0fba6cc"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checks/outputs.py",
+      "historical_copy_sha256": "097582b4498f52b2624cba545701cb48ec7bc532669dc4b8d65558f12d361baf",
+      "current_sha256": "097582b4498f52b2624cba545701cb48ec7bc532669dc4b8d65558f12d361baf"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checks/parallel.py",
+      "historical_copy_sha256": "88dbceee4a5c87d57f05b62b6929859da3a3108fec8a7c9918bb5b3c7c56a657",
+      "current_sha256": "88dbceee4a5c87d57f05b62b6929859da3a3108fec8a7c9918bb5b3c7c56a657"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/checks/__init__.py",
+      "historical_copy_sha256": "faa376c82b8643b49539d346c9d36c06a7720ca344a14f0d54ab1f148fb4b1a1",
+      "current_sha256": "faa376c82b8643b49539d346c9d36c06a7720ca344a14f0d54ab1f148fb4b1a1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/drivers/common.py",
+      "historical_copy_sha256": "272dbca48febb3912562407e4ab74cba2088d8ee1a799b9c816e6ba81659a147",
+      "current_sha256": "272dbca48febb3912562407e4ab74cba2088d8ee1a799b9c816e6ba81659a147"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/drivers/fsdp.py",
+      "historical_copy_sha256": "4cf406ffc883d933cbec610523b7def6d779d743687fcf4c5dafe42d80695178",
+      "current_sha256": "4cf406ffc883d933cbec610523b7def6d779d743687fcf4c5dafe42d80695178"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/drivers/lightning.py",
+      "historical_copy_sha256": "430a57c8a7d4b3925ba8292afcc9b1dedbe737f720eb37d80d23af06a1552cfa",
+      "current_sha256": "430a57c8a7d4b3925ba8292afcc9b1dedbe737f720eb37d80d23af06a1552cfa"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/drivers/native.py",
+      "historical_copy_sha256": "354c1a0ddf79da6830d6f12b07f0e9a7e98541ee737b95fd00949d349d7d5d15",
+      "current_sha256": "354c1a0ddf79da6830d6f12b07f0e9a7e98541ee737b95fd00949d349d7d5d15"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/drivers/pipeline.py",
+      "historical_copy_sha256": "5b3d612d9d6a04ac6c133a751d6bcd56f6d34b0eaee32e9ff2a061f17793a09c",
+      "current_sha256": "5b3d612d9d6a04ac6c133a751d6bcd56f6d34b0eaee32e9ff2a061f17793a09c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/drivers/__init__.py",
+      "historical_copy_sha256": "0fb197d49b50dae1e6123badd30379e04885be3d6c15405cde53030a3268c755",
+      "current_sha256": "0fb197d49b50dae1e6123badd30379e04885be3d6c15405cde53030a3268c755"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/ema/averagers.py",
+      "historical_copy_sha256": "ee51635888a7f9280263b7064331a2aea19e3a62ec85863bd5332f0ad4127ca3",
+      "current_sha256": "ee51635888a7f9280263b7064331a2aea19e3a62ec85863bd5332f0ad4127ca3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/ema/posthoc.py",
+      "historical_copy_sha256": "59f7279b30ef38101e5ce9b40d9161b3b65573297624fa9f9e67ca8cf68b3e47",
+      "current_sha256": "59f7279b30ef38101e5ce9b40d9161b3b65573297624fa9f9e67ca8cf68b3e47"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/ema/__init__.py",
+      "historical_copy_sha256": "cd3b8e374a0e2053639be8ab146fa97d91be9a6cae94f5114ddce4d552d583f9",
+      "current_sha256": "cd3b8e374a0e2053639be8ab146fa97d91be9a6cae94f5114ddce4d552d583f9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/memory/optimizers.py",
+      "historical_copy_sha256": "cd40b4f802ad49e4da4a946171f388f87dc12b247886047acc693139c7d26521",
+      "current_sha256": "cd40b4f802ad49e4da4a946171f388f87dc12b247886047acc693139c7d26521"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/memory/session.py",
+      "historical_copy_sha256": "b346822c9af4fb2a85c09ed75e1c9a9cffe6a104fd566f48387267ded3a3307d",
+      "current_sha256": "b346822c9af4fb2a85c09ed75e1c9a9cffe6a104fd566f48387267ded3a3307d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/memory/__init__.py",
+      "historical_copy_sha256": "27574d881eef3ea50e024a866d7d00eb75ea6bb64c9f158aedf0eb14b49fef8d",
+      "current_sha256": "27574d881eef3ea50e024a866d7d00eb75ea6bb64c9f158aedf0eb14b49fef8d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/groups.py",
+      "historical_copy_sha256": "3de27b083b27f9e3c520d66a89a0dbfb1aba1e8e70e048a36910af72052c8765",
+      "current_sha256": "3de27b083b27f9e3c520d66a89a0dbfb1aba1e8e70e048a36910af72052c8765"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/schedule.py",
+      "historical_copy_sha256": "7f4bf669075262f016e3bebc9673cdbb87868f3676a8c93a71a2c14c404543e1",
+      "current_sha256": "7f4bf669075262f016e3bebc9673cdbb87868f3676a8c93a71a2c14c404543e1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/__init__.py",
+      "historical_copy_sha256": "c7f6bb64ca571718b8dc77d544e53d8798275134d3bf6947cb7feddbb43cb3d1",
+      "current_sha256": "c7f6bb64ca571718b8dc77d544e53d8798275134d3bf6947cb7feddbb43cb3d1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/textenc/ahead.py",
+      "historical_copy_sha256": "aa6ef98cf791534925b826e36609d896f1964a349eabc2978d99e3fd5a4c852c",
+      "current_sha256": "aa6ef98cf791534925b826e36609d896f1964a349eabc2978d99e3fd5a4c852c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/textenc/__init__.py",
+      "historical_copy_sha256": "31732366fb8cee4c3a812091f828c5d1870922b00f7124b5895738be7e21e28a",
+      "current_sha256": "31732366fb8cee4c3a812091f828c5d1870922b00f7124b5895738be7e21e28a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/vae/ahead.py",
+      "historical_copy_sha256": "2b7b6c30ad37f4786d3b83bef8359165168bc47800a3ad276211ba6d2b2f8021",
+      "current_sha256": "2b7b6c30ad37f4786d3b83bef8359165168bc47800a3ad276211ba6d2b2f8021"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/vae/__init__.py",
+      "historical_copy_sha256": "634b856eb001e5e5d696a07af80c9b3e419eddfde9a137a86f0809df586b686b",
+      "current_sha256": "634b856eb001e5e5d696a07af80c9b3e419eddfde9a137a86f0809df586b686b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/bundle/base.py",
+      "historical_copy_sha256": "5216efbc4449a7339b2af015ada2ff3af0117e02395c76652cb5d4834d882e6b",
+      "current_sha256": "5216efbc4449a7339b2af015ada2ff3af0117e02395c76652cb5d4834d882e6b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/bundle/build.py",
+      "historical_copy_sha256": "dde5ed9d0942defdc96600b198f5aa15d39cdbb11cbf761fc7f7078d583f0bc1",
+      "current_sha256": "dde5ed9d0942defdc96600b198f5aa15d39cdbb11cbf761fc7f7078d583f0bc1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/bundle/fused.py",
+      "historical_copy_sha256": "e494d97fb04fd544229be7c127092310eb378c50aea32e98fa07fec4ed0227a5",
+      "current_sha256": "e494d97fb04fd544229be7c127092310eb378c50aea32e98fa07fec4ed0227a5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/bundle/mirror.py",
+      "historical_copy_sha256": "23abf6bf2a74ff8f4b94b3c42589075859ad3c54c7ab0461543891454d34fc01",
+      "current_sha256": "23abf6bf2a74ff8f4b94b3c42589075859ad3c54c7ab0461543891454d34fc01"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/bundle/nonfinite.py",
+      "historical_copy_sha256": "376f103fe452c19192f75d260f17612e8e6afbdf0d54b557375c3eb5dbb8953e",
+      "current_sha256": "376f103fe452c19192f75d260f17612e8e6afbdf0d54b557375c3eb5dbb8953e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/bundle/__init__.py",
+      "historical_copy_sha256": "087e2a8cc3295442ac4210fe9b7e5084dc117fdc04f9623a2c28414c479530d5",
+      "current_sha256": "087e2a8cc3295442ac4210fe9b7e5084dc117fdc04f9623a2c28414c479530d5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/optimizers/adamw16.py",
+      "historical_copy_sha256": "7ce471ff51c02dd0c87c013185ba9839eaf7eb69c2d9c670aada6af3a5aba49d",
+      "current_sha256": "7ce471ff51c02dd0c87c013185ba9839eaf7eb69c2d9c670aada6af3a5aba49d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/optimizers/adamw8bit.py",
+      "historical_copy_sha256": "f48e7996252f1acd93ab345a0d8d23659e35fe2639b7de0cbd1e290271edff0f",
+      "current_sha256": "f48e7996252f1acd93ab345a0d8d23659e35fe2639b7de0cbd1e290271edff0f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/optimizers/factory.py",
+      "historical_copy_sha256": "4517dc1f930b4f07aa72cd0250e309351dede6d0b1b2cbc9d9888f86838846be",
+      "current_sha256": "4517dc1f930b4f07aa72cd0250e309351dede6d0b1b2cbc9d9888f86838846be"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/optimizers/kwargs.py",
+      "historical_copy_sha256": "2e256d8161126e7f0d086cd56204923b9ef8b2e87b205ea22f65dbcfd2bcf452",
+      "current_sha256": "2e256d8161126e7f0d086cd56204923b9ef8b2e87b205ea22f65dbcfd2bcf452"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/optimizers/muon.py",
+      "historical_copy_sha256": "e54f8cff18e015d3fe2d0581e767da8d09f9c8544d2e3a3bdb83d2354c73fc43",
+      "current_sha256": "e54f8cff18e015d3fe2d0581e767da8d09f9c8544d2e3a3bdb83d2354c73fc43"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/optimizers/rounding.py",
+      "historical_copy_sha256": "5da2e7699f7a1158f1c39a310e020822035b39132c9372f4bde7f1eaf23d428c",
+      "current_sha256": "5da2e7699f7a1158f1c39a310e020822035b39132c9372f4bde7f1eaf23d428c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/optimizers/skip.py",
+      "historical_copy_sha256": "cd99d44c895c8764daf049fb358393fb10746c3301074efc4df2ebdd66499522",
+      "current_sha256": "cd99d44c895c8764daf049fb358393fb10746c3301074efc4df2ebdd66499522"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/training/optim/optimizers/__init__.py",
+      "historical_copy_sha256": "43385b57b5df5a753fb47bd163517f48309d8027a5892fa1c850a75f1181ea76",
+      "current_sha256": "43385b57b5df5a753fb47bd163517f48309d8027a5892fa1c850a75f1181ea76"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/hostmem/available.py",
+      "historical_copy_sha256": "d79f4c2f07daa90c1cc7764bf766ea95a9e4571ca867f78b9c087fb45367ac68",
+      "current_sha256": "d79f4c2f07daa90c1cc7764bf766ea95a9e4571ca867f78b9c087fb45367ac68"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_common/hostmem/__init__.py",
+      "historical_copy_sha256": "539db9bd1ab5ce845a4ab780787e478db21969987f14c5a5bed4bde92d128edd",
+      "current_sha256": "539db9bd1ab5ce845a4ab780787e478db21969987f14c5a5bed4bde92d128edd"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/cache/build.py",
+      "historical_copy_sha256": "af484ba139d4322182c4a8c5387c77452a98cdcaddbe6e75bbc794463fe39b3a",
+      "current_sha256": "af484ba139d4322182c4a8c5387c77452a98cdcaddbe6e75bbc794463fe39b3a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/cache/keys.py",
+      "historical_copy_sha256": "0105c957b0020b2e281af938bec96b43b43ba82ed273a70b597c95b409f955d4",
+      "current_sha256": "0105c957b0020b2e281af938bec96b43b43ba82ed273a70b597c95b409f955d4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/cache/settings.py",
+      "historical_copy_sha256": "336c91782adb3fdc4bb350e2a3abba6559f05ade929631edf0f78a8c3f614cc3",
+      "current_sha256": "336c91782adb3fdc4bb350e2a3abba6559f05ade929631edf0f78a8c3f614cc3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/cache/store.py",
+      "historical_copy_sha256": "fdc552d0b88108857b06d5c879d7ac4e80dd4118d26bf186b9e73efbef992b5a",
+      "current_sha256": "fdc552d0b88108857b06d5c879d7ac4e80dd4118d26bf186b9e73efbef992b5a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/cache/tensor_cache.py",
+      "historical_copy_sha256": "db4ce2fc7cc854cd823f41a3bbee352c4966c3c077c0ac3b2c125ced1a0fb816",
+      "current_sha256": "db4ce2fc7cc854cd823f41a3bbee352c4966c3c077c0ac3b2c125ced1a0fb816"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/cache/writer.py",
+      "historical_copy_sha256": "4906f874b7227a74fc0e8499289039550810f33b8d26849d1851bbbfd2c5c95d",
+      "current_sha256": "4906f874b7227a74fc0e8499289039550810f33b8d26849d1851bbbfd2c5c95d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/cache/__init__.py",
+      "historical_copy_sha256": "09d6ed7501e8343e15c92a70829331b4c19b5e8f5d9ae4c12d3c027ead7f9223",
+      "current_sha256": "09d6ed7501e8343e15c92a70829331b4c19b5e8f5d9ae4c12d3c027ead7f9223"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/caption/json_text.py",
+      "historical_copy_sha256": "c567694a37d7206f36e28c7e928feb2d6debc0208773536b3a150140252bab71",
+      "current_sha256": "c567694a37d7206f36e28c7e928feb2d6debc0208773536b3a150140252bab71"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/caption/tags.py",
+      "historical_copy_sha256": "9c0e4f88a7188c8b50331c3c7b381790cf85768818924f5a413d4e3e91d464b1",
+      "current_sha256": "9c0e4f88a7188c8b50331c3c7b381790cf85768818924f5a413d4e3e91d464b1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/caption/template.py",
+      "historical_copy_sha256": "528b757725a99637cae823439d15bcb3aebe2066e6eb469932ffe2a9843974e3",
+      "current_sha256": "528b757725a99637cae823439d15bcb3aebe2066e6eb469932ffe2a9843974e3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/caption/__init__.py",
+      "historical_copy_sha256": "ec2f667327c9b7967f0ef8f06a273f52e49eb509022097ebac1d4e6953429859",
+      "current_sha256": "ec2f667327c9b7967f0ef8f06a273f52e49eb509022097ebac1d4e6953429859"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/catalog/table.py",
+      "historical_copy_sha256": "bdec2c02f28fbb8ff5edb1fc7d22832bab93fd2b506c79d2431587176f1214eb",
+      "current_sha256": "bdec2c02f28fbb8ff5edb1fc7d22832bab93fd2b506c79d2431587176f1214eb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/catalog/text.py",
+      "historical_copy_sha256": "6f1ad84b302d6b5dc73a51739a4da2ea3ec22f38880f508e3265df1efd08b1a1",
+      "current_sha256": "6f1ad84b302d6b5dc73a51739a4da2ea3ec22f38880f508e3265df1efd08b1a1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/catalog/vault.py",
+      "historical_copy_sha256": "fc861adc14be182eb9b1666895ee0ffe18f7eb370a9c975a7a41236eda3e56f4",
+      "current_sha256": "fc861adc14be182eb9b1666895ee0ffe18f7eb370a9c975a7a41236eda3e56f4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/catalog/__init__.py",
+      "historical_copy_sha256": "7219c6b54a7c7518627c116fb78805dea6184f7a16030755c947b136cd5ecd79",
+      "current_sha256": "7219c6b54a7c7518627c116fb78805dea6184f7a16030755c947b136cd5ecd79"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/format/catalog.py",
+      "historical_copy_sha256": "c12b51718e2e91cb427315631d386ef36f1218b7b33882e5ab38a7d61e47e732",
+      "current_sha256": "c12b51718e2e91cb427315631d386ef36f1218b7b33882e5ab38a7d61e47e732"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/format/header.py",
+      "historical_copy_sha256": "0c142c478f21d2a306c44b74b70f313aa62669383e2f00677d30997babf710d1",
+      "current_sha256": "0c142c478f21d2a306c44b74b70f313aa62669383e2f00677d30997babf710d1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/format/shard.py",
+      "historical_copy_sha256": "dd51ee7ace35283b4e326362d3b0f25d5748570e092cb4a8164d508bef42207c",
+      "current_sha256": "dd51ee7ace35283b4e326362d3b0f25d5748570e092cb4a8164d508bef42207c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/format/__init__.py",
+      "historical_copy_sha256": "7af9a9362f1282afdaa552d0f048ef7be123ae888018289126e363086da60568",
+      "current_sha256": "7af9a9362f1282afdaa552d0f048ef7be123ae888018289126e363086da60568"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/loader/decode.py",
+      "historical_copy_sha256": "b062a066873dccc5ad6dff09dd04e73580df741d5cf3ea848fd5e2259802ae47",
+      "current_sha256": "b062a066873dccc5ad6dff09dd04e73580df741d5cf3ea848fd5e2259802ae47"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/loader/stateless.py",
+      "historical_copy_sha256": "021e85fbdf1b6262ba64367f197a2bddbfb28f450edb5d4c73035acc9570ad51",
+      "current_sha256": "021e85fbdf1b6262ba64367f197a2bddbfb28f450edb5d4c73035acc9570ad51"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/loader/__init__.py",
+      "historical_copy_sha256": "a6568f24425d8633f55cfd64f8c760a907dced1ea5f4558c81f22e5f5e7fbbfc",
+      "current_sha256": "a6568f24425d8633f55cfd64f8c760a907dced1ea5f4558c81f22e5f5e7fbbfc"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/base.py",
+      "historical_copy_sha256": "0e4ec261daf13ef0f5428e7b412860c0583857edaab711eb1bc7c854c2059a01",
+      "current_sha256": "0e4ec261daf13ef0f5428e7b412860c0583857edaab711eb1bc7c854c2059a01"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/batching.py",
+      "historical_copy_sha256": "4a63dc1f67fea92494bb2474a7bd833901653109d11e73766e0e5679292e0e7d",
+      "current_sha256": "4a63dc1f67fea92494bb2474a7bd833901653109d11e73766e0e5679292e0e7d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/bucket.py",
+      "historical_copy_sha256": "e354e1a5ecddd73dc16f2230f346eb291620ea98667828405d67a57311ce17a6",
+      "current_sha256": "e354e1a5ecddd73dc16f2230f346eb291620ea98667828405d67a57311ce17a6"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/geometry.py",
+      "historical_copy_sha256": "e4cd9fac398d6e1e7111fe6a949dc12197b82c56b955894562dc6434329e6d7e",
+      "current_sha256": "e4cd9fac398d6e1e7111fe6a949dc12197b82c56b955894562dc6434329e6d7e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/keep.py",
+      "historical_copy_sha256": "883a1a22a82dcc61abafda66ac3606317d082064e67810c0e812d742c77a6c65",
+      "current_sha256": "883a1a22a82dcc61abafda66ac3606317d082064e67810c0e812d742c77a6c65"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/overlong.py",
+      "historical_copy_sha256": "352b468578645cbb009b30ce8216ace9393ef6cfda87961d432860ba219f5e46",
+      "current_sha256": "352b468578645cbb009b30ce8216ace9393ef6cfda87961d432860ba219f5e46"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/resize.py",
+      "historical_copy_sha256": "18862170e93375819228df995bda34a1dc231e0fc1d78962ffad7546949cf1aa",
+      "current_sha256": "18862170e93375819228df995bda34a1dc231e0fc1d78962ffad7546949cf1aa"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/square.py",
+      "historical_copy_sha256": "cf3208e2a7eebb72dba77fabd075125e44e455be31054d517cd9a2871a66e26f",
+      "current_sha256": "cf3208e2a7eebb72dba77fabd075125e44e455be31054d517cd9a2871a66e26f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/resolution/__init__.py",
+      "historical_copy_sha256": "7e3a3bb9ff92d08a587dc005716babcf620a789fef091268ab7645817d7c0ab5",
+      "current_sha256": "7e3a3bb9ff92d08a587dc005716babcf620a789fef091268ab7645817d7c0ab5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/scan/lock.py",
+      "historical_copy_sha256": "ee019e7af55afae6f2fbb3b1c47ad4be41efe908ed402abad173b7e5dd90cf97",
+      "current_sha256": "ee019e7af55afae6f2fbb3b1c47ad4be41efe908ed402abad173b7e5dd90cf97"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/scan/manage.py",
+      "historical_copy_sha256": "8873922b691838bfcf8e26504d8d186f56faa008cd3bb82af3745cfc995e9a49",
+      "current_sha256": "8873922b691838bfcf8e26504d8d186f56faa008cd3bb82af3745cfc995e9a49"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/scan/paths.py",
+      "historical_copy_sha256": "9d6e44bf752ed28128fa8fd6fb784aa62798321ff7b03e6186881f4f90656ddc",
+      "current_sha256": "9d6e44bf752ed28128fa8fd6fb784aa62798321ff7b03e6186881f4f90656ddc"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/scan/runner.py",
+      "historical_copy_sha256": "96f7241c923dcb709920d6dcd2f9d50e56bc8efe943a50a58fc1c04c27a381f8",
+      "current_sha256": "96f7241c923dcb709920d6dcd2f9d50e56bc8efe943a50a58fc1c04c27a381f8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/scan/walk.py",
+      "historical_copy_sha256": "475e512c4adeea4e14b2fb44af18b5caf969101733f70a13609f21c4bca6cac0",
+      "current_sha256": "475e512c4adeea4e14b2fb44af18b5caf969101733f70a13609f21c4bca6cac0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/scan/__init__.py",
+      "historical_copy_sha256": "c3c0554246a08a065645085851b8cef1ba97a72426cd3014067de85919f43756",
+      "current_sha256": "c3c0554246a08a065645085851b8cef1ba97a72426cd3014067de85919f43756"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/sources/base.py",
+      "historical_copy_sha256": "2defdb32587b0cda9986236355c5cec9da36d30e0e396761f7115e7af76053e0",
+      "current_sha256": "2defdb32587b0cda9986236355c5cec9da36d30e0e396761f7115e7af76053e0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/sources/folder.py",
+      "historical_copy_sha256": "746033a2c18583229b94966307393f053efcce896ae544215f6f4e9f713d5032",
+      "current_sha256": "746033a2c18583229b94966307393f053efcce896ae544215f6f4e9f713d5032"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/sources/jsonl.py",
+      "historical_copy_sha256": "d012098743049c05b889fad8d7989677e1f785b21784c2e14699f1ce8c74b5a7",
+      "current_sha256": "d012098743049c05b889fad8d7989677e1f785b21784c2e14699f1ce8c74b5a7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/sources/kohya.py",
+      "historical_copy_sha256": "3c85252784c5d401641567fdc64a8f01426bf12e3fc7cf6c7dbac90de7d10692",
+      "current_sha256": "3c85252784c5d401641567fdc64a8f01426bf12e3fc7cf6c7dbac90de7d10692"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/sources/moss_shard.py",
+      "historical_copy_sha256": "0600041029737eb7a3e2b279998793481490b5bd7cfe0456671a2a91055bbd48",
+      "current_sha256": "0600041029737eb7a3e2b279998793481490b5bd7cfe0456671a2a91055bbd48"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/sources/parquet.py",
+      "historical_copy_sha256": "6b811ec66c1ab089b8926093bc687cec83815d670f03b829df0f095b96d5d7e0",
+      "current_sha256": "6b811ec66c1ab089b8926093bc687cec83815d670f03b829df0f095b96d5d7e0"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/sources/webdataset.py",
+      "historical_copy_sha256": "5324d18fdfa96e1e086fa8fe506d9af4ec9a9b470821ccb9b0681fbcf69156ae",
+      "current_sha256": "5324d18fdfa96e1e086fa8fe506d9af4ec9a9b470821ccb9b0681fbcf69156ae"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_data/sources/__init__.py",
+      "historical_copy_sha256": "0ac6d4eb49df1d4fa8e0d95e8480c6cca075f499743b5d9371ba5c9de21d16db",
+      "current_sha256": "0ac6d4eb49df1d4fa8e0d95e8480c6cca075f499743b5d9371ba5c9de21d16db"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/varlen_choice.py",
+      "historical_copy_sha256": "62d638755453bc5ca1989ce680aa8197204410979e0603d87165aaf853151afb",
+      "current_sha256": "62d638755453bc5ca1989ce680aa8197204410979e0603d87165aaf853151afb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/_fused_linear.py",
+      "historical_copy_sha256": "434942c905fdcd6c4e9bbcf0d20c1411ad86a2af3d69ed643bd8772fc3d0c5df",
+      "current_sha256": "434942c905fdcd6c4e9bbcf0d20c1411ad86a2af3d69ed643bd8772fc3d0c5df"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/_master.py",
+      "historical_copy_sha256": "788d902b8340540edf2235b7f509dc904336ce38d835fd5d1ec6e10ee334c684",
+      "current_sha256": "788d902b8340540edf2235b7f509dc904336ce38d835fd5d1ec6e10ee334c684"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/_memo.py",
+      "historical_copy_sha256": "6b077ce42370256d304a9965fbef18e994eba09c9415d8335fc82ab85d234143",
+      "current_sha256": "6b077ce42370256d304a9965fbef18e994eba09c9415d8335fc82ab85d234143"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/__init__.py",
+      "historical_copy_sha256": "680117e9cd412f1699d44edc005da650fe69a6b19b65f65363577bfe5b2faf3a",
+      "current_sha256": "680117e9cd412f1699d44edc005da650fe69a6b19b65f65363577bfe5b2faf3a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/bench/blockops.py",
+      "historical_copy_sha256": "55c8013f515cf3deeb8f4d8b1fb7e3e040ffabe046cd6715da1d2fb220c753c1",
+      "current_sha256": "55c8013f515cf3deeb8f4d8b1fb7e3e040ffabe046cd6715da1d2fb220c753c1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/bench/__init__.py",
+      "historical_copy_sha256": "1956d26ae610c24c3336e19e805b4c16f1dea130660b46ceb25b2e055a6ac758",
+      "current_sha256": "1956d26ae610c24c3336e19e805b4c16f1dea130660b46ceb25b2e055a6ac758"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/fp8/formats.py",
+      "historical_copy_sha256": "80436b7e543c4409e8fce838c9ce352ce6ca8a9afd62779834504e342abcde01",
+      "current_sha256": "80436b7e543c4409e8fce838c9ce352ce6ca8a9afd62779834504e342abcde01"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/fp8/op.py",
+      "historical_copy_sha256": "e0f127da1d67acb92f3b02a4f094a73a28d5fc7f6d425caf19dd1619262b8eb5",
+      "current_sha256": "e0f127da1d67acb92f3b02a4f094a73a28d5fc7f6d425caf19dd1619262b8eb5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/fp8/train.py",
+      "historical_copy_sha256": "cc2cfb67037fb24e70d377c44884873f446fc516c6db5e478471b44de8b93f3d",
+      "current_sha256": "cc2cfb67037fb24e70d377c44884873f446fc516c6db5e478471b44de8b93f3d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/fp8/__init__.py",
+      "historical_copy_sha256": "a33ab684203285a3c268190b304d3c45a31f5abd93215065218c2552648d2ea8",
+      "current_sha256": "a33ab684203285a3c268190b304d3c45a31f5abd93215065218c2552648d2ea8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/hardware/arch.py",
+      "historical_copy_sha256": "906e7acbb0cc43466fa8657dfdad5a7a93275299db9695f04c399a5ef1cdfc02",
+      "current_sha256": "906e7acbb0cc43466fa8657dfdad5a7a93275299db9695f04c399a5ef1cdfc02"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/hardware/current.py",
+      "historical_copy_sha256": "00f933fde21268ddbf19339fb518d62736012f59fcf7a0a3210ae5724ac052f8",
+      "current_sha256": "00f933fde21268ddbf19339fb518d62736012f59fcf7a0a3210ae5724ac052f8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/hardware/device.py",
+      "historical_copy_sha256": "ae45bfbbfc52c323b159ccba8bdf5bfae843edf7efed6fd120d5640c53f3062f",
+      "current_sha256": "ae45bfbbfc52c323b159ccba8bdf5bfae843edf7efed6fd120d5640c53f3062f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/hardware/memory.py",
+      "historical_copy_sha256": "b90d59a56f8ee3a7a53ba2b8c77db504da93c91ae5c2d7e44c645b4e5141301f",
+      "current_sha256": "a0bc24ae42393c2058d37b5f1c71af9f469819137868d7f6dda57146164258f1",
+      "local_modification": "Backend-aware working() cap, finite raw-fraction normalization, never relax outer fraction, unconditional peak-window cleanup"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/hardware/toolchain.py",
+      "historical_copy_sha256": "76ded7662402a14a40453c8a67aa0d805c8571d953a3c69ad3a6455a9c2686c4",
+      "current_sha256": "76ded7662402a14a40453c8a67aa0d805c8571d953a3c69ad3a6455a9c2686c4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/hardware/xpu_triton.py",
+      "historical_copy_sha256": "47189ff311c0b4e0c39d14fa72df6f994239f69c750ac3da1dbcea7b04570f6d",
+      "current_sha256": "47189ff311c0b4e0c39d14fa72df6f994239f69c750ac3da1dbcea7b04570f6d"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/hardware/__init__.py",
+      "historical_copy_sha256": "9b81403f380c6408f64264aab35087d1e64b538dfe44f64c97957134994cc17a",
+      "current_sha256": "9b81403f380c6408f64264aab35087d1e64b538dfe44f64c97957134994cc17a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/optim/choice.py",
+      "historical_copy_sha256": "a03f06136b98a5ee15032aa5efd5749e714195e7b7b02d299b16eb26f831d01f",
+      "current_sha256": "a03f06136b98a5ee15032aa5efd5749e714195e7b7b02d299b16eb26f831d01f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/optim/reference.py",
+      "historical_copy_sha256": "98e5460fdad717f973ef806153bd860a068b1b22336ab59496473216549cf982",
+      "current_sha256": "98e5460fdad717f973ef806153bd860a068b1b22336ab59496473216549cf982"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/optim/__init__.py",
+      "historical_copy_sha256": "d33958a9fb73d37bc69cbaaa74544419d6994f77b0aadbdcca706f669f4319ba",
+      "current_sha256": "d33958a9fb73d37bc69cbaaa74544419d6994f77b0aadbdcca706f669f4319ba"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/quant/rotated.py",
+      "historical_copy_sha256": "1314e80e748c79907f64fb3c92135a9e90025d5f26db22044589ca6a0bc0b67f",
+      "current_sha256": "1314e80e748c79907f64fb3c92135a9e90025d5f26db22044589ca6a0bc0b67f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/quant/__init__.py",
+      "historical_copy_sha256": "af5da125ee64e39570ccfbeb68c8363fa0841dbb00c5a918557b043ce94137ef",
+      "current_sha256": "af5da125ee64e39570ccfbeb68c8363fa0841dbb00c5a918557b043ce94137ef"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/buckets.py",
+      "historical_copy_sha256": "7c18206bff3987ea7f91b13d546631fdc5bc63679aebb8ec760ba70073637793",
+      "current_sha256": "7c18206bff3987ea7f91b13d546631fdc5bc63679aebb8ec760ba70073637793"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/decisions.py",
+      "historical_copy_sha256": "2f2befd03c07e18431db560e6fcc2d98abf24e1e457f979048dbbfd45ab1bdca",
+      "current_sha256": "2f2befd03c07e18431db560e6fcc2d98abf24e1e457f979048dbbfd45ab1bdca"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/manifest.py",
+      "historical_copy_sha256": "22a955a432328c3ffbb615592bb157678a68a30679382ed9928be2d8c9724bcd",
+      "current_sha256": "22a955a432328c3ffbb615592bb157678a68a30679382ed9928be2d8c9724bcd"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/plan.py",
+      "historical_copy_sha256": "0995b6b15b40d7c7418541adbb6cfcc71d340100ab93e82d2a919ad48e2de550",
+      "current_sha256": "0995b6b15b40d7c7418541adbb6cfcc71d340100ab93e82d2a919ad48e2de550"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/prewarm.py",
+      "historical_copy_sha256": "682d491c2ed612d6c1075f69feba5deacc45a3b540422c8acac20c57749f4fa3",
+      "current_sha256": "682d491c2ed612d6c1075f69feba5deacc45a3b540422c8acac20c57749f4fa3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/replay.py",
+      "historical_copy_sha256": "454731216a4e578cba26a2075e5bf7cf3af6852b8db8ab4c165629c23974b403",
+      "current_sha256": "454731216a4e578cba26a2075e5bf7cf3af6852b8db8ab4c165629c23974b403"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/timing.py",
+      "historical_copy_sha256": "4e9c400feb5fd1a04e39e04e4c78bfc4a1fee869c7aa5f1fd1a05a654a7a0da3",
+      "current_sha256": "4e9c400feb5fd1a04e39e04e4c78bfc4a1fee869c7aa5f1fd1a05a654a7a0da3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/tuner.py",
+      "historical_copy_sha256": "bac3098690c3317904dc83dc8ca49c024c8a46f1f777668b5a787da1038d8e1b",
+      "current_sha256": "c7f454e43ec5bc27272e1411ed01f085a59c5659b83ac3dabeee21172e55b88b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/window.py",
+      "historical_copy_sha256": "44d4390b8448ab104ff8ebb954381f75e7cb12d19cb9b5c48624da96f1f688ec",
+      "current_sha256": "44d4390b8448ab104ff8ebb954381f75e7cb12d19cb9b5c48624da96f1f688ec"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/tuning/__init__.py",
+      "historical_copy_sha256": "8a830eaa5842cc233fd711b4596e2d7905bfa3a48dac8f6bf318a8d408568db5",
+      "current_sha256": "8a830eaa5842cc233fd711b4596e2d7905bfa3a48dac8f6bf318a8d408568db5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/compile/choice.py",
+      "historical_copy_sha256": "89179c8c32e5bb0daa9f09125ac690f30438ed8e2359422936ded287377f68ce",
+      "current_sha256": "d741df2433f7635381f348159f8a1f04e1d56dcc4eff5dd5881ed901cbc1773c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/compile/ops.py",
+      "historical_copy_sha256": "3fad2981a33755419b3c81772dd340b54bf46ab85eaddc3d5b68e949f8dd359f",
+      "current_sha256": "3fad2981a33755419b3c81772dd340b54bf46ab85eaddc3d5b68e949f8dd359f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/compile/__init__.py",
+      "historical_copy_sha256": "0cf4f19f59f0459eca42718b2fec22258296df637453707bc8be786f57db0cf2",
+      "current_sha256": "0cf4f19f59f0459eca42718b2fec22258296df637453707bc8be786f57db0cf2"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/attention.py",
+      "historical_copy_sha256": "cffd77a7277dc9313f4839a607cc9b5221a70ec265c21d7dccdce2ab3f454247",
+      "current_sha256": "cffd77a7277dc9313f4839a607cc9b5221a70ec265c21d7dccdce2ab3f454247"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/ffn.py",
+      "historical_copy_sha256": "c98a204ee1b7f361b5ef303db725182d732419ebe903c6c965a2c09ac0206717",
+      "current_sha256": "c98a204ee1b7f361b5ef303db725182d732419ebe903c6c965a2c09ac0206717"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/hadamard.py",
+      "historical_copy_sha256": "fa24e06f4c2bd2c667733603a6bb66d3253a8ff9f2317a706982ae0366193661",
+      "current_sha256": "fa24e06f4c2bd2c667733603a6bb66d3253a8ff9f2317a706982ae0366193661"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/loss.py",
+      "historical_copy_sha256": "de4a2fb57d26d8a73f5290727e14656cf5f915c619a7a3a2226a9b377769382b",
+      "current_sha256": "de4a2fb57d26d8a73f5290727e14656cf5f915c619a7a3a2226a9b377769382b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/norm.py",
+      "historical_copy_sha256": "405a79c9b939f44571bcc4b41ebccc7258047f566a7976fd1216c5a468a2434f",
+      "current_sha256": "405a79c9b939f44571bcc4b41ebccc7258047f566a7976fd1216c5a468a2434f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/rope.py",
+      "historical_copy_sha256": "4b27c84956a1e142cdce8e9f65a4d023ff5c0f5de75c307f24eed1d9f302f011",
+      "current_sha256": "4b27c84956a1e142cdce8e9f65a4d023ff5c0f5de75c307f24eed1d9f302f011"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/textenc.py",
+      "historical_copy_sha256": "2e90729ad1c31de0e1221f5d74cf7839db255bfc82d5c0581085b28ace7b0554",
+      "current_sha256": "2e90729ad1c31de0e1221f5d74cf7839db255bfc82d5c0581085b28ace7b0554"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/_acc.py",
+      "historical_copy_sha256": "d1acc4adc175292b594bf0e21adb60ce6fe67d6bb87b1004fc67e76c9c67141f",
+      "current_sha256": "d1acc4adc175292b594bf0e21adb60ce6fe67d6bb87b1004fc67e76c9c67141f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/eager/__init__.py",
+      "historical_copy_sha256": "1a07a726bfc1a959e003fbd1b116d378f80baa4d8ced121d924d90d3cde47c4f",
+      "current_sha256": "1a07a726bfc1a959e003fbd1b116d378f80baa4d8ced121d924d90d3cde47c4f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/optim.py",
+      "historical_copy_sha256": "dfe0665b930093dbc595c1e76abc768f265252bfa59efdf55de87c068816a998",
+      "current_sha256": "dfe0665b930093dbc595c1e76abc768f265252bfa59efdf55de87c068816a998"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/quant.py",
+      "historical_copy_sha256": "2d6e8cd012a2f5671ac248647f5d4e7dc20fb90abc3437a5ce500d93dff08007",
+      "current_sha256": "2d6e8cd012a2f5671ac248647f5d4e7dc20fb90abc3437a5ce500d93dff08007"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/quant_rotated.py",
+      "historical_copy_sha256": "b84cbe08f0384039fa298c8ab248976b4dc1144d3636a29b3bd027dbb0ddd26a",
+      "current_sha256": "b84cbe08f0384039fa298c8ab248976b4dc1144d3636a29b3bd027dbb0ddd26a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/__init__.py",
+      "historical_copy_sha256": "b3b1d494c27361effd16f6a00b4afe653497138a857e194e8031897f09a998d7",
+      "current_sha256": "b3b1d494c27361effd16f6a00b4afe653497138a857e194e8031897f09a998d7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/hadamard.py",
+      "historical_copy_sha256": "ab495a81f342c03cd5cbc939ab7e6f63c073f787400d985fc8a563e73334de7b",
+      "current_sha256": "ab495a81f342c03cd5cbc939ab7e6f63c073f787400d985fc8a563e73334de7b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/quant.py",
+      "historical_copy_sha256": "48d22ffb79a6e4c7305222c5f7996ccfd6c8029cf677fbbbfce24646cf1c2a0e",
+      "current_sha256": "48d22ffb79a6e4c7305222c5f7996ccfd6c8029cf677fbbbfce24646cf1c2a0e"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/quant_rotated.py",
+      "historical_copy_sha256": "6fdafaf86bf2a35c36549ae5c4c293e0759be02dda1ac5b1c3aaed64ceab6853",
+      "current_sha256": "6fdafaf86bf2a35c36549ae5c4c293e0759be02dda1ac5b1c3aaed64ceab6853"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/_common.py",
+      "historical_copy_sha256": "7d93c42eb660beec278e47f96824f8e27e3fa1aae92b8a7b632a2aa9885fabef",
+      "current_sha256": "7d93c42eb660beec278e47f96824f8e27e3fa1aae92b8a7b632a2aa9885fabef"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/_status.py",
+      "historical_copy_sha256": "6147c1f1aac547d0d0084bb6b47fe2b7f41d8269684dcb501d4debb9d5571b7c",
+      "current_sha256": "6147c1f1aac547d0d0084bb6b47fe2b7f41d8269684dcb501d4debb9d5571b7c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/__init__.py",
+      "historical_copy_sha256": "5a8c086246bf2bbb4fc82013441a1195df5a7f3e4dfa9caa74b050db0d47b6ca",
+      "current_sha256": "5a8c086246bf2bbb4fc82013441a1195df5a7f3e4dfa9caa74b050db0d47b6ca"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/attention/entry.py",
+      "historical_copy_sha256": "50615528d16d9abee8920f0c795d87b7fed42db748fb65e4de47d66d27a403fb",
+      "current_sha256": "50615528d16d9abee8920f0c795d87b7fed42db748fb65e4de47d66d27a403fb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/attention/varlen.py",
+      "historical_copy_sha256": "77415c32ccc31bdbf131b6d979d0422b33ea7c31110661b76578dc20b33c9836",
+      "current_sha256": "77415c32ccc31bdbf131b6d979d0422b33ea7c31110661b76578dc20b33c9836"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/attention/_kernels.py",
+      "historical_copy_sha256": "5556a5412072d27231099b3f90686a3e7e4a14d12958881d34ccd7eacad6c2cd",
+      "current_sha256": "5556a5412072d27231099b3f90686a3e7e4a14d12958881d34ccd7eacad6c2cd"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/attention/__init__.py",
+      "historical_copy_sha256": "e6ee68d3810f75982fad3b67e5d7e8ccdfb47487bb661ab4c018f682bb9ac321",
+      "current_sha256": "e6ee68d3810f75982fad3b67e5d7e8ccdfb47487bb661ab4c018f682bb9ac321"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/ffn.py",
+      "historical_copy_sha256": "768e5f2c4dcf17dda4012b0f5bb462c35e03e64d65bcff534a154c4ac1972cf7",
+      "current_sha256": "768e5f2c4dcf17dda4012b0f5bb462c35e03e64d65bcff534a154c4ac1972cf7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/fused_linear.py",
+      "historical_copy_sha256": "0395ad5b0e8d7c36e96d95ec130313996528e8eb5e4c2d31c818b2616cfee02b",
+      "current_sha256": "0395ad5b0e8d7c36e96d95ec130313996528e8eb5e4c2d31c818b2616cfee02b"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/loss.py",
+      "historical_copy_sha256": "d06a10adbf894b680a9dce7073f8675145d77967eff357991a878565565a55d7",
+      "current_sha256": "d06a10adbf894b680a9dce7073f8675145d77967eff357991a878565565a55d7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/norm.py",
+      "historical_copy_sha256": "2d2fac35873e3df40d65e15dd4c32b53279e885708f1ea183f98441b6ca27381",
+      "current_sha256": "2d2fac35873e3df40d65e15dd4c32b53279e885708f1ea183f98441b6ca27381"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/residual.py",
+      "historical_copy_sha256": "9c42b3d0a42255d8264bb798aae0b272a3603bee8ee682b393e29d1d1be9d360",
+      "current_sha256": "9c42b3d0a42255d8264bb798aae0b272a3603bee8ee682b393e29d1d1be9d360"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/rope.py",
+      "historical_copy_sha256": "10f8c2175b33c0df8ce0c592e6e27a43e8d165b1fd28c690e76afa51f078ffe3",
+      "current_sha256": "10f8c2175b33c0df8ce0c592e6e27a43e8d165b1fd28c690e76afa51f078ffe3"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/_blockops.py",
+      "historical_copy_sha256": "4386fc1c380ef7783879b95d6705b1a70f5f10e88849e7bd2f326dda19ad41b1",
+      "current_sha256": "4386fc1c380ef7783879b95d6705b1a70f5f10e88849e7bd2f326dda19ad41b1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/_gemm_prims.py",
+      "historical_copy_sha256": "c131a443812ff49070fa53c1ce1b95ab7690c2b1323d2cbc2de844dfec6a7fe5",
+      "current_sha256": "c131a443812ff49070fa53c1ce1b95ab7690c2b1323d2cbc2de844dfec6a7fe5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/blocks/__init__.py",
+      "historical_copy_sha256": "7a25615e91e2f97a747f0e39a327bfad7ceaa704e1be607da94b6723510a231f",
+      "current_sha256": "7a25615e91e2f97a747f0e39a327bfad7ceaa704e1be607da94b6723510a231f"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/textenc/ops.py",
+      "historical_copy_sha256": "9d40ef35ff615759195cf7f0f98d03d6c2b3809dbdf69f0b97baa09d4ac392d7",
+      "current_sha256": "9d40ef35ff615759195cf7f0f98d03d6c2b3809dbdf69f0b97baa09d4ac392d7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/textenc/_kernels.py",
+      "historical_copy_sha256": "92b5f9bcb0315479952e570f5b362a32c2a360b7c769f843191a96d2dd82b25c",
+      "current_sha256": "92b5f9bcb0315479952e570f5b362a32c2a360b7c769f843191a96d2dd82b25c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/tilelang/textenc/__init__.py",
+      "historical_copy_sha256": "424ab2902f16bdab2fdde10bfa773d500d03ec3a32db21058ef5d43be93096f7",
+      "current_sha256": "424ab2902f16bdab2fdde10bfa773d500d03ec3a32db21058ef5d43be93096f7"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/attention/entry.py",
+      "historical_copy_sha256": "d06768852da9ac19c36cd05c994b51cd4f7a899cec865ec108ca2d19fe25b842",
+      "current_sha256": "d06768852da9ac19c36cd05c994b51cd4f7a899cec865ec108ca2d19fe25b842"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/attention/varlen.py",
+      "historical_copy_sha256": "f9831789d33f092a026327ec830cf838a4072fd4e6f8a8222dcae17a6e3e01bb",
+      "current_sha256": "f9831789d33f092a026327ec830cf838a4072fd4e6f8a8222dcae17a6e3e01bb"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/attention/_kernels.py",
+      "historical_copy_sha256": "159acf946d5a9db50778b335380832b68dab3e8cde3c7292a3bee502e6799877",
+      "current_sha256": "159acf946d5a9db50778b335380832b68dab3e8cde3c7292a3bee502e6799877"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/attention/__init__.py",
+      "historical_copy_sha256": "e3e24dc4229720b41bb2e37464b8ece16e2c2f9ddb7b276a3d6c51f40bb3004c",
+      "current_sha256": "e3e24dc4229720b41bb2e37464b8ece16e2c2f9ddb7b276a3d6c51f40bb3004c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/ffn.py",
+      "historical_copy_sha256": "f95fc265bb6882755c744083cedd73ba193ec93e73e645f1795a5501c32e36b8",
+      "current_sha256": "f95fc265bb6882755c744083cedd73ba193ec93e73e645f1795a5501c32e36b8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/fused_linear.py",
+      "historical_copy_sha256": "f3b314e9c212268583ad471275327c933052a69c1d5393cfa0c390b94b4d33d1",
+      "current_sha256": "f3b314e9c212268583ad471275327c933052a69c1d5393cfa0c390b94b4d33d1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/loss.py",
+      "historical_copy_sha256": "d7e50c468e37b1a8d82cfc5ee2b9c042c7b1e70e9c34f1b0d517282b8527b56a",
+      "current_sha256": "d7e50c468e37b1a8d82cfc5ee2b9c042c7b1e70e9c34f1b0d517282b8527b56a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/norm.py",
+      "historical_copy_sha256": "d6292318c7912df1764b4fee656bf3ee5188a7802891f43c94345973530ffad1",
+      "current_sha256": "d6292318c7912df1764b4fee656bf3ee5188a7802891f43c94345973530ffad1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/residual.py",
+      "historical_copy_sha256": "0ee417b8d3279be4e77763389da50379158cd7a6ffc278e829dd9271ed0367d8",
+      "current_sha256": "0ee417b8d3279be4e77763389da50379158cd7a6ffc278e829dd9271ed0367d8"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/rope.py",
+      "historical_copy_sha256": "cb756b5b0f8f96dcfb65908367933258ec5c73843d1b4d5be442e5a6c7ff568a",
+      "current_sha256": "cb756b5b0f8f96dcfb65908367933258ec5c73843d1b4d5be442e5a6c7ff568a"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/_blockops.py",
+      "historical_copy_sha256": "04717fb948489868904252cbfe42fcfe13b32483ad3d7c6a58b2d4bd85c481e1",
+      "current_sha256": "04717fb948489868904252cbfe42fcfe13b32483ad3d7c6a58b2d4bd85c481e1"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/_gemm_kernels.py",
+      "historical_copy_sha256": "ef36badf93995ae0861ec34427e498e40fb510495dd62c7ba72de70d17c0b0c5",
+      "current_sha256": "ef36badf93995ae0861ec34427e498e40fb510495dd62c7ba72de70d17c0b0c5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/blocks/__init__.py",
+      "historical_copy_sha256": "4b02c7127843e42b66fd3c7d80c574da7714cf067ff256d2bd1ec58ab73022b6",
+      "current_sha256": "4b02c7127843e42b66fd3c7d80c574da7714cf067ff256d2bd1ec58ab73022b6"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/fp8/fused.py",
+      "historical_copy_sha256": "067051449e3bba74251926817bff8c241f2e23e9ac7c20f7bf0542739d55a050",
+      "current_sha256": "067051449e3bba74251926817bff8c241f2e23e9ac7c20f7bf0542739d55a050"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/fp8/gemm.py",
+      "historical_copy_sha256": "fd8ac632c42b963f2b8c42a4482574f045ff0fcc627e6b5a5533892fb9506dee",
+      "current_sha256": "fd8ac632c42b963f2b8c42a4482574f045ff0fcc627e6b5a5533892fb9506dee"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/fp8/linear.py",
+      "historical_copy_sha256": "43fa4839ea34c087c41316002b84dc1078e198286b03b2f75f73d7c5babdf987",
+      "current_sha256": "43fa4839ea34c087c41316002b84dc1078e198286b03b2f75f73d7c5babdf987"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/fp8/quantize.py",
+      "historical_copy_sha256": "3739abbc2c1d6300990f7451a40ea89f81a7ee3a19e252a483062998f4793549",
+      "current_sha256": "3739abbc2c1d6300990f7451a40ea89f81a7ee3a19e252a483062998f4793549"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/fp8/__init__.py",
+      "historical_copy_sha256": "5225238f04d6879a4cdbb678477e3b7436a13903ae84edc7fe122f724d2f93a4",
+      "current_sha256": "5225238f04d6879a4cdbb678477e3b7436a13903ae84edc7fe122f724d2f93a4"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/optim/adamw.py",
+      "historical_copy_sha256": "978e7280eb447f9512d5c6065ea8e697dd076518ac08a4bb42edabd896eb9fe2",
+      "current_sha256": "978e7280eb447f9512d5c6065ea8e697dd076518ac08a4bb42edabd896eb9fe2"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/optim/multi.py",
+      "historical_copy_sha256": "d1fe285007f54e3405b40e291886a1f97e9275e17a9d5d877837ad13166d08d9",
+      "current_sha256": "d1fe285007f54e3405b40e291886a1f97e9275e17a9d5d877837ad13166d08d9"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/optim/__init__.py",
+      "historical_copy_sha256": "53979a3cde942b90d477b9ed4424ae60cf20b46545e04df13e9e1d1298642356",
+      "current_sha256": "53979a3cde942b90d477b9ed4424ae60cf20b46545e04df13e9e1d1298642356"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/textenc/attention.py",
+      "historical_copy_sha256": "929249574b42f14f11fcca01f636aff4c03d68785d41e475ba1cc9bb3f156547",
+      "current_sha256": "929249574b42f14f11fcca01f636aff4c03d68785d41e475ba1cc9bb3f156547"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/textenc/delta.py",
+      "historical_copy_sha256": "7d7e6155c140d0cf2a3dd50d74500b3da5a5bbe14cf19deb3ac471539c84ae94",
+      "current_sha256": "7d7e6155c140d0cf2a3dd50d74500b3da5a5bbe14cf19deb3ac471539c84ae94"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/textenc/_attention_kernels.py",
+      "historical_copy_sha256": "f5d86f463828336444b03687a111718244a7d8151a8ccee37df48a124c72e4f5",
+      "current_sha256": "f5d86f463828336444b03687a111718244a7d8151a8ccee37df48a124c72e4f5"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/textenc/_delta_kernels.py",
+      "historical_copy_sha256": "d54a95dd7a487d50609cb18c91ba9ad72ae10aa20fd470741942e843df351637",
+      "current_sha256": "d54a95dd7a487d50609cb18c91ba9ad72ae10aa20fd470741942e843df351637"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/textenc/_delta_short.py",
+      "historical_copy_sha256": "9ac5f4980f3c56d593792d059fa6108d24f540dd99a30bacdf7c516881511ec2",
+      "current_sha256": "9ac5f4980f3c56d593792d059fa6108d24f540dd99a30bacdf7c516881511ec2"
+    },
+    {
+      "path": "kohaku_src/kohakumoss_kernels/backends/triton/textenc/__init__.py",
+      "historical_copy_sha256": "7161d7bebeaf4674210378271ea0527e7593c2cbbedd14e16ce58ede8188c20e",
+      "current_sha256": "7161d7bebeaf4674210378271ea0527e7593c2cbbedd14e16ce58ede8188c20e"
+    },
+    {
+      "path": "Kohaku-LICENSE",
+      "historical_copy_sha256": "2e63789e1bd0f581c88e2cb66dbb3d68a6bdee80740e4e3a59a134630a1b3bc0",
+      "current_sha256": "2e63789e1bd0f581c88e2cb66dbb3d68a6bdee80740e4e3a59a134630a1b3bc0"
+    },
+    {
+      "path": "official_moss/hf.py",
+      "historical_copy_sha256": "7331bf7303b4926baa0ae07d94a63e56c75290ac2d2e89b62b0823052336f633",
+      "current_sha256": "92646e2fa41f1a67d26217be878c1e4398ca1b1a6c7fe04fe53fdb6bb86762c4"
+    },
+    {
+      "path": "official_moss/loaders.py",
+      "historical_copy_sha256": "bf5915bc2f7120930fcac034f56055f15448c0c616d2257707fd305e50961146",
+      "current_sha256": "460cd283841925277b6acc668397ff52ccd8469b159424ba996759a702d52a75"
+    },
+    {
+      "path": "official_moss/model.py",
+      "historical_copy_sha256": "c8bd1f3a2f40fe2e36194b23256e67fb8e4aac555a0f75c9bc59073bfc945f39",
+      "current_sha256": "9ea7e073d180664dd410c16ec33a2eee1aa0b715474878eafaa434ec99eebf77"
+    },
+    {
+      "path": "official_moss/nodes.py",
+      "historical_copy_sha256": "858ea2c20a4b4075d9ca18a94762b282766770950d9e2da0e32ede81f3412ebd",
+      "current_sha256": "2c4b1e884c828446a537633fafa572029681f5e8b120a542cd6c225f001fe9cf"
+    },
+    {
+      "path": "official_moss/text_encoder.py",
+      "historical_copy_sha256": "66936d3116ffead86f1c252f70d3894773104eb1bdebac9bf70665477e90e80d",
+      "current_sha256": "3f205d536630043e1180be609cb7ae6da71383817979ebbd74b22ca36e800f8f"
+    },
+    {
+      "path": "official_moss/weight_compat.py",
+      "historical_copy_sha256": "d76f861bd345011f17cb5bad74fac741c86a96fcc2f32984d072159a67f1188b",
+      "current_sha256": "7792da72d086ac4a49228cc8e72cdc1afb41ba9143d7fa7c24db963451c490ea"
+    },
+    {
+      "path": "official_moss/__init__.py",
+      "historical_copy_sha256": "a21881403bf281053eeedd66fc90229d4aa5b182c815d5f0b4911735f2962924",
+      "current_sha256": "c222ad151562acb05c6106f19571b1d8eab514b3b6985995b90ade6ef1489716"
+    },
+    {
+      "path": "MOSS-LICENSE",
+      "historical_copy_sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+      "current_sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5"
+    },
+    {
+      "path": "paired_session.py",
+      "historical_copy_sha256": "d1ba2ebd0fe0fd2c10c40b10b562afbb2bb35de57ed493315172279e28c279e1",
+      "current_sha256": "62aaf06e3832393215fb3995ea107825c0bd1006ebd328dc12cc0c2558b830a2"
+    },
+    {
+      "path": "bridge.py",
+      "historical_copy_sha256": "948330892cd134f1e48033227372489eed3e00fed157064c6aa1c4c89570c880",
+      "current_sha256": "d176557c0202fe2dcfada3cc4571d6fa6f4a98048e39f6b080fbb863eb069f4c"
+    },
+    {
+      "path": "kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/tokenizer.json.gz",
+      "historical_copy_sha256": "70765620bd5db1fd13e40a868c10419c7c8de7dbb2b5abd3a43d69aaa6c6f5b0",
+      "current_sha256": "70765620bd5db1fd13e40a868c10419c7c8de7dbb2b5abd3a43d69aaa6c6f5b0",
+      "bytes": 3760595
+    }
+  ],
+  "known_assets_not_locally_reverified": [],
+  "local_adapter_hashes": [
+    {
+      "path": "ffn_fused_v3.py",
+      "historical_source_sha256": "30011b94fb005bf23915d158e7261fe6b3f61da88f2a07d085e54549bed3688d",
+      "historical_vendored_sha256": "97ddc53a81814c49c35b8b33d152bc07f9ed6d64140503e99ae7b84ef92c21d5",
+      "current_sha256": "3b16cc7da85eedee8550aca4084742f6ca4fc2c7c54e3d46a3226a78776386b4",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+    },
+    {
+      "path": "ffn_gemm_v3.py",
+      "historical_source_sha256": "4f5e4458e822341ddb19adc9c134acf4d4e7dc7e941252abc1742e7275b10858",
+      "historical_vendored_sha256": "12e6e525139e38618bef8f1d902e9bf1d762bd7b1ee35d90182aca05168aad87",
+      "current_sha256": "12e6e525139e38618bef8f1d902e9bf1d762bd7b1ee35d90182aca05168aad87",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+    },
+    {
+      "path": "inference_contracts_v3.py",
+      "historical_source_sha256": "9a097e5d2d282a36496802d9c5d457d89f82ed13157e9a61660fbb0990399242",
+      "historical_vendored_sha256": "1a94214ed38925de31592e8b139acd4c1c1fd90ea52067641e1fc4c3f660e511",
+      "current_sha256": "397524bbcd887de8e8574e0bdff303553c3cc3c76d6fa12c55f020624b87ad44",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+    },
+    {
+      "path": "projection_share_v2.py",
+      "historical_source_sha256": "e6118d78574cd9d16964e27ce002e232025f9a888960ab391c54630bb0f6399f",
+      "historical_vendored_sha256": "b8ec3cbdceaba563696e0ee59f13ca0321a122a508627430cc4f053cedf7b565",
+      "current_sha256": "4cfda9fa1d105fd15281823202439b7ed1649796c6eef0f65c2a89c0c6446fbc",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+    },
+    {
+      "path": "qkv_fused_v1.py",
+      "historical_source_sha256": "afdb13f391c91f48792043b1037367aa8f501e4f45e503ea62be1311dae76ca2",
+      "historical_vendored_sha256": "40fc05e019ca4a37c15fcf920e20fcb15488d1859b9790ca0741118e8ea15a61",
+      "current_sha256": "b682d6266e773a3874d9c514180746bdd298c16948a6ab59bf6829354c623b21",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+    },
+    {
+      "path": "fixed_a8.py",
+      "historical_source_sha256": "9b9b922cb55f2d6a5f15b67310e0875d1dde68685579f9aa1c96d5461a3b1b8e",
+      "historical_vendored_sha256": "5a19f7b4740e247341c17fe2d1b0f9ab334e18144eaeda9c4a8a5f6a1f0370e8",
+      "current_sha256": "5a19f7b4740e247341c17fe2d1b0f9ab334e18144eaeda9c4a8a5f6a1f0370e8",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+    }
+  ],
+  "excluded_history": "Removed lowbit decoder and its private-baseline history are not distributed; no historical source is relicensed. Independent runtime/packed_decode.py provenance is recorded in ../../LICENSE_PROVENANCE.json."
+}

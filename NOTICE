@@ -1,0 +1,27 @@
+Kohaku MOSS Optimized — source integration release candidate
+
+The root LICENSE is an unchanged copy of KohakuMoss License 1.0, October 2026.
+It applies to the covered Kohaku source and the original integration candidate.
+Third-party components retain the terms, scopes and notices listed in
+THIRD_PARTY_NOTICES.md and LICENSE_PROVENANCE.json. No blanket Apache-2.0
+relicensing and no additional copyright owner are asserted.
+
+KohakuMoss source attribution retained from upstream:
+Copyright 2026 Shih-Ying Yeh (KohakuBlueLeaf) and contributors.
+
+Modified integration includes portable asset resolution, explicit checkpoint and
+precision selection, allocator/lifecycle policies, inference-only dispatch,
+streamed payload storage, standalone verification/download/release tools and
+ComfyUI nodes. Original upstream headers and licenses remain with their code.
+
+runtime/packed_decode.py is an independent mathematical packed-layout decoder:
+little-endian B-bit two's-complement UINT8[ceil(K*B/8),N] -> INT8[N,K].
+The operator reports implementation from that specification without reading the
+removed GPL decoder. SM89 black-box parity checked 10 W5/W6 cases and 169,939,328
+integer codes. This is an engineering provenance statement, not formal legal
+clean-room certification. Removed historical code is not relicensed by this file.
+
+Packaged Qwen configuration/tokenizer assets retain their own LICENSE and NOTICE
+under runtime/vendor/kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/.
+External compiler/runtime, optional Flash/Sage wheels and model weights retain
+their own licenses and are not bundled as binaries/checkpoints in this package.

@@ -1,0 +1,142 @@
+{
+  "status": "CURRENT_COMPONENT_INVENTORY_REVIEWED",
+  "brand": "Kohaku MOSS Optimized",
+  "licenses": [
+    {
+      "component": "KohakuMoss",
+      "license_as_observed": "KohakuMoss License 1.0, October2026; Apache2 terms plus Section10 naming requirement",
+      "attribution_as_observed": "Copyright 2026 Shih-Ying Yeh (KohakuBlueLeaf) and contributors",
+      "scope": "vendored source",
+      "saved_license": "licenses/KohakuMoss-LICENSE.txt",
+      "bytes": 12141,
+      "raw_sha256": "2e63789e1bd0f581c88e2cb66dbb3d68a6bdee80740e4e3a59a134630a1b3bc0",
+      "upstream_reference": "https://github.com/KohakuBlueleaf/KohakuMossTrainer.git"
+    },
+    {
+      "component": "MOSS-Image",
+      "license_as_observed": "Apache License2.0",
+      "attribution_as_observed": "Project: OpenMOSS/MOSS-Image; no additional copyright owner inferred from generic license appendix",
+      "scope": "vendored official_moss loader source",
+      "saved_license": "licenses/MOSS-Image-LICENSE.txt",
+      "bytes": 11560,
+      "raw_sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+      "upstream_reference": "https://github.com/OpenMOSS/MOSS-Image.git"
+    },
+    {
+      "component": "ComfyKitchen",
+      "license_as_observed": "Apache License2.0",
+      "attribution_as_observed": "Copyright (c) 2025 Comfy Org. All rights reserved.",
+      "scope": "external installed runtime dependency",
+      "saved_license": "licenses/ComfyKitchen-LICENSE.txt",
+      "bytes": 11566,
+      "raw_sha256": "457609350489eb6ea2982cbd2d19695e54741dc9778c9140f89e7b4e5e64ba58",
+      "upstream_reference": "https://github.com/Comfy-Org/comfy-kitchen"
+    },
+    {
+      "component": "ComfyKitchen notices",
+      "license_as_observed": "upstream NOTICE includes NVIDIA/PyTorch/nanobind/FlashAttention/torchao/SageAttention attributions",
+      "attribution_as_observed": "Preserve original NOTICE unmodified",
+      "scope": "external dependency notice",
+      "saved_license": "licenses/ComfyKitchen-NOTICE.txt",
+      "bytes": 5099,
+      "raw_sha256": "27a6b994dc3c6d5ff4ac589eb633e09e4627b0efd276b89dd9ea87f561991644",
+      "upstream_reference": "https://github.com/Comfy-Org/comfy-kitchen"
+    },
+    {
+      "component": "triton-windows",
+      "license_as_observed": "MIT permission text",
+      "attribution_as_observed": "Copyright2018-2020 Philippe Tillet; Copyright2020-2022 OpenAI",
+      "scope": "external installed compiler/runtime",
+      "saved_license": "licenses/Triton-Windows-LICENSE.txt",
+      "bytes": 1132,
+      "raw_sha256": "92640fb97222fd0a698ff28ce0c3782c172623f8d6c609b557636a80f28fb946",
+      "upstream_reference": "https://github.com/woct0rdho/triton-windows"
+    },
+    {
+      "component": "xFormers",
+      "license_as_observed": "BSD3-Clause",
+      "attribution_as_observed": "Copyright (c) Facebook, Inc. and its affiliates",
+      "scope": "optional external Flash wheel; no binary copied into the source release candidate",
+      "saved_license": "licenses/xFormers-LICENSE.txt",
+      "bytes": 1645,
+      "raw_sha256": "c4f7484863e2da4fff9fa10c9dd6b498311aeaea2ff29a3731b1de417ddd8422",
+      "upstream_reference": "https://facebookresearch.github.io/xformers/"
+    },
+    {
+      "component": "SageAttention Windows post6",
+      "license_as_observed": "Apache License 2.0",
+      "attribution_as_observed": "Copyright 2024 Jintao Zhang, Haofeng Huang",
+      "scope": "optional externally obtained isolated wheel; no wheel bundled in source candidate",
+      "source_artifact": "sageattention-2.2.0+cu130torch2.10.0andhigher.post6-cp310-abi3-win_amd64.whl",
+      "saved_license": "licenses/SageAttention-LICENSE.txt",
+      "bytes": 11358,
+      "raw_sha256": "986db8b93c3114682f8e96a9ceaff698dd5fc85679cac761ee962acb781b4fa0",
+      "upstream_reference": "https://github.com/woct0rdho/SageAttention/releases/tag/v2.2.0-windows.post6",
+      "wheel_sha256": "1635283f5c01ec3cda58a784d0d7eabbcaffaf9511d1b263db4750e1ed7958bb"
+    },
+    {
+      "component": "Qwen3.5 tokenizer/config license",
+      "scope": "packaged tokenizer/config assets; original upstream text preserved",
+      "saved_license": "runtime/vendor/kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/LICENSE",
+      "bytes": 11358,
+      "raw_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "upstream_reference": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "license_as_observed": "Apache License 2.0"
+    },
+    {
+      "component": "Qwen3.5 tokenizer/config notice",
+      "scope": "packaged tokenizer/config assets; original upstream text preserved",
+      "saved_license": "runtime/vendor/kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/NOTICE",
+      "bytes": 928,
+      "raw_sha256": "f9c5ac7118bd07868a4a9e1d9c72406905a0fc0e058f42bc28670e6254b5128e",
+      "upstream_reference": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "license_as_observed": "Upstream NOTICE retained"
+    }
+  ],
+  "source_repositories": [
+    {
+      "HEAD": "5223637706bc3b847b27589ad18e9221226ffa93",
+      "origin": "https://github.com/KohakuBlueleaf/KohakuMossTrainer.git"
+    },
+    {
+      "HEAD": "0ee86ac9576a6b3f1ada73e0e02aab5c710a58da",
+      "origin": "https://github.com/OpenMOSS/MOSS-Image.git"
+    }
+  ],
+  "exact_vendor_license_checks": {
+    "Kohaku_equals_source": true,
+    "MOSS_equals_source": true
+  },
+  "scope_notes": [
+    "No model weights, wheels, venv or toolchain binaries bundled in current source candidate",
+    "Root LICENSE is the unchanged KohakuMoss License; third-party scopes and original notices remain distinct",
+    "Primary product branding Kohaku MOSS Optimized satisfies the chosen naming policy",
+    "Independent packed decoder provenance is mathematical layout plus black-box equality, not a legal clean-room certification",
+    "Final public history must exclude private baseline containing the removed decoder"
+  ],
+  "root_license": {
+    "path": "LICENSE",
+    "identical_to": "licenses/KohakuMoss-LICENSE.txt",
+    "sha256": "2e63789e1bd0f581c88e2cb66dbb3d68a6bdee80740e4e3a59a134630a1b3bc0",
+    "scope": "Kohaku vendored code and original integration release candidate; third-party components retain their own terms; no new copyright owner asserted"
+  },
+  "independent_packed_decoder": {
+    "path": "runtime/packed_decode.py",
+    "specification": "little-endian B-bit two’s-complement packed UINT8[ceil(K*B/8),N] to INT8[N,K]",
+    "implementation_source": "Mathematical storage layout and independent implementation; operator reports not reading the removed GPL implementation",
+    "validation": "SM89 black-box comparison against existing runner: 10 W5/W6 cases, 169939328 integer codes exactly equal",
+    "evidence": "benchmarks/moss-sharing-20261025/packed-decoder-parity-v5.log (operator-retained private evidence)",
+    "legal_scope": "Engineering provenance record, not formal clean-room legal certification",
+    "source_sha256": "c1c76714c3a4614735278ceceffd0b581b487c45192ea1d19be2531c38cb2ff2",
+    "source_bytes": 1220
+  },
+  "historical_exclusions": [
+    {
+      "component": "previous lowbit unpack source",
+      "current_distribution": "excluded; runtime/vendor/unpack_sm75.py and unrelated GPL license copy removed",
+      "history": "Historical private baseline retained outside public release; use clean release history, do not publish that baseline history",
+      "claim": "No retroactive relicensing of removed historical code"
+    }
+  ],
+  "public_source_manifest": "runtime/vendor/SOURCES.json"
+}
