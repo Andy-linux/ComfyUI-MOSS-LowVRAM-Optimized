@@ -136,6 +136,10 @@ async function showSetup(node) {
             const env = report.environment ?? {}, evaluation = report.evaluation ?? {};
             body.append(element("h3", "1 · Environment and Manager"), element("p", `GPU: ${env.device?.name ?? "No CUDA device"} · Python ${env.python_version ?? "unknown"} · torch ${env.packages?.torch?.version ?? "missing"} · Triton ${env.packages?.triton?.version ?? "missing"}`));
             for (const issue of [...(evaluation.errors ?? []), ...(evaluation.warnings ?? [])]) body.append(element("p", `${issue.code}: ${issue.message}`));
+            if ((evaluation.actions ?? []).length) {
+                body.append(element("h4", "下一步 / Next steps"));
+                for (const action of evaluation.actions) body.append(element("p", String(action)));
+            }
             body.append(element("p", evaluation.qualification ?? "Environment qualification unavailable"));
             const manager = element("button", "Open Manager / installation guidance");
             const guidance = element("p", "在 Manager 完成此节点包安装；若提示重启，请先重启再检查。Windows Manager 可能把 requirements / install.py 准备延迟到重启阶段执行。安装失败时使用当前界面实际提供的重试或重装入口；无入口或宿主不兼容时使用官方 ComfyUI 安装维护向导。不降低安全级别，不承诺任意宿主均可自动准备。");
