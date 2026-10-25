@@ -20,7 +20,7 @@
       "payload_pinning": "staging",
       "te_resident_gib": 3.0,
       "dit_checkpoint": "moss-image-base-dit-int8-convrot.safetensors",
-      "te_checkpoint": "auto",
+      "te_checkpoint": "MOSS-Image-Base/text_encoder",
       "vae_checkpoint": "moss-image-vae.safetensors"
     }
   },

@@ -28,8 +28,36 @@ _TEXT={
     "Original FP16":("te_original","original","fp16"),
 }
 
+def environment_selection(values):
+    """Map existing UI values to the same policy names used by RuntimeConfig."""
+    if not isinstance(values, dict):
+        raise ValueError("Selection must be an object")
+    for key, allowed, default in (
+        ("precision", ("fp16_fixed", "bf16"), "fp16_fixed"),
+        ("vae_precision", ("fp32", "bf16"), "fp32"),
+        ("te_memory", ("auto", "ring", "partial", "resident"), "auto"),
+    ):
+        if values.get(key, default) not in allowed:
+            raise ValueError("Invalid " + key)
+    resident_blocks = values.get("resident_blocks", -1)
+    if type(resident_blocks) is not int or not -1 <= resident_blocks <= 40:
+        raise ValueError("resident_blocks must be an integer from -1 to 40")
+    _, te_mode, te_dtype = _TEXT[values.get("text_encoder", "INT8 ConvRot")]
+    return {
+        "candidate": _MODELS[values.get("model", "SFT W5")],
+        "profile": _PROFILES[values.get("profile", "6 GB")],
+        "precision": values.get("precision", "fp16_fixed"),
+        "te_mode": te_mode,
+        "te_compute_dtype": te_dtype,
+        "attention": _ATTENTION[values.get("attention", "auto")],
+        "vae_precision": values.get("vae_precision", "fp32"),
+        "te_memory": values.get("te_memory", "auto"),
+        "resident_blocks": resident_blocks,
+    }
+
+
 class MOSSOptimizedSessionLoader:
-    CATEGORY="Kohaku MOSS/Optimized"
+    CATEGORY="MOSS/Optimized"
     RETURN_TYPES=("MOSS_SESSION",)
     FUNCTION="load_session"
     DESCRIPTION="MOSS Base/SFT：保留原 W5/W6/W8，支持 Base ConvRot W8A8 与 Kohaku FP8。TE 的存储格式和实际计算精度分开选择；当前不支持 LoRA。"
@@ -64,6 +92,22 @@ class MOSSOptimizedSessionLoader:
     def __init__(self):
         self.session=None
 
+    @classmethod
+    def VALIDATE_INPUTS(cls, model, profile, text_encoder, attention,
+                        precision="fp16_fixed", vae_precision="fp32",
+                        te_memory="auto", resident_blocks=-1):
+        from .runtime.environment_service import check_selection, validation_message
+        try:
+            selected = environment_selection({
+                "model": model, "profile": profile, "text_encoder": text_encoder,
+                "attention": attention, "precision": precision,
+                "vae_precision": vae_precision, "te_memory": te_memory,
+                "resident_blocks": resident_blocks,
+            })
+            return validation_message(check_selection(selected)["evaluation"])
+        except (KeyError, TypeError, ValueError) as error:
+            return "Invalid MOSS configuration: " + str(error)
+
     def load_session(self,model,profile,text_encoder,attention,qkv_backend,ffn_tile,host_arena,adapter_cache=False,conditioning_memory=False,
                      precision="fp16_fixed",attention_head_group=0,vae_precision="fp32",te_memory="auto",vae_admission=False,resident_blocks=-1,payload_pinning="staging",te_resident_gib=3.0,
                      dit_checkpoint="auto",te_checkpoint="auto",vae_checkpoint="auto"):
@@ -73,6 +117,16 @@ class MOSSOptimizedSessionLoader:
         head_group=-1 if attention_head_group=="auto" else int(attention_head_group)
         if backend in ("auto","flash") and head_group not in (-1,0,24):
             raise ValueError("Flash/auto 不支持 head-group；请选择 0，或切换到支持分组的后端。")
+        from .runtime.environment_service import check_selection, validation_message
+        environment = check_selection(environment_selection({
+            "model": model, "profile": profile, "text_encoder": text_encoder,
+            "attention": attention, "precision": precision,
+            "vae_precision": vae_precision, "te_memory": te_memory,
+            "resident_blocks": resident_blocks,
+        }))
+        validation = validation_message(environment["evaluation"])
+        if validation is not True:
+            raise RuntimeError(validation)
         te_asset,te_mode,te_dtype=_TEXT[text_encoder]
         config=RuntimeConfig(candidate=_MODELS[model],profile=_PROFILES[profile],
              te_weights=te_checkpoint,te_asset=te_asset,te_mode=te_mode,te_compute_dtype=te_dtype,
@@ -86,11 +140,13 @@ class MOSSOptimizedSessionLoader:
             if self.session is not None:
                 self.session.close()
             self.session=MossSession(config)
+            for warning in environment["evaluation"]["warnings"]:
+                logging.warning("[MOSS environment] %s", warning["message"])
             logging.info("[KohakuMOSS lifecycle] new session profile=%s candidate=%s device=%s",config.profile,config.candidate,config.device)
         return (self.session,)
 
 class MOSSOptimizedPairedTextEncode:
-    CATEGORY="Kohaku MOSS/Optimized"
+    CATEGORY="MOSS/Optimized"
     RETURN_TYPES=("CONDITIONING","CONDITIONING")
     RETURN_NAMES=("positive","negative")
     FUNCTION="encode"
@@ -133,7 +189,7 @@ def _seed_metadata(seed, unique_id, prompt, extra_pnginfo, was_random):
 
 
 class MOSSOptimizedSampler:
-    CATEGORY="Kohaku MOSS/Optimized"
+    CATEGORY="MOSS/Optimized"
     RETURN_TYPES=("LATENT",)
     FUNCTION="sample"
     DESCRIPTION="使用会话选择的实际数值路径；基线 16 步、CFG 3、Euler / sgm_uniform、shift 5、SLG 22。"
@@ -175,7 +231,7 @@ class MOSSOptimizedSampler:
         return {"ui":{"actual_seed":[str(seed)]},"result":(result,)}
 
 class MOSSOptimizedVAEDecode:
-    CATEGORY="Kohaku MOSS/Optimized"
+    CATEGORY="MOSS/Optimized"
     RETURN_TYPES=("IMAGE",)
     FUNCTION="decode"
     DESCRIPTION="使用会话指定的 FP32/BF16 VAE 解码。显存不足时官方分块回退；精度或分块变化可能改变局部像素。"
@@ -190,7 +246,7 @@ class MOSSOptimizedVAEDecode:
             return (session.decode(samples),)
 
 class MOSSOptimizedReleaseSession:
-    CATEGORY="Kohaku MOSS/Optimized"
+    CATEGORY="MOSS/Optimized"
     RETURN_TYPES=()
     OUTPUT_NODE=True
     FUNCTION="release"
@@ -212,7 +268,7 @@ class MOSSOptimizedReleaseSession:
 
 
 class MOSSOptimizedControls:
-    CATEGORY="Kohaku MOSS/Optimized"
+    CATEGORY="MOSS/Optimized"
     RETURN_TYPES=()
     OUTPUT_NODE=True
     FUNCTION="run"
@@ -264,7 +320,7 @@ NODE_CLASS_MAPPINGS={
     "MOSSOptimizedControls":MOSSOptimizedControls,
 }
 NODE_DISPLAY_NAME_MAPPINGS={
-    "MOSSOptimizedSessionLoader":"Kohaku MOSS · 模型与预算",
+    "MOSSOptimizedSessionLoader":"MOSS · 低显存模型与预算",
     "MOSSOptimizedPairedTextEncode":"MOSS · 正负提示词编码",
     "MOSSOptimizedSampler":"MOSS · 优化采样",
     "MOSSOptimizedVAEDecode":"MOSS · VAE 解码",

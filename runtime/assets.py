@@ -15,7 +15,7 @@ ASSETS = {
     "base_w8": ("diffusion_models", ("moss_image_base_int8_convrot.safetensors", "moss-image-base-dit-int8-convrot.safetensors")),
     "base_fp8": ("diffusion_models", ("moss_image_base_kohaku_fp8_row.safetensors",)),
     "sft_fp8": ("diffusion_models", ("moss_image_sft_kohaku_fp8_row.safetensors",)),
-    "te_int8": ("text_encoders", ("moss-image-qwen35-int8-convrot.safetensors", "qwen3.5_9b_int8_convrot.safetensors")),
+    "te_int8": ("text_encoders", ("moss-image-qwen35-int8-convrot-v2.safetensors", "moss-image-qwen35-int8-convrot.safetensors", "qwen3.5_9b_int8_convrot.safetensors")),
     "te_w4": ("text_encoders", ("qwen3.5_9b_w4a8_gptq.safetensors",)),
     "te_original": ("text_encoders", ("qwen3.5_9b_bf16.safetensors", "MOSS-Image-Base/text_encoder", "MOSS-Image-SFT/text_encoder")),
     "vae": ("vae", ("moss-image-vae.safetensors", "moss_image_vae.safetensors")),
@@ -83,7 +83,17 @@ def resolve_asset(asset_id, selected="auto"):
 
 def checkpoint_choices(category):
     import folder_paths
-    return ["auto"] + sorted(set(folder_paths.get_filename_list(category)))
+    names = set(folder_paths.get_filename_list(category))
+    if category == "text_encoders":
+        # HF text encoders are selected as a directory, not as one of its shards.
+        for root in folder_paths.get_folder_paths(category):
+            root = Path(root)
+            if root.is_dir():
+                for index in root.rglob("model.safetensors.index.json"):
+                    relative = index.parent.relative_to(root).as_posix()
+                    if relative != ".":
+                        names.add(relative)
+    return ["auto"] + sorted(names)
 
 
 def comfy_root():

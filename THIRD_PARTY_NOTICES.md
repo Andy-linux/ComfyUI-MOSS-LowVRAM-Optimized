@@ -1,10 +1,16 @@
-# Kohaku MOSS Optimized — component notices
+# MOSS LowVRAM Optimized — component notices
+
+使用KohakuMoss推理组件 · Formal package: `kohaku-moss-lowvram-optimized`
 
 The root `LICENSE` is byte-identical to `licenses/KohakuMoss-LICENSE.txt`:
 **KohakuMoss License 1.0, October 2026**, including Section 10 naming terms.
 The original integration is prepared for release under that agreement. This does
 not replace the distinct licenses of other components or create a new copyright
-owner. The primary product name is **Kohaku MOSS Optimized**.
+owner. The formal distributed package name **kohaku-moss-lowvram-optimized**
+includes Kohaku. Main display is **MOSS LowVRAM Optimized**; the subtitle
+provides component attribution, not an asserted exception to Section 10. The
+existing repository URL is <https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized>;
+internal node IDs remain unchanged.
 
 | Current component | Scope | Preserved terms |
 |---|---|---|
@@ -41,6 +47,19 @@ this engineering process is not described as formal clean-room legal certificati
 
 Model weights are external assets with their own upstream terms, pinned in
 `model_manifest.json`. A model-card license does not license this entire source
-package. W5/W6 and exported FP8 publication remains pending the owner's actual HF
-repository and immutable hashes. Checkpoint conversion is inference preparation,
+package. W5/W6 already exist at `Andylinux/MOSS-Image-SFT-W5A8-W6A8`,
+revision `bfb77cb73ae7acb4f788d50d4043c2d71989b0a7`; the operator verified
+their hashes against the local files. Index these files rather than re-uploading.
+Three new local FP8 exports await a selected HF destination. Checkpoint conversion is inference preparation,
 not training. Integration modifications are summarized in the root `NOTICE`.
+
+## Optional Turing binary excluded
+
+The local `ssiu/flash-attention-turing` bundle records source commit
+`9ef98fcb506bb1e2fe3cece50935e2935bf6b124` without a confirmed repository
+license. Available CUTLASS/NVIDIA terms cover those respective components, not
+automatically the Turing implementation or its combined compiled binary. This
+package does not distribute, mirror or upload that source/binary bundle. The
+independently authored local integration adapter remains; its presence does not
+include or authorize the upstream implementation. Default auto does not require
+this bundle. See `docs/DISTRIBUTION_INVENTORY.md` for per-artifact decisions.

@@ -1,6 +1,6 @@
 {
   "status": "CURRENT_COMPONENT_INVENTORY_REVIEWED",
-  "brand": "Kohaku MOSS Optimized",
+  "brand": "MOSS LowVRAM Optimized",
   "licenses": [
     {
       "component": "KohakuMoss",
@@ -110,7 +110,7 @@
   "scope_notes": [
     "No model weights, wheels, venv or toolchain binaries bundled in current source candidate",
     "Root LICENSE is the unchanged KohakuMoss License; third-party scopes and original notices remain distinct",
-    "Primary product branding Kohaku MOSS Optimized satisfies the chosen naming policy",
+    "Formal distributed package name kohaku-moss-lowvram-optimized includes Kohaku; main display MOSS LowVRAM Optimized, subtitle 使用KohakuMoss推理组件",
     "Independent packed decoder provenance is mathematical layout plus black-box equality, not a legal clean-room certification",
     "Final public history must exclude private baseline containing the removed decoder"
   ],
@@ -138,5 +138,41 @@
       "claim": "No retroactive relicensing of removed historical code"
     }
   ],
-  "public_source_manifest": "runtime/vendor/SOURCES.json"
+  "public_source_manifest": "runtime/vendor/SOURCES.json",
+  "naming_policy": {
+    "primary_display": "MOSS LowVRAM Optimized",
+    "subtitle": "使用KohakuMoss推理组件",
+    "formal_package_name": "kohaku-moss-lowvram-optimized",
+    "github_repository": "https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized",
+    "section10_basis": "The formal package name includes Kohaku. The subtitle provides component attribution; it is not asserted to be a separate naming exception or a legal certification.",
+    "compatibility": "Existing internal node IDs are unchanged"
+  },
+  "distribution_inventory": "docs/DISTRIBUTION_INVENTORY.md",
+  "weight_distribution": {
+    "existing_public_w5_w6": {
+      "repo_id": "Andylinux/MOSS-Image-SFT-W5A8-W6A8",
+      "revision": "bfb77cb73ae7acb4f788d50d4043c2d71989b0a7",
+      "policy": "Index existing public files; operator verified SHA256 equal to local W5/W6; do not re-upload",
+      "local_sha256": {
+        "q5_ridge_gptq.safetensors": "3f8a775e179a63a7511d469f08430b89f5807ebd181f37f4bbaea7d039096f82",
+        "q6_direct.safetensors": "dc5af59f22eb89320e457536ae90b170c6548c74a9fca584684139cf88018f87"
+      }
+    },
+    "new_fp8": {
+      "status": "three local exports complete; HF destination not selected; not published",
+      "manifest": "docs/huggingface/conversion_manifest.json",
+      "hashes": "docs/huggingface/SHA256SUMS",
+      "source_revision_policy": "Do not invent source revisions where conversion manifest marks them unconfirmed"
+    },
+    "preencoded_prompt_tensors": "Not distributed or required for ordinary live TE; calibration/benchmark caches are not default dependencies"
+  },
+  "excluded_optional_components": [
+    {
+      "component": "ssiu/flash-attention-turing local Turing bundle",
+      "source_head": "9ef98fcb506bb1e2fe3cece50935e2935bf6b124",
+      "license_status": "No confirmed license for the pinned Turing repository implementation; CUTLASS/NVIDIA texts do not license the entire combined binary",
+      "policy": "Do not bundle, mirror, upload or redistribute the Turing binary/source bundle. Existing explicit local optional use remains separate; default auto does not require it.",
+      "adapter_scope": "Our independently authored adapter remains in the source package; no upstream bundle bytes are implied by its presence"
+    }
+  ]
 }

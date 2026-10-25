@@ -70,7 +70,7 @@
     {
       "id": "te_int8",
       "status": "public",
-      "notes": "Pinned Sumomo v2 core-compatible keys; 8,452,959,908 bytes. Matches existing community asset name.",
+      "notes": "Pinned exact Sumomo v2 bytes with a versioned local basename to avoid silently selecting legacy v1 under the same upstream name. Upstream filename/revision/hash are unchanged.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/blob/16364ffd306244f33be05d64b34b47f6e15d0328/LICENSE",
@@ -83,7 +83,7 @@
           "filename": "text_encoders/moss-image-qwen35-int8-convrot.safetensors",
           "size_bytes": 8452959908,
           "sha256": "511379fd690d59f11f49c062a8a687b9a985e92faa48a098eb7c66ba505574fe",
-          "destination": "text_encoders/moss-image-qwen35-int8-convrot.safetensors"
+          "destination": "text_encoders/moss-image-qwen35-int8-convrot-v2.safetensors"
         }
       ]
     },
@@ -252,21 +252,49 @@
     },
     {
       "id": "sft_w5",
-      "status": "local_only/publish_pending",
+      "status": "public",
       "local_filename": "q5_ridge_gptq.safetensors",
-      "notes": "No user HF namespace/repo supplied. No public URL/revision/hash invented; not downloadable.",
-      "files": [],
+      "notes": "Existing public SFT packed checkpoint; exact file SHA256 matches the measured local artifact. Direct upstream index, no duplicate upload. See pinned LOWBIT_MANIFEST and README for conversion provenance; this file license does not relicense runtime source.",
+      "files": [
+        {
+          "repo_id": "Andylinux/MOSS-Image-SFT-W5A8-W6A8",
+          "revision": "bfb77cb73ae7acb4f788d50d4043c2d71989b0a7",
+          "filename": "q5_ridge_gptq.safetensors",
+          "size_bytes": 3630052176,
+          "sha256": "3f8a775e179a63a7511d469f08430b89f5807ebd181f37f4bbaea7d039096f82",
+          "destination": "diffusion_models/q5_ridge_gptq.safetensors"
+        }
+      ],
       "local_artifact_bytes": 3630052176,
-      "local_artifact_sha256": "3f8a775e179a63a7511d469f08430b89f5807ebd181f37f4bbaea7d039096f82"
+      "local_artifact_sha256": "3f8a775e179a63a7511d469f08430b89f5807ebd181f37f4bbaea7d039096f82",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8/blob/bfb77cb73ae7acb4f788d50d4043c2d71989b0a7/LICENSE",
+        "provenance_manifest_url": "https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8/blob/bfb77cb73ae7acb4f788d50d4043c2d71989b0a7/LOWBIT_MANIFEST.json"
+      }
     },
     {
       "id": "sft_w6",
-      "status": "local_only/publish_pending",
+      "status": "public",
       "local_filename": "q6_direct.safetensors",
-      "notes": "No user HF namespace/repo supplied. No public URL/revision/hash invented; not downloadable.",
-      "files": [],
+      "notes": "Existing public SFT packed checkpoint; exact file SHA256 matches the measured local artifact. Direct upstream index, no duplicate upload. See pinned LOWBIT_MANIFEST and README for conversion provenance; this file license does not relicense runtime source.",
+      "files": [
+        {
+          "repo_id": "Andylinux/MOSS-Image-SFT-W5A8-W6A8",
+          "revision": "bfb77cb73ae7acb4f788d50d4043c2d71989b0a7",
+          "filename": "q6_direct.safetensors",
+          "size_bytes": 4224594400,
+          "sha256": "dc5af59f22eb89320e457536ae90b170c6548c74a9fca584684139cf88018f87",
+          "destination": "diffusion_models/q6_direct.safetensors"
+        }
+      ],
       "local_artifact_bytes": 4224594400,
-      "local_artifact_sha256": "dc5af59f22eb89320e457536ae90b170c6548c74a9fca584684139cf88018f87"
+      "local_artifact_sha256": "dc5af59f22eb89320e457536ae90b170c6548c74a9fca584684139cf88018f87",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8/blob/bfb77cb73ae7acb4f788d50d4043c2d71989b0a7/LICENSE",
+        "provenance_manifest_url": "https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8/blob/bfb77cb73ae7acb4f788d50d4043c2d71989b0a7/LOWBIT_MANIFEST.json"
+      }
     },
     {
       "id": "base_fp8",
@@ -285,6 +313,15 @@
       "files": [],
       "local_artifact_bytes": 5174879840,
       "local_artifact_sha256": "06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862"
+    },
+    {
+      "id": "base_fp8_weight_only",
+      "status": "local_only/publish_pending",
+      "local_filename": "moss_image_base_kohaku_fp8_weight_only.safetensors",
+      "notes": "Locally exported Base FP8 weight-only variant. Select Base Kohaku FP8 and this explicit checkpoint; activations remain 16-bit. HF destination is not selected, so no public download is enabled.",
+      "files": [],
+      "local_artifact_bytes": 5346415987,
+      "local_artifact_sha256": "03a31fb8a7c2e196b3b0c3b02849442d40503ead10cdf9f9f4bce543525c1c54"
     }
   ],
   "alternate_original_te_source": {

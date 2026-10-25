@@ -1,4 +1,8 @@
-Kohaku MOSS Optimized — source integration release candidate
+MOSS LowVRAM Optimized
+使用KohakuMoss推理组件
+Formal package: kohaku-moss-lowvram-optimized
+Repository: https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized
+Source integration release candidate
 
 The root LICENSE is an unchanged copy of KohakuMoss License 1.0, October 2026.
 It applies to the covered Kohaku source and the original integration candidate.
@@ -25,3 +29,16 @@ Packaged Qwen configuration/tokenizer assets retain their own LICENSE and NOTICE
 under runtime/vendor/kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/.
 External compiler/runtime, optional Flash/Sage wheels and model weights retain
 their own licenses and are not bundled as binaries/checkpoints in this package.
+
+Naming: the formal distributed package name includes Kohaku under Section 10.
+The subtitle is component attribution; it is not claimed as a naming exemption.
+Existing internal node IDs are unchanged. Distribution details are recorded in
+docs/DISTRIBUTION_INVENTORY.md. Existing upstream weights/wheels are indexed at
+their original sources. Existing public W5/W6 are indexed, not re-uploaded. Three
+new local FP8 exports await an HF destination. Fixed-prompt conditioning tensors
+and calibration caches are not default dependencies of live text encoding.
+
+The optional ssiu/flash-attention-turing implementation has no confirmed project
+license at the recorded source revision. Its local compiled bundle is not bundled,
+mirrored or uploaded. CUTLASS/NVIDIA notices are not treated as authorization for
+that entire binary. Our independent integration adapter remains separate.

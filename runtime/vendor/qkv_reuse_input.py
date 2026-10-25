@@ -8,6 +8,7 @@ the consumed private FP16 norm input after A8 quantization on the same stream.
 This is a destructive input contract, not the old nonaliasing API.
 Not qualified/default until per-architecture INT32, output, attention and image gates.
 """
+
 import threading
 import types
 import torch
@@ -16,75 +17,129 @@ import triton.language as tl
 
 
 @triton.jit
-def _unpack3(PQ, PK, PV, OUT, D:tl.constexpr, K:tl.constexpr,
-             BITS:tl.constexpr, BN:tl.constexpr, BK:tl.constexpr):
-    p = tl.program_id(0) // tl.cdiv(D,BN)
-    ni = (tl.program_id(0) % tl.cdiv(D,BN))*BN+tl.arange(0,BN)
-    ki = tl.program_id(1)*BK+tl.arange(0,BK)
-    ptr = tl.where(p==0,PQ,tl.where(p==1,PK,PV))
-    bit = ki*BITS
-    byte,shift = bit//8,bit%8
-    rows:tl.constexpr = (K*BITS+7)//8
-    valid = (ki[:,None]<K)&(ni[None,:]<D)
-    lo = tl.load(ptr+byte[:,None]*D+ni[None,:],valid,0).to(tl.int32)
-    hi = tl.load(ptr+(byte[:,None]+1)*D+ni[None,:],
-                 valid&((byte[:,None]+1)<rows)&((shift[:,None]+BITS)>8),0).to(tl.int32)
-    code = ((lo|(hi<<8))>>shift[:,None])&((1<<BITS)-1)
-    signed = ((code^(1<<(BITS-1)))-(1<<(BITS-1))).to(tl.int8)
-    tl.store(OUT+(p*D+ni[:,None])*K+ki[None,:],tl.trans(signed),
-             (ni[:,None]<D)&(ki[None,:]<K))
+def _unpack3(
+    PQ,
+    PK,
+    PV,
+    OUT,
+    D: tl.constexpr,
+    K: tl.constexpr,
+    BITS: tl.constexpr,
+    BN: tl.constexpr,
+    BK: tl.constexpr,
+):
+    p = tl.program_id(0) // tl.cdiv(D, BN)
+    ni = (tl.program_id(0) % tl.cdiv(D, BN)) * BN + tl.arange(0, BN)
+    ki = tl.program_id(1) * BK + tl.arange(0, BK)
+    ptr = tl.where(p == 0, PQ, tl.where(p == 1, PK, PV))
+    bit = ki * BITS
+    byte, shift = bit // 8, bit % 8
+    rows: tl.constexpr = (K * BITS + 7) // 8
+    valid = (ki[:, None] < K) & (ni[None, :] < D)
+    lo = tl.load(ptr + byte[:, None] * D + ni[None, :], valid, 0).to(tl.int32)
+    hi = tl.load(
+        ptr + (byte[:, None] + 1) * D + ni[None, :],
+        valid & ((byte[:, None] + 1) < rows) & ((shift[:, None] + BITS) > 8),
+        0,
+    ).to(tl.int32)
+    code = ((lo | (hi << 8)) >> shift[:, None]) & ((1 << BITS) - 1)
+    signed = ((code ^ (1 << (BITS - 1))) - (1 << (BITS - 1))).to(tl.int8)
+    tl.store(
+        OUT + (p * D + ni[:, None]) * K + ki[None, :],
+        tl.trans(signed),
+        (ni[:, None] < D) & (ki[None, :] < K),
+    )
 
 
 @triton.jit
-def _dequant3(ACC,SA,SQ,SK,SV,OUT,M:tl.constexpr,D:tl.constexpr,BLOCK:tl.constexpr):
-    ix = tl.program_id(0)*BLOCK+tl.arange(0,BLOCK)
-    n = ix%(3*D)
-    m = ix//(3*D)
-    p = n//D
-    sp = tl.where(p==0,SQ,tl.where(p==1,SK,SV))
-    acc = tl.load(ACC+ix,m<M,0).to(tl.float32)
-    sa = tl.load(SA+m,m<M,0).to(tl.float32)
-    sw = tl.load(sp+n%D,m<M,0).to(tl.float32)
-    y = (acc*sa)*sw
-    tl.store(OUT+p*M*D+m*D+n%D,y,m<M)
+def _dequant3(
+    ACC, SA, SQ, SK, SV, OUT, M: tl.constexpr, D: tl.constexpr, BLOCK: tl.constexpr
+):
+    ix = tl.program_id(0) * BLOCK + tl.arange(0, BLOCK)
+    n = ix % (3 * D)
+    m = ix // (3 * D)
+    p = n // D
+    sp = tl.where(p == 0, SQ, tl.where(p == 1, SK, SV))
+    acc = tl.load(ACC + ix, m < M, 0).to(tl.float32)
+    sa = tl.load(SA + m, m < M, 0).to(tl.float32)
+    sw = tl.load(sp + n % D, m < M, 0).to(tl.float32)
+    y = (acc * sa) * sw
+    tl.store(OUT + p * M * D + m * D + n % D, y, m < M)
 
 
 @triton.jit
-def _gemm3(A,W,SA,SQ,SK,SV,OQ,OK,OV,DEBUG,M:tl.constexpr,D:tl.constexpr,K:tl.constexpr,
-           BM:tl.constexpr,BN:tl.constexpr,BK:tl.constexpr,STORE_ACC:tl.constexpr):
-    mi=tl.program_id(0)*BM+tl.arange(0,BM)
-    ni=tl.program_id(1)*BN+tl.arange(0,BN)
-    ki=tl.arange(0,BK)
-    acc=tl.zeros((BM,BN),tl.int32)
-    for kb in range(tl.cdiv(K,BK)):
-        kk=kb*BK+ki
-        a=tl.load(A+mi[:,None]*K+kk[None,:],(mi[:,None]<M)&(kk[None,:]<K),0)
-        w=tl.load(W+ni[None,:]*K+kk[:,None],(ni[None,:]<3*D)&(kk[:,None]<K),0)
-        acc=tl.dot(a,w,acc,out_dtype=tl.int32)
+def _gemm3(
+    A,
+    W,
+    SA,
+    SQ,
+    SK,
+    SV,
+    OQ,
+    OK,
+    OV,
+    DEBUG,
+    M: tl.constexpr,
+    D: tl.constexpr,
+    K: tl.constexpr,
+    BM: tl.constexpr,
+    BN: tl.constexpr,
+    BK: tl.constexpr,
+    STORE_ACC: tl.constexpr,
+):
+    mi = tl.program_id(0) * BM + tl.arange(0, BM)
+    ni = tl.program_id(1) * BN + tl.arange(0, BN)
+    ki = tl.arange(0, BK)
+    acc = tl.zeros((BM, BN), tl.int32)
+    for kb in range(tl.cdiv(K, BK)):
+        kk = kb * BK + ki
+        a = tl.load(
+            A + mi[:, None] * K + kk[None, :], (mi[:, None] < M) & (kk[None, :] < K), 0
+        )
+        w = tl.load(
+            W + ni[None, :] * K + kk[:, None],
+            (ni[None, :] < 3 * D) & (kk[:, None] < K),
+            0,
+        )
+        acc = tl.dot(a, w, acc, out_dtype=tl.int32)
     if STORE_ACC:
-        tl.store(DEBUG+mi[:,None]*(3*D)+ni[None,:],acc,(mi[:,None]<M)&(ni[None,:]<3*D))
-    p=ni//D
-    sp=tl.where(p==0,SQ,tl.where(p==1,SK,SV))
-    sa=tl.load(SA+mi,mi<M,0).to(tl.float32)
-    sw=tl.load(sp+ni%D,ni<3*D,0).to(tl.float32)
-    y=(acc.to(tl.float32)*sa[:,None])*sw[None,:]
-    op=tl.where(p==0,OQ,tl.where(p==1,OK,OV))
-    tl.store(op[None,:]+mi[:,None]*D+ni[None,:]%D,
-             y,(mi[:,None]<M)&(ni[None,:]<3*D))
+        tl.store(
+            DEBUG + mi[:, None] * (3 * D) + ni[None, :],
+            acc,
+            (mi[:, None] < M) & (ni[None, :] < 3 * D),
+        )
+    p = ni // D
+    sp = tl.where(p == 0, SQ, tl.where(p == 1, SK, SV))
+    sa = tl.load(SA + mi, mi < M, 0).to(tl.float32)
+    sw = tl.load(sp + ni % D, ni < 3 * D, 0).to(tl.float32)
+    y = (acc.to(tl.float32) * sa[:, None]) * sw[None, :]
+    op = tl.where(p == 0, OQ, tl.where(p == 1, OK, OV))
+    tl.store(
+        op[None, :] + mi[:, None] * D + ni[None, :] % D,
+        y,
+        (mi[:, None] < M) & (ni[None, :] < 3 * D),
+    )
 
 
-CONFIG = dict(bm=64,bn=64,bk=64,warps=4,stages=2)
-SM89_REGISTER_CONFIG = dict(bm=64,bn=128,bk=64,warps=4,stages=2)
+CONFIG = dict(bm=64, bn=64, bk=64, warps=4, stages=2)
+SM89_REGISTER_CONFIG = dict(bm=64, bn=128, bk=64, warps=4, stages=2)
 
 
 class Workspace:
     """Request-serialized workspace; may share old install_scratch() dictionary."""
+
     def __init__(self, scratch=None):
         self.scratch = {} if scratch is None else scratch
         self._lock = threading.Lock()
         self._stream = None
-        self.stats = dict(calls=0,quantize_calls=0,unpack_launches=0,
-                          gemm_launches=0,dequant_launches=0,weight_scratch_bytes=0)
+        self.stats = dict(
+            calls=0,
+            quantize_calls=0,
+            unpack_launches=0,
+            gemm_launches=0,
+            dequant_launches=0,
+            weight_scratch_bytes=0,
+        )
         self.last_kernel = None
 
     def close(self):
@@ -95,22 +150,47 @@ class Workspace:
 
 def _validate_bases(bases):
     from ..storage import FrozenPackedBase
-    if len(bases)!=3 or any(type(b) is not FrozenPackedBase for b in bases):
+
+    if len(bases) != 3 or any(type(b) is not FrozenPackedBase for b in bases):
         raise ValueError("Exactly three original FrozenPackedBase Q/K/V required")
-    d=bases[0].qweight.shape[1];k=bases[0].k;bits=bases[0].bits
+    d = bases[0].qweight.shape[1]
+    k = bases[0].k
+    bits = bases[0].bits
     for b in bases:
-        if b.k!=k or b.bits!=bits or tuple(b.qweight.shape)!=((k*bits+7)//8,d):
+        if (
+            b.k != k
+            or b.bits != bits
+            or tuple(b.qweight.shape) != ((k * bits + 7) // 8, d)
+        ):
             raise ValueError("QKV original packed shapes/bits differ")
-        if b.qweight.dtype!=torch.uint8 or not b.qweight.is_contiguous():
+        if b.qweight.dtype != torch.uint8 or not b.qweight.is_contiguous():
             raise ValueError("Original contiguous UINT8 codes required")
-        if b.wscales.dtype!=torch.float32 or tuple(b.wscales.shape)!=(d,1) or not b.wscales.is_contiguous():
+        if (
+            b.wscales.dtype != torch.float32
+            or tuple(b.wscales.shape) != (d, 1)
+            or not b.wscales.is_contiguous()
+        ):
             raise ValueError("Original contiguous FP32 row scales required")
-        if b.qweight.device!=bases[0].qweight.device or b.wscales.device!=b.qweight.device:
+        if (
+            b.qweight.device != bases[0].qweight.device
+            or b.wscales.device != b.qweight.device
+        ):
             raise ValueError("Explicit shared payload/scale device required")
-    return d,k,bits
+    return d, k, bits
 
 
-def project(x,bases,*,workspace,backend="register",config=SM89_REGISTER_CONFIG,return_acc=False,base_validator=None,overwrite_input=False,residual=None):
+def project(
+    x,
+    bases,
+    *,
+    workspace,
+    backend="register",
+    config=SM89_REGISTER_CONFIG,
+    return_acc=False,
+    base_validator=None,
+    overwrite_input=False,
+    residual=None,
+):
     """Destructive private-norm-input API: returned Q aliases x intentionally.
 
     Explicit overwrite_input=True acknowledges that no consumer may read old x
@@ -120,90 +200,226 @@ def project(x,bases,*,workspace,backend="register",config=SM89_REGISTER_CONFIG,r
     Quantization first reads x into independent INT8 A8 on the same bound stream;
     the unchanged MMA store then overwrites x with Q. No stream/event reordering.
     """
-    from .fixed_a8 import quantize,int32_gemm
-    d,k,bits=(_validate_bases if base_validator is None else base_validator)(bases)
-    if backend!="register" or config!=SM89_REGISTER_CONFIG:
-        raise ValueError("Three-output candidate requires register BM64/BN128/BK64/w4/s2")
-    if x.device!=bases[0].qweight.device or not x.is_cuda or x.dtype not in (torch.float16,torch.bfloat16) or x.ndim!=2 or x.shape[1]!=k:
+    from .fixed_a8 import quantize, int32_gemm
+
+    d, k, bits = (_validate_bases if base_validator is None else base_validator)(bases)
+    if backend != "register" or config != SM89_REGISTER_CONFIG:
+        raise ValueError(
+            "Three-output candidate requires register BM64/BN128/BK64/w4/s2"
+        )
+    if (
+        x.device != bases[0].qweight.device
+        or not x.is_cuda
+        or x.dtype not in (torch.float16, torch.bfloat16)
+        or x.ndim != 2
+        or x.shape[1] != k
+    ):
         raise ValueError("CUDA FP16/BF16 [M,K] same-device input required")
     if not overwrite_input or not torch.is_tensor(residual):
-        raise ValueError("Explicit private input overwrite consent and residual tensor required")
+        raise ValueError(
+            "Explicit private input overwrite consent and residual tensor required"
+        )
     if torch.is_grad_enabled() or x.requires_grad or residual.requires_grad:
         raise ValueError("Destructive QKV requires no-grad/inference execution")
-    if residual.device!=x.device or residual.shape!=x.shape:
+    if residual.device != x.device or residual.shape != x.shape:
         raise ValueError("Matching same-device residual required for ownership check")
-    if not x.is_contiguous() or x.storage_offset()!=0 or x.untyped_storage().nbytes()!=x.numel()*x.element_size():
-        raise ValueError("Private norm input must be contiguous offset0 with exact backing size")
-    ptr=x.untyped_storage().data_ptr()
-    if ptr==residual.untyped_storage().data_ptr():
+    if (
+        not x.is_contiguous()
+        or x.storage_offset() != 0
+        or x.untyped_storage().nbytes() != x.numel() * x.element_size()
+    ):
+        raise ValueError(
+            "Private norm input must be contiguous offset0 with exact backing size"
+        )
+    ptr = x.untyped_storage().data_ptr()
+    if ptr == residual.untyped_storage().data_ptr():
         raise ValueError("Norm input must not share residual storage")
-    if any(ptr==t.untyped_storage().data_ptr() for b in bases for t in (b.qweight,b.wscales)):
+    if any(
+        ptr == t.untyped_storage().data_ptr()
+        for b in bases
+        for t in (b.qweight, b.wscales)
+    ):
         raise ValueError("Norm input must not share model storage")
-    capability=torch.cuda.get_device_capability(x.device)
-    if capability==(7,5) and x.dtype==torch.bfloat16:
+    capability = torch.cuda.get_device_capability(x.device)
+    if capability == (7, 5) and x.dtype == torch.bfloat16:
         raise ValueError("BF16 requires SM80 or newer")
-    if capability not in ((8,9),(7,5)):
-        raise ValueError("Private-input Q reuse is qualified only for SM89 or measured SM75")
-    if capability==(7,5) and (bits!=5 or str(triton.__version__).split(".")[:2]!=["3","2"]):
-        raise ValueError("SM75 private-input Q reuse requires measured W5 and uniform Triton3.2")
+    if capability not in ((8, 9), (7, 5)):
+        raise ValueError(
+            "Private-input Q reuse is qualified only for SM89 or measured SM75"
+        )
+    if capability == (7, 5) and (
+        bits != 5 or str(triton.__version__).split(".")[:2] != ["3", "2"]
+    ):
+        raise ValueError(
+            "SM75 private-input Q reuse requires measured W5 and uniform Triton3.2"
+        )
     if not workspace._lock.acquire(blocking=False):
         raise RuntimeError("Concurrent QKV workspace use refused")
     try:
-        stream=(str(x.device),torch.cuda.current_stream(x.device).cuda_stream)
-        if workspace._stream is None:workspace._stream=stream
-        elif workspace._stream!=stream:
-            raise RuntimeError("Workspace is bound to one CUDA stream; create another per stream")
-        existing=workspace.scratch.get("buffer")
-        if existing is not None and existing.untyped_storage().data_ptr()==ptr:
+        stream = (str(x.device), torch.cuda.current_stream(x.device).cuda_stream)
+        if workspace._stream is None:
+            workspace._stream = stream
+        elif workspace._stream != stream:
+            raise RuntimeError(
+                "Workspace is bound to one CUDA stream; create another per stream"
+            )
+        existing = workspace.scratch.get("buffer")
+        if existing is not None and existing.untyped_storage().data_ptr() == ptr:
             raise ValueError("Norm input must not share decoder workspace storage")
-        diagnostic=getattr(workspace,"diagnostic",None)
-        a=sa=codes=ok=ov=None
-        if diagnostic:diagnostic("entry",{"x":x,"residual":residual,"scratch":workspace.scratch.get("buffer")})
-        a,sa=quantize(x)
-        if diagnostic:diagnostic("quantized",{"x":x,"residual":residual,"a":a,"sa":sa})
-        if any(t.untyped_storage().data_ptr()==ptr for t in (a,sa)):
-            raise ValueError("Original A8 codes/scales must not alias destructive norm input")
-        size=3*d*k
-        buf=workspace.scratch.get("buffer")
-        if buf is None or buf.numel()<size:
+        diagnostic = getattr(workspace, "diagnostic", None)
+        a = sa = codes = ok = ov = None
+        if diagnostic:
+            diagnostic(
+                "entry",
+                {
+                    "x": x,
+                    "residual": residual,
+                    "scratch": workspace.scratch.get("buffer"),
+                },
+            )
+        a, sa = quantize(x)
+        if diagnostic:
+            diagnostic("quantized", {"x": x, "residual": residual, "a": a, "sa": sa})
+        if any(t.untyped_storage().data_ptr() == ptr for t in (a, sa)):
+            raise ValueError(
+                "Original A8 codes/scales must not alias destructive norm input"
+            )
+        size = 3 * d * k
+        buf = workspace.scratch.get("buffer")
+        if buf is None or buf.numel() < size:
             workspace.scratch.clear()
-            buf=torch.empty(size,device=x.device,dtype=torch.int8)
-            workspace.scratch["buffer"]=buf
-        if buf.dtype!=torch.int8 or buf.device!=x.device or not buf.is_contiguous():
+            buf = torch.empty(size, device=x.device, dtype=torch.int8)
+            workspace.scratch["buffer"] = buf
+        if buf.dtype != torch.int8 or buf.device != x.device or not buf.is_contiguous():
             raise ValueError("Shared unpack scratch incompatible")
-        codes=buf[:size].view(3*d,k)
-        _unpack3[(3*triton.cdiv(d,32),triton.cdiv(k,64))](
-            *(b.qweight for b in bases),codes,d,k,bits,32,64,num_warps=4,num_stages=1)
-        if diagnostic:diagnostic("unpacked",{"codes":codes,"a":a,"sa":sa,"x":x,"residual":residual})
-        m=len(x)
-        oq=x
-        if diagnostic:diagnostic("before_K",{"x":x,"residual":residual,"a":a,"sa":sa,"codes":codes})
-        ok=torch.empty((m,d),device=x.device,dtype=x.dtype)
-        if diagnostic:diagnostic("after_K",{"x":x,"residual":residual,"a":a,"sa":sa,"codes":codes,"K":ok})
-        if diagnostic:diagnostic("before_V",{"x":x,"residual":residual,"a":a,"sa":sa,"codes":codes,"K":ok})
-        ov=torch.empty((m,d),device=x.device,dtype=x.dtype)
-        if diagnostic:diagnostic("after_V",{"x":x,"residual":residual,"a":a,"sa":sa,"codes":codes,"K":ok,"V":ov})
-        debug=torch.empty((m,3*d),device=x.device,dtype=torch.int32) if return_acc else oq
-        c=config
-        workspace.last_kernel=_gemm3[(triton.cdiv(m,c["bm"]),triton.cdiv(3*d,c["bn"]))](
-            a,codes,sa,*(b.wscales for b in bases),oq,ok,ov,debug,m,d,k,
-            c["bm"],c["bn"],c["bk"],return_acc,
-            num_warps=c["warps"],num_stages=c["stages"],enable_fp_fusion=False)
-        for b in bases:b.calls+=1
-        for key in ("calls","quantize_calls","unpack_launches","gemm_launches"):workspace.stats[key]+=1
-        workspace.stats["weight_scratch_bytes"]=buf.numel()
-        result=(oq,ok,ov)
-        return (result,debug) if return_acc else result
+        codes = buf[:size].view(3 * d, k)
+        _unpack3[(3 * triton.cdiv(d, 32), triton.cdiv(k, 64))](
+            *(b.qweight for b in bases),
+            codes,
+            d,
+            k,
+            bits,
+            32,
+            64,
+            num_warps=4,
+            num_stages=1,
+        )
+        if diagnostic:
+            diagnostic(
+                "unpacked",
+                {"codes": codes, "a": a, "sa": sa, "x": x, "residual": residual},
+            )
+        m = len(x)
+        oq = x
+        if diagnostic:
+            diagnostic(
+                "before_K",
+                {"x": x, "residual": residual, "a": a, "sa": sa, "codes": codes},
+            )
+        ok = torch.empty((m, d), device=x.device, dtype=x.dtype)
+        if diagnostic:
+            diagnostic(
+                "after_K",
+                {
+                    "x": x,
+                    "residual": residual,
+                    "a": a,
+                    "sa": sa,
+                    "codes": codes,
+                    "K": ok,
+                },
+            )
+        if diagnostic:
+            diagnostic(
+                "before_V",
+                {
+                    "x": x,
+                    "residual": residual,
+                    "a": a,
+                    "sa": sa,
+                    "codes": codes,
+                    "K": ok,
+                },
+            )
+        ov = torch.empty((m, d), device=x.device, dtype=x.dtype)
+        if diagnostic:
+            diagnostic(
+                "after_V",
+                {
+                    "x": x,
+                    "residual": residual,
+                    "a": a,
+                    "sa": sa,
+                    "codes": codes,
+                    "K": ok,
+                    "V": ov,
+                },
+            )
+        debug = (
+            torch.empty((m, 3 * d), device=x.device, dtype=torch.int32)
+            if return_acc
+            else oq
+        )
+        c = config
+        workspace.last_kernel = _gemm3[
+            (triton.cdiv(m, c["bm"]), triton.cdiv(3 * d, c["bn"]))
+        ](
+            a,
+            codes,
+            sa,
+            *(b.wscales for b in bases),
+            oq,
+            ok,
+            ov,
+            debug,
+            m,
+            d,
+            k,
+            c["bm"],
+            c["bn"],
+            c["bk"],
+            return_acc,
+            num_warps=c["warps"],
+            num_stages=c["stages"],
+            enable_fp_fusion=False,
+        )
+        for b in bases:
+            b.calls += 1
+        for key in ("calls", "quantize_calls", "unpack_launches", "gemm_launches"):
+            workspace.stats[key] += 1
+        workspace.stats["weight_scratch_bytes"] = buf.numel()
+        result = (oq, ok, ov)
+        return (result, debug) if return_acc else result
     except torch.OutOfMemoryError:
-        diagnostic=getattr(workspace,"diagnostic",None)
-        if diagnostic:diagnostic("OOM",{"x":x,"residual":residual,"a":a,"sa":sa,"codes":codes,"K":ok,"V":ov})
+        diagnostic = getattr(workspace, "diagnostic", None)
+        if diagnostic:
+            diagnostic(
+                "OOM",
+                {
+                    "x": x,
+                    "residual": residual,
+                    "a": a,
+                    "sa": sa,
+                    "codes": codes,
+                    "K": ok,
+                    "V": ov,
+                },
+            )
         raise
     finally:
         workspace._lock.release()
 
 
-def install(bb,*,backend="register",scratch=None,experimental=False,config=SM89_REGISTER_CONFIG,
-            projection_validator=None,base_validator=None):
+def install(
+    bb,
+    *,
+    backend="register",
+    scratch=None,
+    experimental=False,
+    config=SM89_REGISTER_CONFIG,
+    projection_validator=None,
+    base_validator=None,
+):
     """Install after final bind_ops; no LoRA/hooks/custom projections bypassed.
 
     Until architecture+image qualification, explicit experimental=True is mandatory.
@@ -211,65 +427,119 @@ def install(bb,*,backend="register",scratch=None,experimental=False,config=SM89_
     """
     if projection_validator is None:
         from .inference_contracts_v3 import projection_errors
-        projection_validator=projection_errors
-    if not experimental or backend!="register" or config!=SM89_REGISTER_CONFIG:
+
+        projection_validator = projection_errors
+    if not experimental or backend != "register" or config != SM89_REGISTER_CONFIG:
         raise ValueError("Explicit experimental native/register backend required")
-    if getattr(bb,"_qkv_fused_r2",False):
+    if getattr(bb, "_qkv_fused_r2", False):
         raise RuntimeError("QKV fusion already installed")
-    errors=[]
+    errors = []
     if not len(bb.layers):
         raise ValueError("Cannot install QKV fusion on empty backbone")
-    for i,b in enumerate(bb.layers):
-        for name in ("q","k","v"):
-            lin=b.proj[name]
-            errors += [f"layer {i} {name}: "+e.replace("ffn_up_gate",name) for e in projection_validator(lin)]
-            if lin.weight_like.dtype not in (torch.float16,torch.bfloat16) or lin.weight_like.device.type!="cuda":
+    for i, b in enumerate(bb.layers):
+        for name in ("q", "k", "v"):
+            lin = b.proj[name]
+            errors += [
+                f"layer {i} {name}: " + e.replace("ffn_up_gate", name)
+                for e in projection_validator(lin)
+            ]
+            if (
+                lin.weight_like.dtype not in (torch.float16, torch.bfloat16)
+                or lin.weight_like.device.type != "cuda"
+            ):
                 errors.append(f"layer {i}: only CUDA FP16/BF16 installation supported")
-            if lin.in_features!=3072 or lin.out_features!=3072:
+            if lin.in_features != 3072 or lin.out_features != 3072:
                 errors.append(f"layer {i}: only D3072 QKV shape supported")
-        try:(_validate_bases if base_validator is None else base_validator)([b.proj[n].base for n in ("q","k","v")])
-        except ValueError as e:errors.append(f"layer {i}: {e}")
+        try:
+            (_validate_bases if base_validator is None else base_validator)(
+                [b.proj[n].base for n in ("q", "k", "v")]
+            )
+        except ValueError as e:
+            errors.append(f"layer {i}: {e}")
         if "attn_part" in vars(b):
-            errors.append(f"layer {i}: existing attention override/share must be restored")
-    if errors:raise ValueError("; ".join(errors))
-    config=dict(config)
-    workspace=Workspace(scratch)
-    originals=[]
-    from kohakumoss.types.context import SHIFT_ATTN,SCALE_ATTN,GATE_ATTN
+            errors.append(
+                f"layer {i}: existing attention override/share must be restored"
+            )
+    if errors:
+        raise ValueError("; ".join(errors))
+    config = dict(config)
+    workspace = Workspace(scratch)
+    originals = []
+    from kohakumoss.types.context import SHIFT_ATTN, SCALE_ATTN, GATE_ATTN
+
     for block in bb.layers:
-        originals.append((block,block.attn_part))
-        def attn(self,x,ctx):
-            ops,seq,mod=self.ops,ctx.seq,ctx.mod
-            seg=seq.seg_joint
-            y=self._cast(ops.rms_norm_mod(x,self.norm1.weight,mod[:,SHIFT_ATTN],mod[:,SCALE_ATTN],seg,self.norm1.eps))
-            q,k,v=project(y,[self.proj[n].base for n in ("q","k","v")],
-                          workspace=workspace,backend=backend,config=config,base_validator=base_validator,
-                          overwrite_input=True,residual=x)
+        originals.append((block, block.attn_part))
+
+        def attn(self, x, ctx):
+            ops, seq, mod = self.ops, ctx.seq, ctx.mod
+            seg = seq.seg_joint
+            y = self._cast(
+                ops.rms_norm_mod(
+                    x,
+                    self.norm1.weight,
+                    mod[:, SHIFT_ATTN],
+                    mod[:, SCALE_ATTN],
+                    seg,
+                    self.norm1.eps,
+                )
+            )
+            q, k, v = project(
+                y,
+                [self.proj[n].base for n in ("q", "k", "v")],
+                workspace=workspace,
+                backend=backend,
+                config=config,
+                base_validator=base_validator,
+                overwrite_input=True,
+                residual=x,
+            )
             del y
-            q,k=ops.qk_norm_rope(q.unflatten(-1,(self.heads,-1)),k.unflatten(-1,(self.heads,-1)),
-                                self.q_norm.weight,self.k_norm.weight,seq.pos_joint,ctx.bands,self.q_norm.eps)
-            v=v.unflatten(-1,(self.heads,-1))
-            o=ops.attention(q,k,v,seq.attn_joint).flatten(1)
-            del q,k,v
-            r=ctx.residual_scale[self.index]
-            return self._post(self._attn_out(o,x,mod[:,GATE_ATTN],seg,r))
-        block.attn_part=types.MethodType(attn,block)
-    bb._qkv_fused_r2=True
+            q, k = ops.qk_norm_rope(
+                q.unflatten(-1, (self.heads, -1)),
+                k.unflatten(-1, (self.heads, -1)),
+                self.q_norm.weight,
+                self.k_norm.weight,
+                seq.pos_joint,
+                ctx.bands,
+                self.q_norm.eps,
+            )
+            v = v.unflatten(-1, (self.heads, -1))
+            o = ops.attention(q, k, v, seq.attn_joint).flatten(1)
+            del q, k, v
+            r = ctx.residual_scale[self.index]
+            return self._post(self._attn_out(o, x, mod[:, GATE_ATTN], seg, r))
+
+        block.attn_part = types.MethodType(attn, block)
+    bb._qkv_fused_r2 = True
+
     class Handle:
         def __init__(self):
-            self.workspace=workspace
-            self.stats=workspace.stats
-            self.receipt=dict(backend=backend,experimental=True,config=dict(config),
-                              logical_projection_calls_per_scope=3,
-                              quantize_calls_per_scope=1,unpack_launches_per_scope=1,
-                              gemm_launches_per_scope=1,
-                              dequant_launches_per_scope=int(backend=="native"),
-                              register_dequant_fused=True,output_storages=3,new_output_allocations=2,
-                              Q_overwrites_private_norm_input=True,explicit_destructive_contract=True,
-                              V_retains_QK_storage=False,qualification="MICRO_AND_FULLIMAGE_PENDING",
-                              packed_bytes_and_scales_unchanged=True)
+            self.workspace = workspace
+            self.stats = workspace.stats
+            self.receipt = dict(
+                backend=backend,
+                experimental=True,
+                config=dict(config),
+                logical_projection_calls_per_scope=3,
+                quantize_calls_per_scope=1,
+                unpack_launches_per_scope=1,
+                gemm_launches_per_scope=1,
+                dequant_launches_per_scope=int(backend == "native"),
+                register_dequant_fused=True,
+                output_storages=3,
+                new_output_allocations=2,
+                Q_overwrites_private_norm_input=True,
+                explicit_destructive_contract=True,
+                V_retains_QK_storage=False,
+                qualification="MICRO_AND_FULLIMAGE_PENDING",
+                packed_bytes_and_scales_unchanged=True,
+            )
+
         def restore(self):
-            if workspace._lock.locked():raise RuntimeError("Active QKV call")
-            for b,old in originals:b.attn_part=old
-            bb._qkv_fused_r2=False
+            if workspace._lock.locked():
+                raise RuntimeError("Active QKV call")
+            for b, old in originals:
+                b.attn_part = old
+            bb._qkv_fused_r2 = False
+
     return Handle()

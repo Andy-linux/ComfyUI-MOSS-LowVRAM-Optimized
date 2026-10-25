@@ -3,9 +3,14 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.ruff_cache/
 .venv/
 venv/
 models.local.json
+/local/
+/private-tools/
+*.credential.xml
+registry-credentials.md
 .env
 .env.*
 *.partial
@@ -24,6 +29,7 @@ models.local.json
 /benchmarks/
 /release-artifacts/
 tests/
+docs/samples/
 _selected_missing.json
 *.pyd
 *.dll

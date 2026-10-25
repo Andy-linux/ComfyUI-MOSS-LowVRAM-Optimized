@@ -2439,7 +2439,9 @@
     {
       "path": "official_moss/weight_compat.py",
       "historical_copy_sha256": "d76f861bd345011f17cb5bad74fac741c86a96fcc2f32984d072159a67f1188b",
-      "current_sha256": "7792da72d086ac4a49228cc8e72cdc1afb41ba9143d7fa7c24db963451c490ea"
+      "current_sha256": "fa6252b69d2fb36f66b1b4b049e115f65910b2cdc8b388d04f2ecc39d422fd3c",
+      "formatting_before_sha256": "7792da72d086ac4a49228cc8e72cdc1afb41ba9143d7fa7c24db963451c490ea",
+      "modification_scope": "Existing local inference integration. Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change."
     },
     {
       "path": "official_moss/__init__.py",
@@ -2459,7 +2461,9 @@
     {
       "path": "bridge.py",
       "historical_copy_sha256": "948330892cd134f1e48033227372489eed3e00fed157064c6aa1c4c89570c880",
-      "current_sha256": "d176557c0202fe2dcfada3cc4571d6fa6f4a98048e39f6b080fbb863eb069f4c"
+      "current_sha256": "a99fe703c867034909ae09706d31cd78abb02ea86c855e8e3e747844e9cab3c7",
+      "formatting_before_sha256": "d176557c0202fe2dcfada3cc4571d6fa6f4a98048e39f6b080fbb863eb069f4c",
+      "modification_scope": "Existing local inference integration. Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change."
     },
     {
       "path": "kohaku_src/kohakumoss/encoders/text/assets/qwen3.5-9b/tokenizer.json.gz",
@@ -2495,22 +2499,55 @@
       "path": "projection_share_v2.py",
       "historical_source_sha256": "e6118d78574cd9d16964e27ce002e232025f9a888960ab391c54630bb0f6399f",
       "historical_vendored_sha256": "b8ec3cbdceaba563696e0ee59f13ca0321a122a508627430cc4f053cedf7b565",
-      "current_sha256": "4cfda9fa1d105fd15281823202439b7ed1649796c6eef0f65c2a89c0c6446fbc",
-      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+      "current_sha256": "f6afc0cb38b533940aa24a7d0f510446b041d4ae3b4654609447f9c796a37253",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change.",
+      "formatting_before_sha256": "4cfda9fa1d105fd15281823202439b7ed1649796c6eef0f65c2a89c0c6446fbc"
     },
     {
       "path": "qkv_fused_v1.py",
       "historical_source_sha256": "afdb13f391c91f48792043b1037367aa8f501e4f45e503ea62be1311dae76ca2",
       "historical_vendored_sha256": "40fc05e019ca4a37c15fcf920e20fcb15488d1859b9790ca0741118e8ea15a61",
-      "current_sha256": "b682d6266e773a3874d9c514180746bdd298c16948a6ab59bf6829354c623b21",
-      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+      "current_sha256": "caab8a6a2c2472e1bd48317b493f92ab4cfcb56458a1e9aa90c2f088266bc06a",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change.",
+      "formatting_before_sha256": "b682d6266e773a3874d9c514180746bdd298c16948a6ab59bf6829354c623b21"
     },
     {
       "path": "fixed_a8.py",
       "historical_source_sha256": "9b9b922cb55f2d6a5f15b67310e0875d1dde68685579f9aa1c96d5461a3b1b8e",
       "historical_vendored_sha256": "5a19f7b4740e247341c17fe2d1b0f9ab334e18144eaeda9c4a8a5f6a1f0370e8",
-      "current_sha256": "5a19f7b4740e247341c17fe2d1b0f9ab334e18144eaeda9c4a8a5f6a1f0370e8",
-      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
+      "current_sha256": "9db28174b507c18def70eb5bc5bea340e0d60b2065e2afcf9c24103f49f9ada3",
+      "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change.",
+      "formatting_before_sha256": "5a19f7b4740e247341c17fe2d1b0f9ab334e18144eaeda9c4a8a5f6a1f0370e8"
+    },
+    {
+      "path": "flash_adapter.py",
+      "current_sha256": "a8cbf633f3ce88154d4fb7cbd6847e3240b7c50c331703f3434bb486cfca2450",
+      "formatting_before_sha256": "d8f3b9653ec14a3963016b9eef4f4a317a6250972d7eb2855dd5153f4c09c7be",
+      "modification_scope": "Existing local inference integration. Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change."
+    },
+    {
+      "path": "host_packed_arena.py",
+      "current_sha256": "9b0eda8aac3d04e52645182e4e1bc80646bb4a884e35d1eb3829fc9ba1d99b2f",
+      "formatting_before_sha256": "ae6b7454782a12c781c417f61d5b2884536e0bcdd5c845ebe836c2a92784faba",
+      "modification_scope": "Existing local inference integration. Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change."
+    },
+    {
+      "path": "qkv_reuse_input.py",
+      "current_sha256": "cbad7b826fa5d70e25a7ebc63cb4e3484d078675a4d5aed31449ea18657dc0c1",
+      "formatting_before_sha256": "592c19cfb6ff91e048913ede25bcc387be640107ba4631a57ab575316f43adda",
+      "modification_scope": "Existing local inference integration. Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change."
+    },
+    {
+      "path": "qkv_three_output.py",
+      "current_sha256": "8233d85590e1dbccd8b98a74ee5562b4c1e42689c757842b480d03cde057bdc9",
+      "formatting_before_sha256": "de54dfe4ff12e8e99842e4ec557918ab358e1d76506c64fed0adc4841fece99a",
+      "modification_scope": "Existing local inference integration. Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change."
+    },
+    {
+      "path": "writer_epilogue.py",
+      "current_sha256": "f2912c4b4f21c653d241fbe8328990a979c68003eb25e3a56edcc364051e1fe7",
+      "formatting_before_sha256": "412750f70bc46305efa8480820243082950cd21a7a0248a99e3475aab287a4e7",
+      "modification_scope": "Existing local inference integration. Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change."
     }
   ],
   "excluded_history": "Removed lowbit decoder and its private-baseline history are not distributed; no historical source is relicensed. Independent runtime/packed_decode.py provenance is recorded in ../../LICENSE_PROVENANCE.json."

@@ -19,8 +19,8 @@
       "resident_blocks": -1,
       "payload_pinning": "staging",
       "te_resident_gib": 3.0,
-      "dit_checkpoint": "auto",
-      "te_checkpoint": "moss-image-qwen35-int8-convrot.safetensors",
+      "dit_checkpoint": "moss_image_sft_int8_convrot.safetensors",
+      "te_checkpoint": "moss-image-qwen35-int8-convrot-v2.safetensors",
       "vae_checkpoint": "moss-image-vae.safetensors"
     }
   },

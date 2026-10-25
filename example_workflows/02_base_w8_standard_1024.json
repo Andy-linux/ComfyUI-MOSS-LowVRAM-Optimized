@@ -41,7 +41,7 @@
             "hash_type": "SHA256"
           },
           {
-            "name": "moss-image-qwen35-int8-convrot.safetensors",
+            "name": "moss-image-qwen35-int8-convrot-v2.safetensors",
             "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/resolve/16364ffd306244f33be05d64b34b47f6e15d0328/text_encoders/moss-image-qwen35-int8-convrot.safetensors",
             "directory": "text_encoders",
             "hash": "511379fd690d59f11f49c062a8a687b9a985e92faa48a098eb7c66ba505574fe",
@@ -75,10 +75,10 @@
         "staging",
         3.0,
         "moss-image-base-dit-int8-convrot.safetensors",
-        "moss-image-qwen35-int8-convrot.safetensors",
+        "moss-image-qwen35-int8-convrot-v2.safetensors",
         "moss-image-vae.safetensors"
       ],
-      "title": "Base W8 · standard 50 steps"
+      "title": "MOSS · Base W8 · standard 50 steps"
     },
     {
       "id": 2,
@@ -375,7 +375,7 @@
       ],
       "size": [
         1720,
-        170
+        200
       ],
       "flags": {},
       "order": 8,
@@ -386,9 +386,9 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "Base W8 · standard 50 steps\n1024 × 1024 · fixed seed 314159265 · 50 steps · CFG 3 · Euler / sgm_uniform · shift 5 · SLG layer 22.\nAttention auto; VAE BF16 is an explicit precision tradeoff; TE memory auto. Manifest-listed download bytes: 14,116,205,080.\nLegacy INT8 ConvRot TE is W8A16. All conditioning outputs remain FP16. Public checkpoints are not claimed byte-identical to private R4 benchmark weights.\nOpening does not download models. Download all listed files first; for original HF TE keep text_encoder/ and sibling tokenizer/ directory structure. Controls stay idle; use the buttons for prewarm/unload."
+        "MOSS · Base W8A8 INT8 ConvRot · 1024 × 1024 · 50 steps\nBase model standard workflow. TE: W8A16; VAE: BF16; attention: auto.\nUse the exact DiT/TE/VAE filenames selected below; model links are embedded.\nKeep the pinned TE v2 bytes under the -v2 filename shown in the selector.\nBF16 requires a supported GPU. For the conservative RTX20 starting configuration, use workflow06 with FP32 VAE.\nImporting loads the workflow. Download missing files explicitly; keep controls idle until you use Prewarm or Unload."
       ],
-      "title": "Read before queueing · 使用前必读"
+      "title": "MOSS · Read before queueing · 使用前必读"
     }
   ],
   "links": [
@@ -507,7 +507,7 @@
         0
       ]
     },
-    "workflow_name": "Base W8 · standard 50 steps"
+    "workflow_name": "MOSS · Base W8 · standard 50 steps"
   },
   "version": 0.4
 }

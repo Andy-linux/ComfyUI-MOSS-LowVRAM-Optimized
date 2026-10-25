@@ -109,7 +109,7 @@ checkpoint tensors and does not substitute an SFT retained-parameter sidecar.
 ## Loading
 
 Use a loader that explicitly understands the relevant record and scale layout,
-such as the matching **Kohaku MOSS Optimized** integration. A generic FP8 dtype
+such as the matching **MOSS LowVRAM Optimized** integration using KohakuMoss. A generic FP8 dtype
 cast or arbitrary Diffusers `from_pretrained` call is not a documented loader for
 these files. This draft provides no unassigned plugin or model download URL.
 

@@ -41,7 +41,7 @@
             "hash_type": "SHA256"
           },
           {
-            "name": "moss-image-qwen35-int8-convrot.safetensors",
+            "name": "moss-image-qwen35-int8-convrot-v2.safetensors",
             "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/resolve/16364ffd306244f33be05d64b34b47f6e15d0328/text_encoders/moss-image-qwen35-int8-convrot.safetensors",
             "directory": "text_encoders",
             "hash": "511379fd690d59f11f49c062a8a687b9a985e92faa48a098eb7c66ba505574fe",
@@ -74,11 +74,11 @@
         -1,
         "staging",
         3.0,
-        "auto",
-        "moss-image-qwen35-int8-convrot.safetensors",
+        "moss_image_sft_int8_convrot.safetensors",
+        "moss-image-qwen35-int8-convrot-v2.safetensors",
         "moss-image-vae.safetensors"
       ],
-      "title": "SFT W8 · legacy-compatible TE · 16 steps"
+      "title": "MOSS · SFT W8 · legacy-compatible TE · 16 steps"
     },
     {
       "id": 2,
@@ -375,7 +375,7 @@
       ],
       "size": [
         1720,
-        170
+        200
       ],
       "flags": {},
       "order": 8,
@@ -386,9 +386,9 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "SFT W8 · legacy-compatible TE · 16 steps\n1024 × 1024 · fixed seed 314159265 · 16 steps · CFG 3 · Euler / sgm_uniform · shift 5 · SLG layer 22.\nAttention auto; VAE BF16 is an explicit precision tradeoff; TE memory auto. Manifest-listed download bytes: 14,116,180,238.\nLegacy INT8 ConvRot TE is W8A16. All conditioning outputs remain FP16. Public checkpoints are not claimed byte-identical to private R4 benchmark weights.\nOpening does not download models. Download all listed files first; for original HF TE keep text_encoder/ and sibling tokenizer/ directory structure. Controls stay idle; use the buttons for prewarm/unload."
+        "MOSS · SFT W8 · 1024 × 1024 · 16 steps\nPublic Comfy-Org fused INT8 DiT; legacy INT8 ConvRot TE uses W8A16. VAE: BF16.\nUse the exact DiT/TE/VAE filenames selected below; model links are embedded.\nKeep the pinned TE v2 bytes under the -v2 filename shown in the selector.\nThe public DiT differs from earlier local benchmark weights. Current execution evidence: docs/PUBLICATION_VALIDATION.md.\nImporting loads the workflow. Download missing files explicitly; keep controls idle until you use Prewarm or Unload."
       ],
-      "title": "Read before queueing · 使用前必读"
+      "title": "MOSS · Read before queueing · 使用前必读"
     }
   ],
   "links": [
@@ -507,7 +507,7 @@
         0
       ]
     },
-    "workflow_name": "SFT W8 · legacy-compatible TE · 16 steps"
+    "workflow_name": "MOSS · SFT W8 · legacy-compatible TE · 16 steps"
   },
   "version": 0.4
 }
