@@ -68,6 +68,7 @@ class RuntimeConfig:
     vae_precision: str = "fp32"
     vae_admission: bool = False
     device: str = "cuda:0"
+    fp8_activation_mode: str = "checkpoint"
 
 
 def bootstrap_paths():
@@ -112,6 +113,12 @@ class MossSession:
         from .resources import BUDGET_GIB
         import torch
 
+        from .fp8_support import FP8_ACTIVATION_MODES
+
+        if config.fp8_activation_mode not in FP8_ACTIVATION_MODES:
+            raise ValueError(config.fp8_activation_mode)
+        if config.candidate not in FP8_CANDIDATES and config.fp8_activation_mode != "checkpoint":
+            raise ValueError("Explicit FP8 activation mode requires an FP8 candidate")
         if config.profile not in BUDGET_GIB:
             raise ValueError(config.profile)
         if config.precision not in ("fp16_fixed", "bf16"):
@@ -217,6 +224,7 @@ class MossSession:
         self.lock = RLock()
         self.te = self.bb = self.wrapper = self.patcher = self.vae = None
         self.original_adapter = None
+        self.fp8_activation_receipt = None
         self.te_lease = None
         self.retired_te_leases = []
         self.arena_cache = None
@@ -597,6 +605,23 @@ class MossSession:
                 raise ValueError(
                     "Selected FP8 mode requires an explicitly described FP8 checkpoint"
                 )
+            if candidate in FP8_CANDIDATES:
+                from .fp8_support import select_fp8_activation
+
+                self.fp8_activation_receipt = select_fp8_activation(
+                    bb, mode=self.config.fp8_activation_mode,
+                    checkpoint=receipt, dtype=self.compute_dtype,
+                )
+                receipt["fp8_activation"] = dict(self.fp8_activation_receipt)
+                self.last["FP8_activation"] = dict(self.fp8_activation_receipt)
+                import logging
+
+                logging.info(
+                    "[KohakuMOSS FP8] storage=%s recipe=%s requested_activation=%s effective_activation=%s compute_dtype=%s; vendor dispatch, no blanket FP8 GEMM claim",
+                    receipt["format"], receipt.get("recipe"),
+                    self.config.fp8_activation_mode,
+                    self.fp8_activation_receipt["effective_mode"], self.compute_dtype,
+                )
             self.last["checkpoint"] = receipt
         self.bb = bb
         if adapter_first:
@@ -783,6 +808,7 @@ class MossSession:
             cache = self.adapter_cache
             context = (
                 self.config.precision,
+                self.config.fp8_activation_mode,
                 self.adapter_revision,
                 height,
                 width,
@@ -1001,14 +1027,16 @@ class MossSession:
                 self.bb, dtype=self.compute_dtype, device=config.device
             )
         self.last["effective_FFN_backend"] = (
-            "kohaku_fp8"
+            "kohaku_fp8_activation_" + self.fp8_activation_receipt["effective_mode"]
+            + "_requested_" + config.fp8_activation_mode
             if config.candidate in FP8_CANDIDATES
             else "fused_v3"
             if config.kernels == "v3_shared"
             else "native_original"
         )
         self.last["effective_qkv_backend"] = (
-            "kohaku_fp8_separate"
+            "kohaku_fp8_separate_activation_" + self.fp8_activation_receipt["effective_mode"]
+            + "_requested_" + config.fp8_activation_mode
             if config.candidate in FP8_CANDIDATES
             else "stored_int8_separate"
             if config.candidate in INT8_CANDIDATES
@@ -1173,12 +1201,13 @@ class MossSession:
         import logging
 
         logging.info(
-            "[KohakuMOSS dispatch] precision=%s attention=%s head_group=%d QKV=%s FFN_tile=%d",
+            "[KohakuMOSS dispatch] precision=%s attention=%s head_group=%d QKV=%s FFN_tile=%d fp8_activation_request=%s",
             config.precision,
             config.attention,
             config.attention_head_group,
             config.qkv_backend,
             config.ffn_tile,
+            config.fp8_activation_mode,
         )
 
     def sample(
@@ -1199,6 +1228,8 @@ class MossSession:
     ):
         with self.lock:
             self._ready("sample_entry")
+            if self.fp8_activation_receipt is not None:
+                self.last["FP8_activation"] = dict(self.fp8_activation_receipt)
             import torch
             import comfy.sample
             from comfy_extras.nodes_model_advanced import ModelSamplingSD3
@@ -1710,6 +1741,7 @@ class MossSession:
             restore()
         self.restores = []
         self.bb = self.wrapper = self.patcher = self.original_adapter = None
+        self.fp8_activation_receipt = None
         self.arena_handle = None
         self.qkv_handle = None
         self._release_scratch()

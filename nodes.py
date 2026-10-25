@@ -110,7 +110,7 @@ class MOSSOptimizedSessionLoader:
 
     def load_session(self,model,profile,text_encoder,attention,qkv_backend,ffn_tile,host_arena,adapter_cache=False,conditioning_memory=False,
                      precision="fp16_fixed",attention_head_group=0,vae_precision="fp32",te_memory="auto",vae_admission=False,resident_blocks=-1,payload_pinning="staging",te_resident_gib=3.0,
-                     dit_checkpoint="auto",te_checkpoint="auto",vae_checkpoint="auto"):
+                     dit_checkpoint="auto",te_checkpoint="auto",vae_checkpoint="auto",fp8_activation_mode="checkpoint"):
         if attention not in _ATTENTION:
             raise ValueError("未知注意力后端："+str(attention))
         backend=_ATTENTION[attention]
@@ -128,7 +128,7 @@ class MOSSOptimizedSessionLoader:
         if validation is not True:
             raise RuntimeError(validation)
         te_asset,te_mode,te_dtype=_TEXT[text_encoder]
-        config=RuntimeConfig(candidate=_MODELS[model],profile=_PROFILES[profile],
+        config=RuntimeConfig(candidate=_MODELS[model],profile=_PROFILES[profile],fp8_activation_mode=fp8_activation_mode,
              te_weights=te_checkpoint,te_asset=te_asset,te_mode=te_mode,te_compute_dtype=te_dtype,
              dit_weights=dit_checkpoint,vae_name=vae_checkpoint,attention=backend,precision=precision,attention_head_group=head_group,
              qkv_backend=qkv_backend,ffn_tile=-1 if ffn_tile=="auto" else int(ffn_tile),host_arena=host_arena,
