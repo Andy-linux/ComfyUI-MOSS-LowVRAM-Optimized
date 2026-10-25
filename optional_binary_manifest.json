@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "packages": {
+    "turing_flash": {
+      "status": "publish_pending",
+      "abi": {
+        "platform": "win32",
+        "machine": "x86_64",
+        "python": "3.12",
+        "torch": "2.10.0+cu130",
+        "cuda": "13.0",
+        "sm": 75
+      },
+      "distribution_authorization": "user_authorized_preserve_recorded_license_status",
+      "source": {
+        "repository": "https://github.com/ssiu/flash-attention-turing",
+        "commit": "9ef98fcb506bb1e2fe3cece50935e2935bf6b124",
+        "cutlass_commit": "df18f5e4f5de76bed8be1de8e4c245f2f5ec3020"
+      },
+      "license_status": "Upstream repository license has not been confirmed; preserve actual source/build records and all available component LICENSE/NOTICE files without asserting blanket clearance.",
+      "artifact": {
+        "url": "https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/download/turing-sm75-cp312-cu130-v1/moss-turing-flash-cp312-torch210-cu130-sm75-win_amd64.zip",
+        "size_bytes": 43707834,
+        "sha256": "779e2bf85ae347a50200b372eb79481bce069a0392856cd09e9f0b8dbd0fcae7"
+      },
+      "files": [
+        {
+          "path": "CUTLASS_LICENSE.txt",
+          "size_bytes": 1574,
+          "sha256": "6b9e8b964c2a90f7743107a23bccec9ebc6f5a47d4a8fa3d986aa6f51f86da68",
+          "role": "license"
+        },
+        {
+          "path": "MANIFEST.json",
+          "size_bytes": 6338,
+          "sha256": "01d12881ae976f32718dcfbb7a821e34ac6f8498d6f21b87fbe4334d85983906",
+          "role": "build_record"
+        },
+        {
+          "path": "NOTICE",
+          "size_bytes": 523,
+          "sha256": "04ac7cd74ecf9851b49447f9b7821bf77ea8eb4ac0b8a3b6e663f1dba4190729",
+          "role": "notice"
+        },
+        {
+          "path": "NO_SOURCE_PATCH.md",
+          "size_bytes": 424,
+          "sha256": "57d09b3191388bbb2dc4f9f44e249defaadf684cdac5aa206e7091df07edd83b",
+          "role": "notice"
+        },
+        {
+          "path": "NVIDIA_CUDA_LICENSE.txt",
+          "size_bytes": 67875,
+          "sha256": "f176e5fd245a4ff1d7aee743e345e14b29c4b724f150e4858c4c6a313966d1fb",
+          "role": "license"
+        },
+        {
+          "path": "README.md",
+          "size_bytes": 1728,
+          "sha256": "9c46f0051c9cb3defbf1a57ec1be4b685e4be34e805b4caa21e0f81f507edf84",
+          "role": "notice"
+        },
+        {
+          "path": "SOURCE_SHA256.json",
+          "size_bytes": 4089,
+          "sha256": "b675571f6e051397258e0a1edca02c4408517894d124806444edab5565ed80a9",
+          "role": "source"
+        },
+        {
+          "path": "build/BUILD_RECORD.json",
+          "size_bytes": 1213,
+          "sha256": "bd0e106f867982f36b777700f5ee95a32d1e90d59d131aa578656d41e2e5ac96",
+          "role": "build_record"
+        },
+        {
+          "path": "build/DEPENDENCIES.json",
+          "size_bytes": 2345,
+          "sha256": "097a9409f581de7656a5dd2340f997a50f51f94fa7c0d7b053c8b90dd12f8148",
+          "role": "build_record"
+        },
+        {
+          "path": "build/build_portable.py",
+          "size_bytes": 3716,
+          "sha256": "c5f9839554d7d22e7c31b32bef040f331d447c012666f66d71ecca4e874e31f8",
+          "role": "build_record"
+        },
+        {
+          "path": "build/cpu_build_guard.py",
+          "size_bytes": 665,
+          "sha256": "9f97c006d3d9e3d9bdd6bac8cebdce23415f934d779cbf6327d78ca571473c76",
+          "role": "build_record"
+        },
+        {
+          "path": "dlls/cudart64_13.dll",
+          "size_bytes": 470640,
+          "sha256": "769440f43991b2af0fbc7ee69d77f6f6d60f7468f585ae7cf1fb86451a51fcb1",
+          "role": "runtime_dependency"
+        },
+        {
+          "path": "flash_attention_interface.py",
+          "size_bytes": 16662,
+          "sha256": "45d562310ea2114ae4375fcd36782416e334677eff043c2c50d042069e399ef5",
+          "role": "interface"
+        },
+        {
+          "path": "flash_attn_turing.cp312-win_amd64.pyd",
+          "size_bytes": 9502208,
+          "sha256": "eb134fa0d0ed0f6598e7407799519487c39b7374df910abd437906e317478a89",
+          "role": "binary"
+        },
+        {
+          "path": "source/ARCHIVE_MEMBERS.json",
+          "size_bytes": 1204247,
+          "sha256": "70fe764498b0f965c7dc14fa673be13440835d83c1495e41c410c52a58a957fd",
+          "role": "source"
+        },
+        {
+          "path": "source/cutlass-df18f5e4f5de76bed8be1de8e4c245f2f5ec3020.zip",
+          "size_bytes": 38906681,
+          "sha256": "c924ba1eb7c6b92bb2e021e5c667359382b2dcd47dab130f5fb2583fe377dd05",
+          "role": "source"
+        },
+        {
+          "path": "source/turing-9ef98fcb506bb1e2fe3cece50935e2935bf6b124.zip",
+          "size_bytes": 1529458,
+          "sha256": "5ced2700cf606e34cdba4f5e4e0622536ba7e4e34dd794587eca006976b27843",
+          "role": "source"
+        }
+      ],
+      "notes": "The real local ZIP and complete17-member inventory were verified by the release packager. The fixed GitHub Release URL is the authorized target, not yet confirmed public. Keep publish_pending until root verifies the public asset. No SM75 GPU test is inferred."
+    }
+  }
+}
