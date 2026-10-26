@@ -4,13 +4,24 @@
 
 ## 安装与首次运行
 
+### 通过工作流安装
+
 1. 在已启用官方ComfyUI Manager的ComfyUI中导入唯一工作流：[00_moss_lowvram.json](example_workflows/00_moss_lowvram.json)。
 2. 出现缺失节点提示时，点击 **查看详情 → 在管理器中查看**，找到 **MOSS LowVRAM Optimized**。
 3. 打开版本选择器，选择最新版本并安装，然后点击 **应用更改 / 重启**。
 4. 在 **MOSS · 配置与准备** 节点选择模型、计算方式与显存预算，点击 **Prepare / check selected configuration**。
 5. 查看资源计划并确认准备。模型就绪后点击ComfyUI的运行按钮。首次运行会编译内核，请等待完成。
 
-默认操作通过界面完成。详细步骤和依赖要求见[安装指南](docs/INSTALLATION_GUIDE.md)。
+### 命令行安装
+
+已安装[comfy-cli](https://docs.comfy.org/comfy-cli/getting-started)和[ComfyUI Manager](https://docs.comfy.org/manager/install)时，先激活ComfyUI使用的Python环境，再运行：
+
+```sh
+comfy --workspace "C:\ComfyUI" node install https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized
+```
+
+将路径替换为自己的ComfyUI根目录。安装完成后重启ComfyUI，导入工作流，点击 **Prepare** 准备模型。
+详细步骤和依赖要求见[安装指南](docs/INSTALLATION_GUIDE.md)。
 
 ## 配置选项
 

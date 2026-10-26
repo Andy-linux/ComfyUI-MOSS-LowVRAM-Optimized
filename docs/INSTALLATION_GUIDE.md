@@ -10,7 +10,19 @@
 6. 确认模型来源、大小、位置和准备计划；资源就绪后运行工作流。首次运行会编译内核，请等待完成。
 
 Manager在安装阶段处理requirements并执行install.py。Windows可能把依赖步骤安排到下一次启动，安装后应完成重启。
-Registry索引更新期间，卡片与版本选择器显示可能不同；以选择器中的目标版本为准。
+
+## 命令行安装
+
+需要[comfy-cli](https://docs.comfy.org/comfy-cli/getting-started)、Git，以及安装在ComfyUI Python环境中的[ComfyUI Manager](https://docs.comfy.org/manager/install)。
+先激活该Python环境，再执行：
+
+```sh
+comfy --workspace "C:\ComfyUI" node install https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized
+```
+
+将 `C:\ComfyUI` 替换为包含 `main.py` 的ComfyUI根目录。命令从GitHub安装节点；Manager处理普通依赖并执行安装器。
+Windows的依赖准备可能安排到下次启动，完成后按原方式重启ComfyUI并保持Manager启用。
+随后导入工作流，选择配置，点击 **Prepare** 准备模型。
 
 ## 模型准备
 
