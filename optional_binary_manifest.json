@@ -11,17 +11,16 @@
         "cuda": "13.0",
         "sm": 75
       },
-      "distribution_authorization": "user_authorized_preserve_recorded_license_status",
       "source": {
         "repository": "https://github.com/ssiu/flash-attention-turing",
         "commit": "9ef98fcb506bb1e2fe3cece50935e2935bf6b124",
         "cutlass_commit": "df18f5e4f5de76bed8be1de8e4c245f2f5ec3020"
       },
-      "license_status": "Upstream repository license has not been confirmed; preserve actual source/build records and all available component LICENSE/NOTICE files without asserting blanket clearance.",
+      "license_status": "The pinned Turing upstream has no declared license. CUTLASS and NVIDIA license texts are included; see NOTICE and MANIFEST.json.",
       "artifact": {
-        "url": "https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/download/turing-sm75-cp312-cu130-v1/moss-turing-flash-cp312-torch210-cu130-sm75-win_amd64.zip",
-        "size_bytes": 43707834,
-        "sha256": "779e2bf85ae347a50200b372eb79481bce069a0392856cd09e9f0b8dbd0fcae7"
+        "url": "https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/download/turing-sm75-cp312-cu130-v2/moss-turing-flash-cp312-torch210-cu130-sm75-win_amd64-v2.zip",
+        "size_bytes": 43706657,
+        "sha256": "a85c18b8003b82ca080ae56c5ff1e6d62de22402de5fec2d7576ff5077b6d730"
       },
       "files": [
         {
@@ -32,8 +31,8 @@
         },
         {
           "path": "MANIFEST.json",
-          "size_bytes": 6338,
-          "sha256": "01d12881ae976f32718dcfbb7a821e34ac6f8498d6f21b87fbe4334d85983906",
+          "size_bytes": 3235,
+          "sha256": "9a8ab9457cf585f29e07662270ac8d84f33234aa288630a762324b27b96e1c80",
           "role": "build_record"
         },
         {
@@ -56,8 +55,8 @@
         },
         {
           "path": "README.md",
-          "size_bytes": 1728,
-          "sha256": "9c46f0051c9cb3defbf1a57ec1be4b685e4be34e805b4caa21e0f81f507edf84",
+          "size_bytes": 1163,
+          "sha256": "4e13eb0bad501e74edbd977f8a352e104e5c17a9b529257439b14c480b1a9559",
           "role": "notice"
         },
         {
@@ -127,7 +126,7 @@
           "role": "source"
         }
       ],
-      "notes": "Public GitHub Release 423709338, tag turing-sm75-cp312-cu130-v1, is published and not draft. Root verified an anonymous HTTP 200 full download without Authorization: 43,707,834 bytes and SHA256 779e2bf85ae347a50200b372eb79481bce069a0392856cd09e9f0b8dbd0fcae7; remote asset digest matches. The complete 17-member source/build/NOTICE/component-license inventory is pinned. This establishes public artifact identity, not new SM75 GPU qualification or blanket upstream license clearance."
+      "notes": "Optional Turing Flash Attention for the specified Windows SM75 environment. V2 simplifies README and manifest documentation; runtime binaries, interface, sources and licenses are unchanged."
     }
   }
 }

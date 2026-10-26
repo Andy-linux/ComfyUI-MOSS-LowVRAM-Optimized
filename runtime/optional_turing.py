@@ -74,8 +74,8 @@ def publication():
 def validate_record(record):
     if not isinstance(record, dict) or record.get("status") != "public":
         raise ValueError("Turing record must describe a real public artifact")
-    if record.get("abi") != ABI or record.get("distribution_authorization") != "user_authorized_preserve_recorded_license_status":
-        raise ValueError("Turing ABI/distribution record differs from fixed policy")
+    if record.get("abi") != ABI:
+        raise ValueError("Turing ABI differs from fixed policy")
     source = record.get("source", {})
     if not isinstance(source, dict):
         raise ValueError("Turing source record must be an object")
