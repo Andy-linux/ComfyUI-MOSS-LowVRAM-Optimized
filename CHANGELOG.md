@@ -9,9 +9,11 @@
 - Prefer ComfyUI's `cudaMallocAsync` mechanism with a startup probe and a fresh
   native-allocator process when that mechanism is unsupported. Integrate model
   admission, VRAM budgets, transfer scheduling, and unload behavior.
-- Add one unified configuration/preparation workflow, with the seven earlier
-  precision examples retained. Separate stored weight formats, actual arithmetic,
-  and floating boundary precision; preserve all six earlier internal node IDs.
+- Provide only `00_moss_lowvram.json` as the user configuration/preparation
+  workflow. Keep the seven earlier precision examples solely as compatibility
+  fixtures in `tests/historical_workflows/`, excluded from the Registry package.
+  Separate stored weight formats, actual arithmetic, and floating boundary
+  precision; preserve all six earlier internal node IDs.
 - Prepare selected models in the ComfyUI server's registered model directories
   through an explicit GUI confirmation, with pinned versions, size/SHA256 checks,
   progress, retries, verified-file reuse, and complete nine-file Original TE sets.

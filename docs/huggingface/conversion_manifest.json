@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "status": "UPLOAD_PREPARED",
+  "status": "REMOTE_WEIGHT_BYTES_AND_INITIAL_COMPANIONS_VERIFIED",
   "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
   "scope": "Two shared row FP8 DiT checkpoints: Base and SFT. Runtime activation policy selects FP8-compute or 16-bit weight-only; no training, TE, VAE, tokenizer or binary bundle.",
   "sources": [
@@ -63,8 +63,8 @@
       "format_metadata": "kohakumoss_fp8 JSON: recipe=row, layers list",
       "activation_policy": "Selected at inference: fp8 requests dynamic FP8-compute (vendor may select W16); 16bit reuses the same row weight codes/scales with FP16/BF16 activations.",
       "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
-      "public_revision": null,
-      "download_url": null,
+      "public_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b",
+      "download_url": "https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/resolve/082aebf29d592d9a9f0ba61b64f780ad160ec72b/moss_image_base_kohaku_fp8_row.safetensors",
       "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
       "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32",
       "supported_runtime_modes": [
@@ -91,8 +91,8 @@
       "format_metadata": "kohakumoss_fp8 JSON: recipe=row, layers list",
       "activation_policy": "Selected at inference: fp8 requests dynamic FP8-compute (vendor may select W16); 16bit reuses the same row weight codes/scales with FP16/BF16 activations.",
       "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
-      "public_revision": null,
-      "download_url": null,
+      "public_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b",
+      "download_url": "https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/resolve/082aebf29d592d9a9f0ba61b64f780ad160ec72b/moss_image_sft_kohaku_fp8_row.safetensors",
       "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
       "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32",
       "supported_runtime_modes": [
@@ -148,8 +148,7 @@
       "FP8 is always faster",
       "new 4 GB/8 GB hardware certification",
       "Linux, SM75, SM86, SM90 or Blackwell qualification",
-      "full Base/SFT quality equivalence",
-      "public HF upload completed"
+      "full Base/SFT quality equivalence"
     ],
     "per_case_receipts": "See release validation and original execution receipts when published; no missing matrix entries invented",
     "isolated_row_dispatch_probe": {
@@ -243,5 +242,13 @@
       "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
       "nonquantized_tensor_policy": "BF16 and KEEP_FP32-sensitive FP32 tensors; rope FP32"
     }
-  ]
+  ],
+  "publication": {
+    "repository": "Andylinux/MOSS-Image-Kohaku-FP8",
+    "verified_weight_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b",
+    "initial_companion_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b",
+    "verification": "Two exact weight sizes and LFS SHA256; all five initial companion files fetched at the fixed commit and compared by full SHA256 to stage.",
+    "weight_remote_stream_hash_performed": false,
+    "revision_note": "This manifest references the previously verified immutable weight commit; its own later documentation commit is reported externally to avoid self-reference."
+  }
 }

@@ -50,8 +50,8 @@ No Python package installation is performed. Credentials are never stored in JSO
 | `te_original` | 16,805,544,650 | public; Original BF16 TE: all four shards plus index/config and tokenizer. Exact small-file SHA256 required; downloader refuses incomplete metadata. |
 | `sft_w5` | 3,630,052,176 | public; existing Andylinux SFT W5 packed checkpoint, pinned revision/hash; matches the measured local artifact. |
 | `sft_w6` | 4,224,594,400 | public; existing Andylinux SFT W6 packed checkpoint, pinned revision/hash; matches the measured local artifact. |
-| `base_fp8` | 5,174,879,864 | Base Kohaku FP8 row; target `Andylinux/MOSS-Image-Kohaku-FP8` selected, upload/revision verification pending. One file supports FP8 or 16-bit compute. |
-| `sft_fp8` | 5,174,879,840 | SFT Kohaku FP8 row; same selected target, upload/revision verification pending. Distinct SFT bytes, not a renamed Base model. |
+| `base_fp8` | 5,174,879,864 | Base Kohaku FP8 row; public at the fixed R1 below. One file supports FP8 or 16-bit compute. |
+| `sft_fp8` | 5,174,879,840 | SFT Kohaku FP8 row; public at the same fixed R1 below. Distinct SFT bytes, not a renamed Base model. |
 | `base_fp8_weight_only` | 5,346,415,987 | Legacy local-only separate weight-only export; not included in the new two-row public distribution. Existing explicit local loading remains compatibility scope. |
 
 The 9,748,121,532-byte Comfy-Org INT8 TE differs from the 8,452,959,908-byte
@@ -108,14 +108,13 @@ be re-uploaded to a new HF repository.
 The destination is
 [Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8).
 Base and SFT row checkpoints are the two files selected for public distribution.
-The upload is in progress; only an actual uploaded file with pinned immutable
-revision, bytes and SHA256 may become downloadable through the GUI/manifest.
-The destination choice does not itself prove that upload verification finished.
+The two Base/SFT FP8 row checkpoints are public at [R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41), totaling 10,349,759,704 bytes. Exact sizes and remote LFS SHA256 match local full-file SHA256; small companion files were read back. The approximately 10GB remote weights were not downloaded again for a full-stream SHA256 check.
+Weight upload commit R0 is `082aebf29d592d9a9f0ba61b64f780ad160ec72b`; R1 adds the finalized documentation with unchanged weight identities. Registry publication and actual Manager installation/download/generation remain pending.
 
-| Asset | Local export SHA256 | Compute choice |
-| --- | --- | --- |
-| `base_fp8` | `4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14` | FP8 / 16-bit, using the same row file |
-| `sft_fp8` | `06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862` | FP8 / 16-bit, using the same row file |
+| Asset | Exact bytes | Local full-file / remote LFS SHA256 | Compute choice |
+| --- | --- | --- | --- |
+| `base_fp8` | 5,174,879,864 | `4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14` | FP8 / 16-bit, using the same row file |
+| `sft_fp8` | 5,174,879,840 | `06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862` | FP8 / 16-bit, using the same row file |
 
 Storage and matrix arithmetic remain separate. Switching to 16-bit compute does
 not require a second weight-only download. The old 5,346,415,987-byte independent

@@ -141,11 +141,11 @@ offload、VAE 预估、原始 payload 双缓冲、锁页 chunk 与卸载清理�
 INT8 TE v2的推荐目标别名为 `text_encoders/moss-image-qwen35-int8-convrot-v2.safetensors`，
 避免与同上游basename的旧v1混淆。GUI也可核验并复用其他注册名称下的同一份精确v2字节，
 不要求仅为改名再下载8.45GB文件。Base/SFT FP8各一份row文件共享FP8/16-bit计算，
-只切换计算不重复下载权重；公开下载仍以真实上传完成后的固定revision/hash清单为准。
+只切换计算不重复下载权重；两份公开权重已固定于R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`，精确大小/hash见[模型文件](MODEL_FILES.md)。
 
 旧01–07图已移到 `tests/historical_workflows/`，仅为GitHub历史测试fixture，
 由 `.comfyignore` 排除Registry包，不再作为用户模板或当前分享方案。
-尚未注册时不写假的 `cnr_id`；真实发布、安装后再导出真实包ID与版本信息。
+当前00的 `cnr_id` / `ver` 是待发布metadata，不表示Registry已发布或安装已验证；真实发布、安装后需核对并重新导出。
 
 ## 验证范围
 
@@ -184,10 +184,8 @@ Registry仍未发布，真正空基线Manager安装仍待完成。
 Registry Publisher `xianbei`的公开状态已确认为**Active**。本地加密凭证读取/
 解密检查已成功；**PAT在Registry服务上的认证仍未验证**，不能据此宣称已可发布。
 尚无用于这项PAT认证检查的官方只读验证端点，不探测可能产生写入的发布接口，
-文档也不包含凭证内容。两份自制FP8 row的目标已确定为
-[Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8)，
-上传进程仍在运行，尚无远端两权重完成记录；下载是否启用以固定revision/hash的实际清单为准。旧weight-only不纳入本次公开分发。
-GitHub源码与Turing资产公开不代表HF权重上传或Registry注册完成。
+文档也不包含凭证内容。两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。旧weight-only不纳入本次公开分发。
+GitHub、Turing与HF资产公开不代表Registry注册或实际Manager安装完成。
 
 新增00的候选服务复用/生成已通过；此前01–07图证据保留原范围。真正新用户Manager安装闭环尚待完成。
 已在Windows独立基线（Python3.12.13、Torch2.10+cu130、Manager4.2.2，初始缺少Triton与accelerate）

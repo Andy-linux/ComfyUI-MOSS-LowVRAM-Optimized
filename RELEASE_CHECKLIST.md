@@ -16,8 +16,8 @@
   credential; never commit it, print it or put it in workflow JSON.
 - The FP8 destination is now [Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8).
   Only **two Base/SFT row checkpoints** are in the public upload scope. Their
-  upload is in progress; require actual immutable commit/revision, bytes and SHA256
-  before enabling downloads. One row file supports the FP8 / 16-bit compute choice.
+  upload and fixed R1 verification are complete; see MODEL_FILES.md for exact
+  bytes/SHA256. One row file supports the FP8 / 16-bit compute choice.
   The old separate Base weight-only export stays legacy local, not a third upload.
 
 Existing public W5/W6 already live in
@@ -84,8 +84,9 @@ missing HF identity or bypass a structural/metadata failure. Record actual outpu
   pack simultaneously. Update/migrate one installation; the existing folder name
   may remain for launcher compatibility. Preserve any local `models.local.json`
   privately when migrating, never in the published archive.
-  Insert genuine `cnr_id`/`ver` only after publishing and installing the real
-  Registry version, then re-export and validate the resulting JSON/PNG artifacts.
+  Current00 cnr_id/ver are planned publication metadata, not proof of Registry
+  publication. After publishing and installing the real Registry version, verify
+  those fields, then re-export and validate the resulting JSON/PNG artifacts.
 - Validate the new 00 entry independently: changing Base/SFT, DiT storage/compute,
   TE format/compute, budget and VAE must create the correct selected asset plan.
   Its GUI preparation must fetch only the selected assets and prepare the complete
@@ -145,10 +146,8 @@ missing HF identity or bypass a structural/metadata failure. Record actual outpu
 - Turing Release 423709338 is public/non-draft. Anonymous HTTP200 full ZIP download
   matched 43,707,834 bytes and the full pinned SHA, as did remote asset digest.
   The optional manifest is public; runtime code remains frozen and strict SM75.
-- Public HF target exists but two-row file uploads are still in progress with no
-  remote completion record for both weights. GitHub
-  is now public, while Registry publication has not occurred. Record actual
-  immutable responses before updating those states.
+- The two Base/SFT FP8 row checkpoints are public at [R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41), totaling 10,349,759,704 bytes. Exact sizes and remote LFS SHA256 match local full-file SHA256; small companion files were read back. The approximately 10GB remote weights were not downloaded again for a full-stream SHA256 check.
+  GitHub is public; Registry publication and real empty-baseline Manager installation remain pending.
 
 ## Explicit publishing only
 

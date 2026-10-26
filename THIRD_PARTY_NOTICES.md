@@ -50,8 +50,7 @@ Model weights are external assets with their own upstream terms, pinned in
 package. W5/W6 already exist at `Andylinux/MOSS-Image-SFT-W5A8-W6A8`,
 revision `bfb77cb73ae7acb4f788d50d4043c2d71989b0a7`; the operator verified
 their hashes against the local files. Index these files rather than re-uploading.
-Two Base/SFT FP8 row checkpoints target the public repository
-`Andylinux/MOSS-Image-Kohaku-FP8`; file upload/verification is still in progress.
+The two Base/SFT FP8 row checkpoints are public at [R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41), totaling 10,349,759,704 bytes. Exact sizes and remote LFS SHA256 match local full-file SHA256; small companion files were read back. The approximately 10GB remote weights were not downloaded again for a full-stream SHA256 check.
 Each row file supports FP8 or 16-bit compute. The older separate Base weight-only
 export remains legacy local and is not a third public upload. Checkpoint conversion
 is inference preparation, not training. Integration modifications are summarized

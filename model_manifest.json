@@ -298,21 +298,49 @@
     },
     {
       "id": "base_fp8",
-      "status": "local_only/publish_pending",
+      "status": "public",
       "local_filename": "moss_image_base_kohaku_fp8_row.safetensors",
-      "notes": "Confirmed repository Andylinux/MOSS-Image-Kohaku-FP8; upload/remote verification is in progress. Shared row storage supports explicit FP8 or 16-bit activation modes; no duplicate weight download.",
-      "files": [],
+      "notes": "Public Base/SFT shared row checkpoint, verified at the pinned immutable revision. The same row file is reused at runtime for FP8 or FP16/BF16 activation modes without requantization or a duplicate weight download; arithmetic dispatch remains shape-dependent.",
+      "files": [
+        {
+          "repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
+          "revision": "d8a0b2f46a79770fe711bf5322cf6cb3219c8d41",
+          "filename": "moss_image_base_kohaku_fp8_row.safetensors",
+          "size_bytes": 5174879864,
+          "sha256": "4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14",
+          "destination": "diffusion_models/moss_image_base_kohaku_fp8_row.safetensors"
+        }
+      ],
       "local_artifact_bytes": 5174879864,
-      "local_artifact_sha256": "4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14"
+      "local_artifact_sha256": "4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/blob/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream model-weight declaration is not a blanket runtime or converter code license"
+      }
     },
     {
       "id": "sft_fp8",
-      "status": "local_only/publish_pending",
+      "status": "public",
       "local_filename": "moss_image_sft_kohaku_fp8_row.safetensors",
-      "notes": "Confirmed repository Andylinux/MOSS-Image-Kohaku-FP8; upload/remote verification is in progress. Shared row storage supports explicit FP8 or 16-bit activation modes; no duplicate weight download.",
-      "files": [],
+      "notes": "Public Base/SFT shared row checkpoint, verified at the pinned immutable revision. The same row file is reused at runtime for FP8 or FP16/BF16 activation modes without requantization or a duplicate weight download; arithmetic dispatch remains shape-dependent.",
+      "files": [
+        {
+          "repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
+          "revision": "d8a0b2f46a79770fe711bf5322cf6cb3219c8d41",
+          "filename": "moss_image_sft_kohaku_fp8_row.safetensors",
+          "size_bytes": 5174879840,
+          "sha256": "06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862",
+          "destination": "diffusion_models/moss_image_sft_kohaku_fp8_row.safetensors"
+        }
+      ],
       "local_artifact_bytes": 5174879840,
-      "local_artifact_sha256": "06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862"
+      "local_artifact_sha256": "06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862",
+      "license": {
+        "declared_upstream": "apache-2.0",
+        "url": "https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/blob/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41/LICENSE",
+        "review": "see LICENSE_PROVENANCE.json; upstream model-weight declaration is not a blanket runtime or converter code license"
+      }
     },
     {
       "id": "base_fp8_weight_only",

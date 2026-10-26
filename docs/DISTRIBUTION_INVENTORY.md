@@ -13,7 +13,7 @@ LICENSE/NOTICE字节不变。此清单记录工程分发决定，不作为额外
 | 用户模板 | 仅 `example_workflows/00_moss_lowvram.json` | GUI选择系列/格式/计算并准备所选模型；旧01–07只在tests/historical_workflows，不进Registry |
 | 原有Base/SFT/TE/VAE模型 | 固定上游来源索引，不复制上传 | model_manifest.json内真实revision、bytes、SHA256与各模型许可 |
 | 原有W5/W6 | 使用现有Andylinux公开仓库，不重传 | 下列已核对revision/hash；不与新FP8目标混同 |
-| 新Base/SFT FP8 row | 两份文件，目标Andylinux/MOSS-Image-Kohaku-FP8已公开；文件仍上传/核验中 | 同一row文件切换FP8/16-bit计算；只有真实固定revision/hash后启用下载 |
+| 新Base/SFT FP8 row | 两份文件已在Andylinux/MOSS-Image-Kohaku-FP8的固定R1公开核验 | 同一row文件切换FP8/16-bit计算；使用下列真实R1/bytes/hash |
 | 旧独立Base weight-only导出 | 仅legacy local，不是第三份公开模型 | 保留历史conversion/hash记录，不重复上传 |
 | 固定公开Sage wheel | 严格SM89宿主由Manager安装阶段准备到插件隔离目录 | 原发行URL、精确bytes/SHA256及原组件许可；源码包不内嵌wheel |
 | 自编SM75 Turing bundle | 用户已授权且独立GitHub Release已公开；匿名完整下载大小/hash及远端digest确认 | optional_binary_manifest.json固定URL/整体及逐文件hash/严格ABI，保留源码、构建、原许可和NOTICE；上游仓库许可未确认事实不变 |
@@ -35,10 +35,13 @@ LICENSE/NOTICE字节不变。此清单记录工程分发决定，不作为额外
 
 ## 两份新FP8 row与历史本地产物
 
+两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。
+精确文件大小与固定revision表见[模型文件](../MODEL_FILES.md)；Registry与实际Manager安装仍待完成。
+
 | 文件 | 分发范围 | SHA256 |
 | --- | --- | --- |
-| `moss_image_base_kohaku_fp8_row.safetensors` | Base公开row上传中；共享FP8/16-bit计算 | `4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14` |
-| `moss_image_sft_kohaku_fp8_row.safetensors` | SFT公开row上传中；共享FP8/16-bit计算 | `06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862` |
+| `moss_image_base_kohaku_fp8_row.safetensors` | Base公开row，5,174,879,864 bytes；共享FP8/16-bit计算 | `4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14` |
+| `moss_image_sft_kohaku_fp8_row.safetensors` | SFT公开row，5,174,879,840 bytes；共享FP8/16-bit计算 | `06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862` |
 | `moss_image_base_kohaku_fp8_weight_only.safetensors` | legacy local，非本次第三份公开下载 | `03a31fb8a7c2e196b3b0c3b02849442d40503ead10cdf9f9f4bce543525c1c54` |
 
 导出为格式转换/量化，没有训练。已验证共享路径的8个512²/2步/解码请求及263层

@@ -24,8 +24,8 @@ UI 队列显示成功可能仅表示已安排，尚未安装。请点击 Restart
 
 当前00默认SFT W5 + Sumomo INT8 TE v2 / W8A16 +原MOSS VAE；00是唯一用户模板。
 旧01–07移至tests/historical_workflows，仅保留为历史测试fixture，不进入Registry包。Base/SFT row共两份FP8权重，对同一文件切换FP8或16-bit计算；
-旧独立weight-only文件仅legacy local，不重复作为第三份公开下载。新FP8公开下载
-须等实际上传完成且固定revision/hash进入清单。
+旧独立weight-only文件仅legacy local，不重复作为第三份公开下载。两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。
+精确文件大小/hash见[模型文件](../MODEL_FILES.md)。这不是实际Manager安装或模型下载验收。
 
 ## 已完成和待完成的安装验证
 

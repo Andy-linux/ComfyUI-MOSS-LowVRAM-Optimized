@@ -54,7 +54,9 @@
             "hash": "c3bdf94dc67ec69b30ea9fe1fa8340085679cae64d019f7c7e4a9921f1a7f17a",
             "hash_type": "SHA256"
           }
-        ]
+        ],
+        "cnr_id": "kohaku-moss-lowvram-optimized",
+        "ver": "0.1.0"
       },
       "widgets_values": [
         "SFT",
@@ -126,7 +128,9 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "MOSSOptimizedPairedTextEncode"
+        "Node name for S&R": "MOSSOptimizedPairedTextEncode",
+        "cnr_id": "kohaku-moss-lowvram-optimized",
+        "ver": "0.1.0"
       },
       "widgets_values": [
         "A quiet riverside village at sunrise, soft golden light on wooden houses and willow trees, natural colors, detailed photography. 清晨的河畔村庄，金色阳光洒在木屋与垂柳上，宁静自然，细节清晰。",
@@ -215,7 +219,9 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "MOSSOptimizedSampler"
+        "Node name for S&R": "MOSSOptimizedSampler",
+        "cnr_id": "kohaku-moss-lowvram-optimized",
+        "ver": "0.1.0"
       },
       "widgets_values": [
         314159265,
@@ -266,7 +272,9 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "MOSSOptimizedVAEDecode"
+        "Node name for S&R": "MOSSOptimizedVAEDecode",
+        "cnr_id": "kohaku-moss-lowvram-optimized",
+        "ver": "0.1.0"
       },
       "widgets_values": []
     },
@@ -364,7 +372,9 @@
       ],
       "outputs": [],
       "properties": {
-        "Node name for S&R": "MOSSOptimizedControls"
+        "Node name for S&R": "MOSSOptimizedControls",
+        "cnr_id": "kohaku-moss-lowvram-optimized",
+        "ver": "0.1.0"
       },
       "widgets_values": [
         "idle"

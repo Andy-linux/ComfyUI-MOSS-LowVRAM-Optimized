@@ -5,7 +5,7 @@
 - 正式包ID：`kohaku-moss-lowvram-optimized`；展示为 **MOSS LowVRAM Optimized**，使用KohakuMoss推理组件。
 - GitHub目标：[Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized)。已公开，已确认源码提交 `523e1e68190d1a17138b2189ad24349e175d938d`；后续清单启用修改保留各自同步提交。
 - Registry Publisher `xianbei`公开状态Active；Registry包尚未发布。此前本地加密凭证可读取/解密，不等于PAT服务端认证已通过；不借无必要写入试探认证。
-- 两份Base/SFT FP8 row目标已确定为公开 [Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8)，模型文件仍在上传/核验中。一个row文件共享FP8/16-bit计算；旧独立weight-only仅legacy local，不是第三份上传。
+- 两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。一个row文件共享FP8/16-bit计算；旧独立weight-only仅legacy local，不是第三份上传。
 - 用户已明确授权自编SM75 Turing bundle作为独立GitHub Release。Release 423709338已公开、非draft；root匿名HTTP200完整下载43,707,834 bytes与SHA779e2bf8…匹配远端digest，清单已启用public。源码包不内嵌binary。
 
 根KohakuMoss LICENSE、NOTICE与原vendor/组件许可证字节保持不变；命名与组件scope继续保留。
@@ -34,15 +34,16 @@ portable MANIFEST、CUTLASS/NVIDIA原文、NOTICE及完整hash清单，去除私
 W5/W6继续使用 `Andylinux/MOSS-Image-SFT-W5A8-W6A8` 的revision
 `bfb77cb73ae7acb4f788d50d4043c2d71989b0a7`，保留其README、LOWBIT_MANIFEST和许可。
 
-自有FP8仅上传Base/SFT两份row。核对上传回执、不可变revision、精确bytes/SHA256与
-转换来源后，才把model_manifest状态转为public并启用GUI下载。当前uploading不是完成。
+自有FP8仅发布Base/SFT两份row，权重提交R0为 `082aebf29d592d9a9f0ba61b64f780ad160ec72b`，
+单次文档提交及readback得到R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`，核验范围见[模型文件](../MODEL_FILES.md)。
+GUI下载使用真实固定revision/bytes/hash；该HF结果不表示Registry或Manager安装闭环已完成。
 不向已有W5/W6仓库随意追加，也不把本地旧weight-only作为第三份公开下载。
 
 ## 3. 先获得真实Registry身份，再导出唯一工作流
 
 源码与Registry发布成功并确认实际可安装后，从该安装导出唯一
 `example_workflows/00_moss_lowvram.json`，携带真实 `properties.cnr_id` 与 `ver`。
-发布前不伪造身份，保留六个旧class IDs并新增统一配置入口。
+当前cloud00已有待发布cnr_id/ver metadata，不表示Registry已发布；发布安装后仍需核对再导出。保留六个旧class IDs并新增统一配置入口。
 旧01–07只在 `tests/historical_workflows/` 保存为历史fixture，由.comfyignore排除Registry；
 不是当前模板、下载入口或新用户分享方案。
 
