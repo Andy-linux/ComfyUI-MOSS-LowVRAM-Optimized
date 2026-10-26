@@ -28,6 +28,25 @@ def _decode(self, z, **decoder_kwargs):
     return self.decoder(self.post_quant_conv(z), **decoder_kwargs)
 
 
+def load_fp32_vae_patcher(vae_path, metadata=None, device=None, disable_dynamic=False):
+    """Comfy cached VAE factory with an explicit FP32 numerical contract.
+
+    Match load_vae_patcher's device slot and disable_dynamic keyword. Comfy0.41
+    accepts but does not forward disable_dynamic to VAE; its outer clone path
+    owns that policy. This VAE constructor has no disable_dynamic parameter.
+    """
+    import comfy.sd
+    import comfy.utils
+
+    if metadata is None:
+        state, metadata = comfy.utils.load_torch_file(vae_path, return_metadata=True)
+    else:
+        state = comfy.utils.load_torch_file(vae_path)
+    vae = comfy.sd.VAE(sd=state, metadata=metadata, device=device, dtype=torch.float32)
+    vae.throw_exception_if_invalid()
+    return vae.patcher
+
+
 def load_bf16_vae(name):
     import folder_paths
     import comfy.sd

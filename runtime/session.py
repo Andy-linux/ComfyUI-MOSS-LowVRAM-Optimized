@@ -1442,10 +1442,12 @@ class MossSession:
                     state, metadata = comfy.utils.load_torch_file(
                         str(vae_path), return_metadata=True
                     )
-                    self.vae = comfy.sd.VAE(sd=state, metadata=metadata)
+                    self.vae = comfy.sd.VAE(sd=state, metadata=metadata, dtype=torch.float32)
                     self.vae.throw_exception_if_invalid()
+                    from .vae_precision import load_fp32_vae_patcher
+
                     self.vae.patcher.cached_patcher_init = (
-                        comfy.sd.load_vae_patcher,
+                        load_fp32_vae_patcher,
                         (str(vae_path), metadata, None),
                     )
                 if self.vae.vae_dtype != torch.float32:
