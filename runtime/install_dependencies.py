@@ -1,8 +1,4 @@
-"""Read-only dependency plans; execution is reserved for Manager's install.py.
-
-No installer runs at import, environment-route, or inference time. Only stdlib is
-imported here. Plan facts are JSON serializable, not authorization to run commands.
-"""
+"""Build dependency plans and run them during Manager installation."""
 import hashlib
 import importlib
 import importlib.metadata as metadata
@@ -28,8 +24,8 @@ SAGE_SHA256 = "1635283f5c01ec3cda58a784d0d7eabbcaffaf9511d1b263db4750e1ed7958bb"
 SAGE_BYTES = 16656067
 SAGE_ROOT = Path(__file__).resolve().parent / "vendor/sageattn220"
 SAGE_MEMBERS = ("sageattention/core.py", "sageattention/_fused.pyd", "sageattention/_qattn_sm80.pyd", "sageattention/_qattn_sm89.pyd", "sageattention/_qattn_sm90.pyd")
-MANAGER_ACTION = "请先在 Manager 点击 Restart / 重启以执行待处理依赖，再打开节点环境检查。仍有缺失时，使用当前 Manager 实际提供的修复/重装入口（旧界面名称为 Try fix / Reinstall）；新界面或安全策略未提供此功能时，请通过官方宿主维护流程处理，不降低安全级别。"
-HOST_ACTION = "当前宿主组合不在自动准备范围。请使用官方 ComfyUI Desktop 图形安装/维护流程建立兼容 NVIDIA 环境；本插件不会替换 Python、Torch 或 CUDA。https://www.comfy.org/download"
+MANAGER_ACTION = "请在 Manager 完成节点包安装，按提示应用更改或重启，再重新检查。"
+HOST_ACTION = "请先通过 ComfyUI 安装与维护流程准备上述 Python、Torch 和 CUDA 环境，再重新检查：https://www.comfy.org/download"
 
 
 def _environment():
@@ -41,21 +37,36 @@ def _environment():
     return module.inspect_environment(check_extensions=False)
 
 
+def _free_threaded(report):
+    abi = report.get("python_abi") or {}
+    markers = " ".join(str(abi.get(key) or "") for key in ("abiflags", "soabi", "cache_tag"))
+    version = str(report.get("python_version", ""))
+    return (abi.get("free_threaded") is True or abi.get("py_gil_disabled") in (1, "1")
+            or abi.get("gil_enabled") is False or "t" in str(abi.get("abiflags", ""))
+            or bool(re.search(r"(?:cp|cpython-?)3\d{2}t(?:[-_]|$)", markers))
+            or bool(re.search(r"3\.\d+t|3\.\d+\.\d+t", version)))
+
+
 def _prerequisites(report):
-    """Supplement inventory with local facts only; never invoke a compiler."""
+    """Read the current interpreter's development files and compiler inventory."""
     if "install_prerequisites" in report:
         return report["install_prerequisites"]
-    include = Path(sysconfig.get_path("include"))
     base = Path(sys.base_prefix)
+    include = Path(sysconfig.get_path("include") or base / "include")
+    version = re.match(r"(\d+)\.(\d+)", str(report.get("python_version", "")))
+    suffix = "".join(version.groups()) if version else str(sys.version_info.major) + str(sys.version_info.minor)
+    suffix += "t" if _free_threaded(report) else ""
+    library_name, pth_name = "python" + suffix + ".lib", "python" + suffix + "._pth"
     triton = report.get("packages", {}).get("triton", {})
     origin = triton.get("origin")
     root = Path(origin).parent if origin else None
     windows = report.get("platform") == "win32"
     return {
         "python_headers": (include / "Python.h").is_file(),
-        "python_import_library": (base / "libs/python312.lib").is_file() if windows else True,
+        "python_import_library": (base / "libs" / library_name).is_file() if windows else True,
+        "python_library_name": library_name, "python_pth_name": pth_name,
         "header_root": str(base),
-        "embedded_python": (base / "python312._pth").is_file(),
+        "embedded_python": (base / pth_name).is_file(),
         "c_compiler": bool(shutil.which("cc") or shutil.which("gcc") or shutil.which("clang")) if not windows else bool(root and (root / "runtime/tcc/tcc.exe").is_file()),
         "cuda_compiler": bool(root and (root / "backends/nvidia/bin" / ("ptxas.exe" if windows else "ptxas")).is_file()),
         "compiler_override": os.environ.get("CC"),
@@ -89,7 +100,7 @@ def _linux_requirement(report):
 
 
 def _sage_state():
-    """Presence/provenance inventory only. Do not import optional extensions."""
+    """Check optional Sage files and the recorded wheel identity."""
     if not SAGE_ROOT.exists():
         return {"status": "missing"}
     expected = {"url": SAGE_URL, "sha256": SAGE_SHA256,
@@ -101,7 +112,7 @@ def _sage_state():
             return {"status": "installed", "verification": "presence_and_provenance_only"}
     except (OSError, ValueError):
         pass
-    return {"status": "conflict", "reason": "已有可选Sage目录未知/不完整，不自动覆盖；保持auto，需由宿主维护流程处理。"}
+    return {"status": "conflict", "reason": "Sage 组件目录不完整，请通过宿主维护流程修复；期间使用 auto。"}
 
 
 def _sage_plan(report):
@@ -113,14 +124,14 @@ def _sage_plan(report):
                 report.get("cuda_build") == "13.0" and report.get("cuda_available") and
                 (report.get("device") or {}).get("sm") == 89)
     if not eligible:
-        return {"status": "skipped", "reason": "固定可选Sage仅自动准备Windows x64 / Python3.12 / Torch2.10+cu130 / SM89；当前架构或宿主未覆盖，默认auto不依赖Sage。"}, []
+        return {"status": "skipped", "reason": "可选 Sage 准备范围：Windows x64 / Python 3.12 / Torch 2.10+cu130 / SM89；当前请使用 auto。"}, []
     state = dict(report["sage_installation"]) if "sage_installation" in report else _sage_state()
     state["required_for_auto"] = False
     steps = []
     if state["status"] == "missing":
         steps.append({"id": "sageattention", "kind": "optional_sage", "url": SAGE_URL,
                       "sha256": SAGE_SHA256, "bytes": SAGE_BYTES,
-                      "message": "安装阶段准备固定公开Sage wheel到插件隔离目录；失败仅提示warning，默认auto仍可用。"})
+                      "message": "安装阶段将固定 Sage wheel 准备到插件隔离目录；失败时使用 auto。"})
     return state, steps
 
 
@@ -133,12 +144,7 @@ def _turing_helper():
 
 
 def dependency_plan(report=None):
-    """Return schema v1: status ready/action_required/unsupported, steps, errors,
-    warnings, actions, qualification, prerequisite facts. Never writes/downloads.
-
-    Tests/callers may supply install_prerequisites and torch_requires facts. A
-    Windows ready plan means dependency preparation only, not GPU qualification.
-    """
+    """Build an installation plan for the detected Python, Torch and CUDA host."""
     report = _environment() if report is None else report
     prerequisites = _prerequisites(report)
     plan = {"schema_version": 1, "status": "ready", "read_only": True,
@@ -146,7 +152,7 @@ def dependency_plan(report=None):
             "scope": "automatic_dependency_preparation", "runtime_readiness": "see_environment_evaluation",
             "steps": [], "optional_steps": [], "optional_dependencies": {}, "errors": [],
             "warnings": [], "actions": [MANAGER_ACTION], "source": SOURCE,
-            "qualification": "dependency preparation only; no GPU workload run",
+            "qualification": "安装阶段依赖准备",
             "prerequisites": prerequisites}
     def error(code, message):
         plan["errors"].append({"code": code, "message": message})
@@ -158,35 +164,48 @@ def dependency_plan(report=None):
     if not report.get("cuda_available") or not sm:
         error("cuda_required", "未检测到可用 NVIDIA CUDA GPU；请先通过宿主图形维护流程修复驱动/环境。")
     if torch.get("status") != "available":
-        error("torch_unavailable", "现有 ComfyUI Torch 不可用，不能自动替换。")
+        error("torch_unavailable", "当前 Torch 不可用，请先修复 ComfyUI 运行环境。")
     requirement = None
     if platform == "win32":
-        if (not re.fullmatch(r"3\.12\.\d+", str(report.get("python_version", ""))) or
-                report.get("machine") not in ("AMD64", "x86_64") or
-                torch.get("version") != "2.10.0+cu130" or report.get("cuda_build") != "13.0" or sm not in (75, 89)):
-            error("host_unqualified", "Windows 自动准备仅覆盖 x64 Python 3.12 / Torch 2.10.0+cu130 / SM89，及有历史记录的 SM75 组合。")
+        version = str(report.get("python_version", ""))
+        py312 = bool(re.fullmatch(r"3\.12\.\d+", version))
+        py313 = bool(re.fullmatch(r"3\.13\.\d+", version))
+        implementation = str(report.get("python_implementation") or ("cpython" if py312 else "")).lower()
+        if _free_threaded(report):
+            error("python_free_threaded", "free-threaded Python 不支持此原生扩展，请使用普通带 GIL 的 CPython。")
+        if (not (py312 or (py313 and sm == 89)) or implementation != "cpython" or _free_threaded(report)
+                or report.get("machine") not in ("AMD64", "x86_64")
+                or torch.get("version") != "2.10.0+cu130" or report.get("cuda_build") != "13.0" or sm not in (75, 89)):
+            error("host_unqualified", "自动准备要求 Windows x64、普通 CPython 3.12 或 3.13（SM75 仅 3.12）、Torch 2.10.0+cu130、CUDA 13.0，GPU 为 SM89 或 SM75。")
         else:
             requirement = "triton-windows==" + ("3.2.0.post21" if sm == 75 else "3.6.0.post26")
             if sm == 75:
-                plan["warnings"].append({"code": "historical_sm75", "message": "SM75 + Torch2.10 + Triton3.2 为历史实测非上游标准配对；本次发布尚未重新验证整工作流。"})
+                plan["warnings"].append({"code": "historical_sm75", "message": "SM75 为实验性兼容路径：Python 3.12 / Torch 2.10 / Triton 3.2。"})
         if prerequisites.get("compiler_override"):
-            error("compiler_override", "检测到自定义 CC 编译器；请在宿主维护流程确认/移除覆盖后重试，本插件不修改全局环境变量。")
+            error("compiler_override", "检测到 CC 编译器覆盖，请先在宿主环境中确认该设置。")
         if not prerequisites.get("python_headers") or not prerequisites.get("python_import_library"):
-            if prerequisites.get("embedded_python") and requirement:
-                plan["steps"].append({"id": "python_headers", "kind": "python_headers", "message": "为当前便携 Python 补充官方 Python3.12 include/libs 文件（校验固定 SHA256，不覆盖已有文件）。", "url": HEADERS_URL, "sha256": HEADERS_SHA256})
+            if prerequisites.get("embedded_python") and requirement and py312:
+                plan["steps"].append({"id": "python_headers", "kind": "python_headers", "message": "为当前便携 Python 3.12 补充固定 include/libs 开发文件。", "url": HEADERS_URL, "sha256": HEADERS_SHA256})
             else:
-                error("python_development_files", "缺少匹配 Python 的 include/Python.h 或 libs/python312.lib；非便携宿主请通过官方图形安装器修复 Python 开发文件。")
+                library = prerequisites.get("python_library_name", "python313.lib" if py313 else "python312.lib")
+                missing = []
+                if not prerequisites.get("python_headers"):
+                    missing.append("include/Python.h")
+                if not prerequisites.get("python_import_library"):
+                    missing.append("libs/" + library)
+                detail = "；Python 3.13 嵌入式开发文件需通过完整 Python 安装修复" if py313 and prerequisites.get("embedded_python") else "；请通过 Python 安装器修复开发文件"
+                error("python_development_files", "缺少 Python " + version + " 开发文件：" + "、".join(missing) + detail + "。")
     elif platform == "linux":
         requirement = _linux_requirement(report)
         if not requirement:
-            error("torch_triton_pin_unknown", "现有 Torch 元数据没有可确认的精确 Linux Triton 版本，停止自动安装。")
+            error("torch_triton_pin_unknown", "请先准备具有明确 Triton 版本要求的 Linux Torch 环境。")
         if not re.fullmatch(r"3\.(?:1[2-9]|[2-9]\d)\.\d+", str(report.get("python_version", ""))):
             error("python_unqualified", "需要 Python >=3.12 的稳定版本。")
         if sm == 75 and requirement and tuple(map(int, requirement.split("==")[1].split(".")[:2])) >= (3, 3):
-            error("sm75_triton", "现有 Torch 要求的 Triton 已移除 SM75；不会改写 Torch 依赖。")
+            error("sm75_triton", "当前 Torch 要求的 Triton 已移除 SM75 支持，请准备兼容宿主。")
         if not prerequisites.get("python_headers") or not prerequisites.get("c_compiler"):
             error("linux_build_prerequisites", "Linux 缺少 Python 开发头文件或 C 编译器；请由宿主图形软件管理器/管理员准备。")
-        plan["warnings"].append({"code": "linux_unqualified", "message": "Linux 按现有 Torch 元数据准备依赖，不代表本插件整工作流已通过 Linux 实测。"})
+        plan["warnings"].append({"code": "linux_unqualified", "message": "Linux 为实验性准备路径，依赖版本随当前 Torch 元数据确定。"})
     else:
         error("platform_unsupported", "自动准备仅支持 NVIDIA Windows x64 / Linux 环境。")
     if triton.get("shadow_conflict"):
@@ -194,10 +213,10 @@ def dependency_plan(report=None):
     if requirement:
         expected = requirement.split("==")[1]
         if triton.get("status") == "missing" and not triton.get("version"):
-            plan["steps"].append({"id": "triton", "kind": "pip", "requirement": requirement, "message": "安装与当前环境策略匹配的固定 Triton wheel；不安装依赖、不替换 Torch。"})
+            plan["steps"].append({"id": "triton", "kind": "pip", "requirement": requirement, "message": "安装与当前 Torch 匹配的固定 Triton wheel。"})
         elif (triton.get("status") != "available" or triton.get("version") != expected or
               triton.get("distribution") != requirement.split("==")[0]):
-            error("triton_conflict", "已安装 Triton 与固定准备策略不符/无法导入；请通过 Manager/宿主维护流程处理现有冲突，不自动卸载或升级。")
+            error("triton_conflict", "Triton 版本或原生扩展冲突，请通过 Manager 或宿主维护流程修复后重启。")
         elif not prerequisites.get("cuda_compiler") or (platform == "win32" and not prerequisites.get("c_compiler")):
             error("triton_toolchain_missing", "现有 Triton wheel 缺少编译器工具；请在 Manager 修复依赖后重启。")
     sage, optional_steps = _sage_plan(report)
@@ -254,11 +273,7 @@ def _install_headers():
 
 
 def _prepare_sage():
-    """Installation phase only: download verified fixed wheel and use helper.
-
-    The helper validates exact bytes/hash, ABI and target, then stages/renames its
-    isolated directory. No pip, dependency resolution, or global replacement.
-    """
+    """Prepare the fixed Sage wheel through its isolated installer helper."""
     with urllib.request.urlopen(SAGE_URL, timeout=60) as response:
         data = response.read(SAGE_BYTES + 1)
     if len(data) != SAGE_BYTES or hashlib.sha256(data).hexdigest() != SAGE_SHA256:
@@ -285,11 +300,7 @@ def _verify_sage():
 
 
 def execute_plan(plan):
-    """Install-hook-only executor. Reinspect the host; never trust UI plan input.
-
-    Callable for install.py, never expose this function through server routes.
-    Returns structured status and exit_code. Successful preparation needs restart.
-    """
+    """Execute the current host plan during Manager installation."""
     fresh = dependency_plan()
     if fresh["status"] == "unsupported":
         return dict(fresh, read_only=False, exit_code=1, restart_required=False)
@@ -325,7 +336,7 @@ def execute_plan(plan):
                 verified["optional_steps"] = [step for step in verified["optional_steps"] if step["id"] != "sageattention"]
             except (OSError, ValueError, RuntimeError, subprocess.SubprocessError, zipfile.BadZipFile, ImportError) as exc:
                 optional.update(status="failed", reason=f"{type(exc).__name__}: {exc}")
-                verified["warnings"].append({"code": "optional_sage_preparation_failed", "message": "可选Sage准备失败，不能将Sage标为可用；默认auto仍可使用。请保持auto，后续由Manager安装/维护阶段重试：" + str(exc)})
+                verified["warnings"].append({"code": "optional_sage_preparation_failed", "message": "Sage 准备失败，请先使用 auto；可在 Manager 维护阶段重试：" + str(exc)})
         turing = verified["optional_dependencies"]["turing_flash"]
         if turing["status"] in ("missing", "installed"):
             try:
@@ -337,7 +348,7 @@ def execute_plan(plan):
                 verified["optional_steps"] = [step for step in verified["optional_steps"] if step["id"] != "turing_flash"]
             except (OSError, ValueError, RuntimeError, subprocess.SubprocessError, zipfile.BadZipFile, ImportError) as exc:
                 turing.update(status="failed", reason=f"{type(exc).__name__}: {exc}")
-                verified["warnings"].append({"code": "optional_turing_preparation_failed", "message": "可选SM75 Turing准备失败，不将Flash标为可用；默认auto仍可使用：" + str(exc)})
+                verified["warnings"].append({"code": "optional_turing_preparation_failed", "message": "Turing 准备失败，请先使用 auto：" + str(exc)})
         return dict(verified, read_only=False, status="prepared" if changed else "ready", exit_code=0, restart_required=changed)
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError, zipfile.BadZipFile) as exc:
         fresh["errors"].append({"code": "preparation_failed", "message": f"依赖准备失败：{type(exc).__name__}: {exc}"})

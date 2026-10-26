@@ -1,7 +1,7 @@
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 
-// Only the new entry point is enhanced; historical node widget order is sacred.
+// Setup controls belong only to the unified node.
 const TYPE = "MOSSOptimizedConfiguration";
 const INTEGER_OP = "INT8 × INT8 → INT32";
 const NEW_FIELDS = ["model_family", "dit_storage", "dit_compute", "te_storage", "te_compute", "profile", "precision", "attention", "vae_precision", "vae_asset"];
@@ -61,166 +61,235 @@ function structuralChoices(node, changed) {
     if (changed === "te_storage") setValue(node, "te_checkpoint", PINNED_NAMES[value(node, "te_storage")]);
     if (changed === "vae_asset") setValue(node, "vae_checkpoint", PINNED_NAMES[value(node, "vae_asset")]);
 }
-async function request(path, payload) {
-    const response = await api.fetchApi(path, payload === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    let data;
-    try { data = await response.json(); } catch { throw new Error(`Setup service returned HTTP ${response.status}; restart ComfyUI after updating this plugin.`); }
-    if (!response.ok || data.error) throw new Error(typeof data.error === "string" ? data.error : `HTTP ${response.status}`);
-    return data;
+function serviceError(path, code) {
+    if (code === 404 && path.includes("/jobs/")) return "准备任务已失效。请刷新检查，再确认准备。";
+    if (code === 404) return "MOSS 准备服务未就绪。请在 Manager 确认已安装 MOSS LowVRAM Optimized，应用更改并重启，然后刷新页面重试。";
+    if (code === 401 || code === 403) return `ComfyUI 拒绝了请求（HTTP ${code}）。请检查页面连接和访问权限后重试。`;
+    return `请求失败（HTTP ${code}），请重试。若持续失败，请查看 ComfyUI 的 MOSS 启动错误。`;
+}
+async function request(path, payload, { timeoutMs = 45000 } = {}) {
+    const controller = new AbortController();
+    let timer, timeoutError;
+    const deadline = new Promise((_, reject) => {
+        timer = setTimeout(() => {
+            timeoutError = new Error("请求超时，请重试检查。若刚重启 ComfyUI，请稍候再试。");
+            reject(timeoutError);
+            controller.abort();
+        }, timeoutMs);
+    });
+    try {
+        return await Promise.race([(async () => {
+            const response = await api.fetchApi(path, {
+                ...(payload === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }),
+                signal: controller.signal,
+            });
+            if (response.status === 404 || response.status === 401 || response.status === 403) throw new Error(serviceError(path, response.status));
+            let data;
+            try { data = await response.json(); } catch { throw new Error(response.ok ? "MOSS 返回的内容无法读取。请刷新页面，确认插件安装完成后重试。" : serviceError(path, response.status)); }
+            if (!response.ok) throw new Error(typeof data?.error === "string" ? data.error : serviceError(path, response.status));
+            if (!data || typeof data !== "object") throw new Error("MOSS 返回的检查结果不完整。请刷新页面后重试。");
+            if (data.error) throw new Error(typeof data.error === "string" ? data.error : serviceError(path, response.status));
+            return data;
+        })(), deadline]);
+    } catch (error) {
+        if (timeoutError) throw timeoutError;
+        if (error instanceof TypeError) throw new Error("无法连接 ComfyUI，请确认服务已启动后重试。");
+        throw error;
+    } finally { clearTimeout(timer); }
 }
 function invalidate(node) {
     node.properties ??= {};
-    node.properties.models = []; // Clear immediately; never retain a previous mode's download link.
+    node.properties.models = [];
     node._mossSetupReport = null;
-    status(node, "Selection changed — check preparation");
+    status(node, "配置已更改，请检查准备状态");
 }
-async function inspect(node, refresh = false) {
+async function inspect(node) {
+    const picked = selection(node), key = JSON.stringify(picked);
+    if (node._mossInspectPending?.key === key) return node._mossInspectPending.promise;
     const serial = (node._mossInspectSerial ?? 0) + 1;
     node._mossInspectSerial = serial;
-    const picked = selection(node);
-    const report = await request("/moss_lowvram/setup/inspect", { selection: picked, verify: false });
-    if (node._mossInspectSerial !== serial || JSON.stringify(picked) !== JSON.stringify(selection(node))) return null;
-    node._mossSetupReport = report;
-    node.properties ??= {};
-    node.properties.models = Array.isArray(report.models) ? report.models : [];
-    for (const [field, options] of Object.entries(report.options ?? report.capabilities?.options ?? {})) {
-        const w = widget(node, field);
-        if (!w || !Array.isArray(options)) continue;
-        const enabled = options.filter(o => o.enabled !== false).map(o => o.value);
-        // Keep a selected but hardware-incompatible value visible, so the
-        // authoritative error remains understandable; do not silently change it.
-        w.options.values = enabled.includes(w.value) ? enabled : [w.value, ...enabled];
-        w.tooltip = options.find(o => o.value === w.value)?.reason || w.tooltip;
-    }
-    const errors = report.evaluation?.errors ?? [];
-    status(node, errors.length ? `${errors.length} environment issue(s)` : report.assets?.ready ? "Ready — selected files present" : "Models need preparation", errors.map(e => e.message).join("\n") || report.evaluation?.qualification || "Inspect selected files before queueing");
-    return report;
+    const pending = { key };
+    pending.promise = (async () => {
+        const report = await request("/moss_lowvram/setup/inspect", { selection: picked, verify: false });
+        if (!report.environment || !Array.isArray(report.evaluation?.errors) || !Array.isArray(report.assets?.files)) throw new Error("MOSS 检查结果不完整。请刷新页面并检查插件版本。");
+        if (node._mossInspectSerial !== serial || key !== JSON.stringify(selection(node))) return null;
+        node._mossSetupReport = report;
+        node.properties ??= {};
+        node.properties.models = Array.isArray(report.models) ? report.models : [];
+        for (const [field, options] of Object.entries(report.options ?? report.capabilities?.options ?? {})) {
+            const w = widget(node, field);
+            if (!w || !Array.isArray(options)) continue;
+            const enabled = options.filter(o => o.enabled !== false).map(o => o.value);
+            w.options.values = enabled.includes(w.value) ? enabled : [w.value, ...enabled];
+            w.tooltip = options.find(o => o.value === w.value)?.reason || w.tooltip;
+        }
+        const errors = report.evaluation.errors;
+        status(node, errors.length ? `环境需处理 ${errors.length} 项` : report.assets.ready ? "已就绪，可以运行" : "模型待准备", errors.map(e => e.message).join("\n") || "打开准备窗口查看环境与模型状态。");
+        return report;
+    })().finally(() => { if (node._mossInspectPending === pending) node._mossInspectPending = null; });
+    node._mossInspectPending = pending;
+    return pending.promise;
 }
 const element = (tag, text) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; return e; };
-const bytes = n => Number.isFinite(n) ? `${(n / 1073741824).toFixed(2)} GiB` : "size unknown";
+const bytes = n => Number.isFinite(n) ? `${(n / 1073741824).toFixed(2)} GiB` : "大小未知";
 function link(text, url) {
     const a = element("a", text); a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer"; a.style.color = "#8dcfff"; return a;
 }
-function openManager(message) {
-    // Invoke an existing visible UI control. No guessed Manager network API,
-    // shell installer, security setting, or package mutation is used here.
-    const button = [...document.querySelectorAll("button")].find(b => /^(comfyui\s*)?manager$/i.test(b.textContent.trim()) || /comfyui.manager/i.test(b.getAttribute("title") ?? ""));
-    const instructions = "在 Manager 完成此节点包安装；若提示需要重启，先重启 ComfyUI 再回来检查。Windows Manager 可能将 requirements 和 install.py 的依赖准备延迟到重启阶段执行，请等待重启后的安装任务完成。安装失败时，按当前 Manager 实际提供的重试或重装入口处理；没有对应入口或宿主不兼容时，请使用官方 ComfyUI 安装维护向导。自动准备仅覆盖下方明确列出的宿主范围；不降低安全级别，也不自动替换 Torch/CUDA。";
-    if (button) button.click();
-    message.replaceChildren(element("span", button ? instructions : `本页面未找到 Manager 入口。${instructions}`), element("span", " "), link("官方 ComfyUI 安装维护向导", "https://docs.comfy.org/installation/desktop"));
+function openManager(node, dialog, message) {
+    const visible = e => e.getClientRects().length && getComputedStyle(e).visibility !== "hidden" && getComputedStyle(e).display !== "none" && !e.disabled && e.getAttribute("aria-disabled") !== "true";
+    const isManager = e => [e.textContent.trim(), e.getAttribute("aria-label") ?? "", e.getAttribute("title") ?? ""].some(text => /^(?:ComfyUI\s*)?Manager$/i.test(text) || text === "管理扩展功能");
+    const buttons = [...document.querySelectorAll('button,[role="button"]')].filter(e => visible(e) && isManager(e));
+    if (buttons.length === 1) {
+        dialog.close();
+        buttons[0].click();
+        status(node, "已打开 Manager", "完成 MOSS 节点包安装，按提示应用更改或重启，再重新检查。");
+        return;
+    }
+    message.replaceChildren(element("span", "请从 ComfyUI 工具栏打开“管理扩展功能 / Manager”。尚未安装时，请按官方说明启用。 "), link("启用 Manager", "https://docs.comfy.org/manager/install"), element("span", " · "), link("ComfyUI Desktop", "https://www.comfy.org/download"));
 }
+function environmentDiagnostic(report) {
+    const env = report.environment ?? {}, abi = env.python_abi ?? {};
+    const safe = value => typeof value === "string" ? value.replace(/[A-Za-z]:[\\/][^\s]+/g, "[路径]").replace(/[a-z][a-z0-9+.-]*:\/\/[^\s]+/gi, "[地址]").slice(0, 160) : typeof value === "boolean" || typeof value === "number" ? value : null;
+    return {
+        python: safe(env.python_version), implementation: safe(env.python_implementation),
+        abi: Object.fromEntries(["abiflags", "soabi", "cache_tag", "py_gil_disabled", "gil_enabled", "free_threaded"].map(key => [key, safe(abi[key])])),
+        torch: safe(env.packages?.torch?.version), cuda: safe(env.cuda_build), cuda_available: Boolean(env.cuda_available),
+        gpu: safe(env.device?.name), sm: safe(env.device?.sm), triton: safe(env.packages?.triton?.version),
+        errors: [...new Set([...(report.evaluation?.errors ?? []), ...(report.dependency_plan?.errors ?? [])].map(issue => safe(issue.code)).filter(Boolean))],
+    };
+}
+async function copyEnvironmentInfo(report, container) {
+    const text = JSON.stringify(environmentDiagnostic(report), null, 2);
+    try {
+        if (!globalThis.navigator?.clipboard?.writeText) throw new Error("clipboard_unavailable");
+        await navigator.clipboard.writeText(text);
+        container.replaceChildren(element("p", "环境信息已复制。"));
+    } catch {
+        const field = element("textarea"); field.value = text; field.readOnly = true; field.rows = 12; field.style.width = "100%";
+        container.replaceChildren(element("p", "请选中下方环境信息复制。"), field); field.focus?.(); field.select?.();
+    }
+}
+const fileStatus = value => ({ queued: "等待准备", running: "准备中", complete: "准备完成", failed: "准备失败", cancelled: "已取消", ready: "已就绪", missing: "待下载", candidate: "已有文件待校验", unverified: "待校验", mismatch: "需替换", custom: "自选文件", publish_pending: "暂无下载源", error: "需要处理", downloading: "下载中", verifying: "校验中" }[value] ?? value ?? "待检查");
 async function showSetup(node) {
+    if (node._mossSetupDialog?.open) return;
+    clearTimeout(node._mossInspectTimer);
     const dialog = element("dialog");
+    node._mossSetupDialog = dialog;
     dialog.style.cssText = "max-width:860px;width:88vw;max-height:85vh;overflow:auto;background:#202329;color:#eee;border:1px solid #777;border-radius:10px;padding:24px;font:14px/1.5 sans-serif";
-    const heading = element("h2", "MOSS · Prepare selected configuration");
-    const body = element("div");
-    const progress = element("pre"); progress.style.cssText = "white-space:pre-wrap;overflow-wrap:anywhere";
-    const actions = element("div"); actions.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;margin-top:18px";
-    const refresh = element("button", "Refresh environment and files");
-    const download = element("button", "Confirm download missing selected files");
-    const close = element("button", "Close");
-    let busy = false, closed = false, reviewedSelection = null, reviewedRepairs = [];
-    dialog.append(heading, body, progress, actions); actions.append(refresh, download, close);
+    const heading = element("h2", "MOSS · 配置与准备"), body = element("div"), progress = element("pre"), actions = element("div");
+    progress.style.cssText = "white-space:pre-wrap;overflow-wrap:anywhere";
+    actions.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;margin-top:18px";
+    const refresh = element("button", "重新检查"), copy = element("button", "复制环境信息"), download = element("button", "确认下载 / 校验"), close = element("button", "关闭");
+    let busy = false, checking = false, closed = false, reviewedSelection = null, reviewedRepairs = [], reviewedReport = null;
+    const diagnostics = element("div");
+    dialog.append(heading, body, progress, diagnostics, actions); actions.append(refresh, copy, download, close);
     close.onclick = () => dialog.close();
-    dialog.addEventListener("close", () => { closed = true; dialog.remove(); });
-    document.body.append(dialog); dialog.showModal();
+    dialog.addEventListener("close", () => { closed = true; if (node._mossSetupDialog === dialog) node._mossSetupDialog = null; dialog.remove(); });
+    function controls() {
+        refresh.disabled = busy || checking;
+        copy.disabled = !reviewedReport || checking;
+        download.disabled = busy || checking || !reviewedReport || Boolean(reviewedReport.assets.ready) || reviewedReport.assets.files.length === 0;
+    }
+    function managerHelp(container) {
+        const button = element("button", "打开 Manager"), message = element("p", "在 Manager 完成 MOSS 节点包安装，按提示应用更改或重启，再重新检查。");
+        button.onclick = () => openManager(node, dialog, message);
+        container.append(button, message, link("Manager 安装说明", "https://docs.comfy.org/manager/install"));
+    }
+    function environmentDetails(report) {
+        const details = element("details"), env = report.environment;
+        details.append(element("summary", "环境与可选功能"), element("p", `GPU: ${env.device?.name ?? "未发现 CUDA 设备"} · SM${env.device?.sm ?? "?"} · Python ${env.python_version ?? "?"}${env.python_abi?.free_threaded ? " (free-threaded)" : ""} · Torch ${env.packages?.torch?.version ?? "?"} · CUDA ${env.cuda_build ?? "?"} · Triton ${env.packages?.triton?.version ?? "缺失"}`));
+        if (report.evaluation.errors.length) {
+            for (const issue of report.dependency_plan?.errors ?? []) details.append(element("p", issue.message));
+            for (const step of report.dependency_plan?.steps ?? []) details.append(element("p", step.requirement ?? step.message ?? step.id));
+        }
+        const optional = report.dependency_plan?.optional_dependencies ?? {};
+        for (const [name, state] of Object.entries(optional)) details.append(element("p", `${name}: ${state.status ?? "未知"}${state.reason ? ` · ${state.reason}` : ""}`));
+        for (const step of report.dependency_plan?.optional_steps ?? []) {
+            const row = element("p", `${step.id ?? "可选功能"}: ${step.message ?? "安装阶段准备"}`);
+            if (step.url) row.append(element("span", " · "), link("来源", step.url));
+            details.append(row);
+        }
+        for (const [field, options] of Object.entries(report.options ?? {})) {
+            for (const option of Array.isArray(options) ? options : []) if (option.enabled === false) details.append(element("p", `${field} · ${option.label ?? option.value}: ${option.reason || "与当前配置不兼容"}`));
+        }
+        managerHelp(details);
+        return details;
+    }
     async function render() {
-        if (busy) return;
-        progress.textContent = "Checking this ComfyUI process and selected model files…";
-        download.disabled = true;
+        if (busy || checking || closed) return;
+        checking = true; reviewedReport = null; reviewedSelection = null; reviewedRepairs = []; controls();
+        progress.textContent = "正在检查环境与模型…";
         try {
-            const report = await inspect(node, true);
-            reviewedSelection = report ? JSON.stringify(selection(node)) : null;
-            if (!report || closed) return;
-            body.replaceChildren();
-            const env = report.environment ?? {}, evaluation = report.evaluation ?? {};
-            body.append(element("h3", "1 · Environment and Manager"), element("p", `GPU: ${env.device?.name ?? "No CUDA device"} · Python ${env.python_version ?? "unknown"} · torch ${env.packages?.torch?.version ?? "missing"} · Triton ${env.packages?.triton?.version ?? "missing"}`));
-            for (const issue of [...(evaluation.errors ?? []), ...(evaluation.warnings ?? [])]) body.append(element("p", `${issue.code}: ${issue.message}`));
-            if ((evaluation.actions ?? []).length) {
-                body.append(element("h4", "下一步 / Next steps"));
-                for (const action of evaluation.actions) body.append(element("p", String(action)));
-            }
-            body.append(element("p", evaluation.qualification ?? "Environment qualification unavailable"));
-            const manager = element("button", "Open Manager / installation guidance");
-            const guidance = element("p", "在 Manager 完成此节点包安装；若提示重启，请先重启再检查。Windows Manager 可能把 requirements / install.py 准备延迟到重启阶段执行。安装失败时使用当前界面实际提供的重试或重装入口；无入口或宿主不兼容时使用官方 ComfyUI 安装维护向导。不降低安全级别，不承诺任意宿主均可自动准备。");
-            manager.onclick = () => openManager(guidance);
-            body.append(manager, guidance);
-            const dependency = report.dependency_plan;
-            if (dependency) {
-                body.append(element("h4", "安装阶段自动准备范围"), element("p", `自动准备计划：${dependency.status ?? "unknown"}。此状态仅描述 Manager 安装阶段的自动准备范围；unsupported 不等于运行环境不可用。能否运行由上方运行环境 evaluation 的错误决定。此对话框不执行依赖安装。`));
-                if (dependency.qualification) body.append(element("p", dependency.qualification));
-                for (const step of dependency.steps ?? []) {
-                    const row = element("p", `${step.message ?? step.id ?? "准备步骤"}${step.requirement ? ` (${step.requirement})` : ""}`);
-                    if (step.url) row.append(element("span", " "), link("固定来源", step.url));
-                    body.append(row);
+            const report = await inspect(node);
+            if (closed) return;
+            if (!report) { progress.textContent = "配置已更新，请重新检查。"; return; }
+            reviewedReport = report; reviewedSelection = JSON.stringify(selection(node));
+            body.replaceChildren(element("h3", report.evaluation.errors.length ? "环境需要处理" : "环境检查通过"));
+            for (const issue of report.evaluation.errors) body.append(element("p", issue.message));
+            if (report.evaluation.errors.length) {
+                for (const action of report.evaluation.actions ?? []) {
+                    const text = String(action);
+                    if (/^(SM(?:75|89).*Triton|在 Manager)/.test(text)) continue;
+                    body.append(element("p", text));
                 }
-                for (const issue of [...(dependency.errors ?? []), ...(dependency.warnings ?? [])]) body.append(element("p", `${issue.code ?? "准备说明"}: ${issue.message ?? issue}`));
-                const optional = dependency.optional_dependencies ?? {};
-                if (Object.keys(optional).length || (dependency.optional_steps ?? []).length) {
-                    body.append(element("h4", "可选注意力扩展 · 默认 auto 不依赖此项"), element("p", "以下扩展仅在后端列出的固定宿主范围内于安装阶段准备。准备失败、未发布或宿主不兼容时保持 attention=auto；这些扩展不计入默认路径的必需依赖。installed 仅表示固定文件/来源检查，available 也不代表已运行 GPU 验证。"));
-                    for (const [name, state] of Object.entries(optional)) {
-                        body.append(element("p", `${name}: ${state.status ?? "unknown"}${state.reason ? ` · ${state.reason}` : ""}${state.verification ? ` · ${state.verification}` : ""}${state.scope ? ` · ${state.scope}` : ""}`));
-                    }
-                    for (const step of dependency.optional_steps ?? []) {
-                        const row = element("p", `${step.id ?? "可选扩展"}: ${step.message ?? "安装阶段准备"}`);
-                        if (step.url) row.append(element("span", " "), link("固定可选来源", step.url));
-                        if (step.sha256) row.append(element("span", ` · SHA256: ${step.sha256}`));
-                        body.append(row);
-                    }
-                }
-                body.append(element("p", "自动准备未覆盖或安装未完成时，请通过当前 Manager 实际入口或官方宿主维护流程处理，完成后重启并刷新检查。"));
+                const codes = report.evaluation.errors.map(issue => issue.code ?? "");
+                const hostBlocks = (report.dependency_plan?.errors ?? []).filter(issue => ["host_unqualified", "python_development_files", "python_free_threaded"].includes(issue.code));
+                if (codes.some(code => code.startsWith("dependency_")) && hostBlocks.length) {
+                    body.append(element("h4", "先处理这些环境条件"));
+                    for (const issue of hostBlocks) body.append(element("p", issue.message));
+                    body.append(link("ComfyUI 宿主安装与维护", "https://docs.comfy.org/installation/desktop"));
+                } else if (codes.some(code => ["python_version", "python_free_threaded", "cuda_required", "dependency_torch"].includes(code))) {
+                    body.append(element("p", "请先使用满足 Python 要求且启用 NVIDIA CUDA 的 ComfyUI 环境，再重新检查。"), link("ComfyUI 安装与维护", "https://docs.comfy.org/installation/desktop"));
+                } else if (codes.some(code => code.startsWith("dependency_") || code === "sm75_triton")) managerHelp(body);
             }
-            const unavailable = Object.entries(report.options ?? {}).flatMap(([field, options]) => Array.isArray(options) ? options.filter(option => option.enabled === false).map(option => ({ field, ...option })) : []);
-            if (unavailable.length) {
-                const details = element("details");
-                details.append(element("summary", `不可用选项及原因 (${unavailable.length})`));
-                for (const option of unavailable) details.append(element("p", `${option.field} · ${option.label ?? option.value}: ${option.reason || "与当前所选配置不兼容"}`));
-                body.append(details);
-            }
-            body.append(element("h3", "2 · Selected model plan"));
-            const plan = report.assets ?? {}, files = plan.files ?? [];
-            body.append(element("p", `Total: ${bytes(plan.total_bytes)} · Missing: ${bytes(plan.missing_bytes)}. Downloads run on the ComfyUI server; sources and hashes are fixed by the plugin manifest. Original float TE includes its complete shard/tokenizer bundle.`));
+            body.append(environmentDetails(report), element("h3", "模型准备"));
+            const plan = report.assets, files = plan.files;
+            body.append(element("p", `总大小 ${bytes(plan.total_bytes)} · 待下载 ${bytes(plan.missing_bytes)}`));
             for (const file of files) {
                 const row = element("div"); row.style.cssText = "padding:8px 0;border-bottom:1px solid #555;overflow-wrap:anywhere";
-                row.append(element("strong", `${file.name ?? file.asset_id} · ${file.status ?? "unknown"} · ${bytes(file.size_bytes)}`), element("div", file.destination ?? ""));
-                if (file.message) row.append(element("div", file.message));
-                if (file.resolved_name) row.append(element("div", `Verified existing model: ${file.resolved_name}`));
-                for (const rejected of file.candidate_mismatches ?? []) row.append(element("div", `Existing file retained: ${rejected.name} · ${rejected.reason}`));
-                if (file.status === "candidate") row.append(element("div", `${file.candidate_count ?? 0} same-size registered candidate(s). Prepare verifies full SHA256 before reuse; a different filename is not proof of matching weights.`));
-                if (file.repair_action === "quarantine_then_download") row.append(element("strong", "Confirming preparation moves this rejected existing file into .moss_lowvram_rejected in the same directory, preserving its bytes, then downloads the pinned replacement. It does not overwrite or delete the original."));
-                if (file.url) row.append(link("Pinned source", file.url));
-                if (file.sha256) row.append(element("div", `SHA256: ${file.sha256}`));
-                body.append(row);
+                row.append(element("strong", `${file.name ?? file.asset_id} · ${fileStatus(file.status)} · ${bytes(file.size_bytes)}`));
+                if (file.resolved_name) row.append(element("div", `已复用：${file.resolved_name}`));
+                if (file.status === "candidate") row.append(element("div", "确认准备后校验已有文件；匹配时直接复用。"));
+                if (file.repair_action === "quarantine_then_download") row.append(element("strong", "确认后将旧文件保留到同目录 .moss_lowvram_rejected，再下载替代文件。"));
+                else if (["error", "mismatch", "custom", "publish_pending"].includes(file.status) && file.message) row.append(element("div", file.message));
+                const info = element("details"); info.append(element("summary", "文件与来源"), element("p", file.destination ?? ""));
+                if (file.url) info.append(link("固定来源", file.url));
+                if (file.sha256) info.append(element("p", `SHA256: ${file.sha256}`));
+                for (const rejected of file.candidate_mismatches ?? []) info.append(element("p", `已保留：${rejected.name} · ${rejected.reason}`));
+                row.append(info); body.append(row);
             }
-            body.append(element("h3", "3 · Download, restart if repaired, then queue"), element("p", "Confirm downloads below. A failed download can be retried. Refresh after installing dependencies or restarting. Changing family does not alter prompts, seed or steps; use Apply recommended sampling separately."));
             reviewedRepairs = files.filter(f => f.repair_action === "quarantine_then_download").map(f => f.destination);
-            const repairs = reviewedRepairs.length > 0;
-            download.textContent = repairs ? "Confirm preserve rejected files and download replacements" : "Confirm download / verify selected files";
-            download.disabled = Boolean(plan.ready) || files.length === 0;
-            progress.textContent = plan.ready ? "Selected files are present. Environment issues above must also be resolved before queueing." : "Review file sizes and source links, then confirm download.";
-        } catch (error) { progress.textContent = error.message; status(node, "Preparation check failed", error.message); }
+            download.textContent = reviewedRepairs.length ? "确认保留旧文件并下载替代文件" : "确认下载 / 校验";
+            progress.textContent = plan.ready ? report.evaluation.errors.length ? "模型已就绪，请先处理环境项目。" : "准备完成，可以运行。" : "核对模型后，确认下载 / 校验。";
+        } catch (error) {
+            if (!closed) { body.replaceChildren(element("h3", "检查未完成")); managerHelp(body); progress.textContent = error.message; status(node, "检查未完成，请重试", error.message); }
+        } finally { checking = false; controls(); }
     }
     refresh.onclick = render;
+    copy.onclick = () => reviewedReport ? copyEnvironmentInfo(reviewedReport, diagnostics) : undefined;
     download.onclick = async () => {
-        if (busy) return;
-        busy = true; download.disabled = true; refresh.disabled = true;
+        if (busy || checking || !reviewedReport) return;
+        busy = true; controls();
         try {
-            if (reviewedSelection !== JSON.stringify(selection(node))) throw new Error("The configuration changed. Refresh the plan and review its sizes before confirming download.");
+            if (reviewedSelection !== JSON.stringify(selection(node))) throw new Error("配置已更改，请重新检查后确认准备。");
             const job = await request("/moss_lowvram/setup/download", { selection: selection(node), repair_files: reviewedRepairs });
             while (!closed) {
-                const state = await request(`/moss_lowvram/setup/jobs/${encodeURIComponent(job.job_id)}`);
-                progress.textContent = `${state.state}: ${bytes(state.bytes_done)} / ${bytes(state.bytes_total)}\n${(state.files ?? []).map(f => `${f.name ?? f.destination ?? f.asset_id ?? "file"}: ${f.state ?? f.status ?? "pending"}`).join("\n")}${state.error ? `\n${state.error}` : ""}`;
+                const state = await request(`/moss_lowvram/setup/jobs/${encodeURIComponent(job.job_id)}`, undefined, { timeoutMs: 15000 });
+                progress.textContent = `${fileStatus(state.state)}: ${bytes(state.bytes_done)} / ${bytes(state.bytes_total)}\n${(state.files ?? []).map(f => `${f.name ?? f.destination ?? f.asset_id ?? "文件"}: ${fileStatus(f.state ?? f.status)}`).join("\n")}${state.error ? `\n${state.error}` : ""}`;
                 if (["ready", "complete", "completed", "done", "success", "failed", "error", "cancelled"].includes(state.state)) {
-                    if (state.error || ["failed", "error"].includes(state.state)) throw new Error(state.error || "Download failed. Refresh and retry; existing files will be checked.");
+                    if (state.error || ["failed", "error"].includes(state.state)) throw new Error(state.error || "准备失败，请重新检查后重试。");
                     break;
                 }
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
-            busy = false; refresh.disabled = false;
+            busy = false;
             if (!closed) await render();
-        } catch (error) { progress.textContent = `${error.message}\nUse Refresh, then confirm download to retry.`; }
-        finally { busy = false; refresh.disabled = false; download.disabled = false; }
+        } catch (error) {
+            reviewedReport = null; reviewedSelection = null;
+            if (!closed) progress.textContent = `${error.message}\n点击“重新检查”后重试。`;
+        } finally { busy = false; controls(); }
     };
+    document.body.append(dialog); dialog.showModal();
     await render();
 }
 function applySampling(node) {
@@ -254,18 +323,17 @@ app.registerExtension({
                     if (NEW_FIELDS.includes(w.name)) structuralChoices(node, w.name);
                     invalidate(node);
                     clearTimeout(node._mossInspectTimer);
-                    node._mossInspectTimer = setTimeout(() => inspect(node).catch(e => status(node, "Check unavailable", e.message)), 300);
+                    node._mossInspectTimer = setTimeout(() => inspect(node).catch(e => status(node, "检查未完成，请重试", e.message)), 300);
                     return output;
                 };
             }
-            status(node, "Prepare / check before first queue");
+            status(node, "首次运行前，请检查准备状态");
             return result;
         };
         const serialize = nodeType.prototype.serialize;
         nodeType.prototype.serialize = function (...args) {
             const data = serialize.apply(this, args);
-            // Frontend 1.55 serializes display widgets despite serialize:false.
-            // All 24 persistent inputs precede these three setup-only widgets.
+            // Keep setup controls out of saved workflows.
             if (Array.isArray(data.widgets_values)) data.widgets_values = data.widgets_values.slice(0, 24);
             if (data.widgets_values_named) {
                 delete data.widgets_values_named.moss_setup_status;
@@ -279,7 +347,7 @@ app.registerExtension({
             const result = configured?.apply(this, arguments);
             structuralChoices(this);
             invalidate(this);
-            inspect(this).catch(e => status(this, "Check unavailable", e.message));
+            inspect(this).catch(e => status(this, "检查未完成，请重试", e.message));
             return result;
         };
     },
