@@ -1,108 +1,35 @@
-# Environment support and validation boundaries
+# 环境支持
 
-**MOSS LowVRAM Optimized** uses KohakuMoss inference components. The intended
-Registry package is `kohaku-moss-lowvram-optimized`. Hardware generations are
-reported separately; support for a dtype or import does not certify every kernel,
-checkpoint, profile, operating system or optional wheel.
+## 基本要求
 
-## NVIDIA generations
+- ComfyUI≥0.41、Python≥3.12、NVIDIA CUDA宿主。
+- 当前主要运行环境：Windows x64、普通CPython3.12/3.13、Torch2.10.0+cu130、Triton3.6.0.post26、RTX4070TiSUPER / SM89。
+- Manager自动依赖准备按精确Python/Torch/CUDA/SM组合选择固定版本，详情见[安装指南](INSTALLATION_GUIDE.md)。
 
-| Family | Evidence | Current publication wording |
-|---|---|---|
-| RTX 20 / Turing, SM75 | Historical RTX 2080 Ti with 22 GB physical memory (as reported), Windows, Python 3.12, Torch 2.10/cu130, triton-windows 3.2 post21; W5 4g/6g/unlimited auto end-to-end runs passed | Historical compatibility evidence only. The current release has not been rerun on a physical Turing card. |
-| RTX 40 / Ada, SM89 | Current full release validation on RTX 4070 Ti SUPER, 16 GB physical VRAM, Windows/Python 3.12.13, Torch 2.10.0+cu130, comfy-kitchen 0.2.37 | Primary currently validated environment; see exact cases in `../RELEASE_VALIDATION.md`. |
-| RTX 50 / Blackwell | No completed hardware qualification supplied | Pending. Do not extrapolate from SM89 or from an `SM>=89` condition in code. |
-| Linux | No completed release validation supplied | Untested. A compatible Python/Torch/Triton stack is a prerequisite, not a test result. |
-| AMD, Apple Metal, Intel accelerators | No supported end-to-end GPU path established by this release evidence | Not claimed supported by this release. |
+## GPU与平台范围
 
-The historical 22 GB Turing card is not a test of a stock 11 GB RTX 2080 Ti.
-Likewise, 4g/6g/8g profiles in current Ada testing are process allocation budgets
-on a 16 GB physical card, not physical small-card certifications. Async reserved
-pool memory, driver/context memory and allocations outside the tracked budget
-remain separate from the profile allocation cap.
+| 环境 | 当前范围 |
+| --- | --- |
+| RTX40 / Ada、SM89 | 当前主要运行平台，已使用RTX4070TiSUPER 16GB；其他卡按资源与内核条件检查 |
+| RTX20 / Turing、SM75 | 历史W5 auto兼容范围，历史设备为2080Ti 22GB；当前版本待复验 |
+| RTX30 | 整工作流支持尚未承诺；按各计算模式的SM要求选择 |
+| RTX50 / Blackwell | 待验证 |
+| Linux NVIDIA | 依赖准备支持读取现有Torch的精确Triton要求；整工作流待验证 |
+| CPU-only、AMD、Apple Metal、Intel加速器 | 当前不可用 |
 
-## Sanitized historical SM75 evidence
+显存profile表示进程分配预算。实际运行还需为驱动、上下文和其他进程保留显存。
 
-The maintainer's earlier receipts record an RTX 2080 Ti SM75 device with **22 GB
-physical memory**. The tested stack was Windows, Python 3.12, Torch 2.10 with a
-CUDA 13.0 build and triton-windows 3.2 post21. W5 with auto attention completed
-end-to-end under the software profiles labelled **4g, 6g and unlimited**.
+## 计算模式要求
 
-The 4g/6g labels describe allocation policies applied on that 22 GB device. They
-do not establish successful execution on physical 4 GB/6 GB cards, nor on an
-unmodified 11 GB 2080 Ti. No historical timing, exact peak or quality score is
-invented in this summary. The private raw receipt locations and machine-specific
-paths are intentionally omitted; these facts are a sanitized maintainer summary.
+| 模式 | 条件 |
+| --- | --- |
+| 显式INT8 W8A8 / W4A8文本编码 | SM80+ |
+| Kohaku FP8 row计算与共享16-bit模式 | 当前实现要求SM89+ |
+| Original BF16 / FP16 TE | 使用对应浮点权重与计算选项 |
+| auto注意力 | PyTorch SDPA |
+| Sage | 固定wheel与精确匹配的Windows Python3.12 / SM89宿主 |
+| Turing Flash | 固定独立资产与精确Windows SM75 ABI，FP16限定路径 |
+| VAE | FP32精度边界 |
 
-Those receipts predate the current publishing workflow edits, directory selector,
-exact public model choices and new W8A8/FP8 integrations. They are not current
-release requalification. The new 06 W5 and 07 W6 workflow files now have their own successful current
-SM89 HTTP executions, recorded in `PUBLICATION_VALIDATION.md`; that does not
-constitute a new SM75 run. In particular, a historical W5 PASS is not a W6,
-FP8, A8-TE or all-profile PASS. Earlier normal-step runtime evidence remains the separate
-SM89/RTX 4070 Ti SUPER ledger in `../RELEASE_VALIDATION.md`; it is not reassigned
-to the new00 interface or shared-row activation switch.
-
-## Mode boundaries
-
-- Turing's historical evidence applies to the stated W5 auto path. Native FP8
-  compute and the newly introduced activation-INT8 TE path must not be advertised
-  as established Turing features.
-- Ada covers the combinations actually listed in the release evidence. FP8 storage
-  does not prove every GEMM uses FP8 operands: upstream may choose a w16 fallback.
-- Original BF16/FP16 TE, W8A16 TE, W8A8 TE and W4A8 TE are different numerical
-  contracts. Preserve their separate receipts and FP16 conditioning boundary.
-- Optional attention backends are build-specific. The ordinary `auto` path uses
-  PyTorch SDPA and does not require a private Flash or Sage binary.
-- The user authorized the self-built Turing bundle as a separate GitHub Release.
-  The pinned upstream source still has no confirmed repository LICENSE; preserve
-  the actual source/build/component-license/NOTICE records without claiming
-  blanket clearance. The source package excludes binaries. Installation-stage
-  preparation requires the real fixed public manifest and exact SM75 ABI; the
-  fixed 43,707,834-byte ZIP is now public/non-draft, and anonymous complete HTTP200
-  download matched its SHA and remote digest. Strict-ABI install preparation is
-  enabled; no new SM75 GPU qualification is inferred.
-  Neither this authorization nor local execution is new GPU qualification.
-
-## Install-time dependencies
-
-The current package requires **Python >=3.12**. Use the Python environment that
-starts ComfyUI. Normal Python requirements belong
-in the package's declared dependencies and `requirements.txt`; keep them in sync.
-They currently include `diffusers>=0.41.0,<0.42`, `accelerate`, transformers,
-safetensors, einops, NumPy, Pillow and comfy-kitchen. The actual release stack uses Python 3.12; a lower-bound
-declaration does not qualify every newer Python or dependency version.
-Use a platform-appropriate Triton stack compatible with the existing Torch/CUDA
-and Python ABI. Do not replace users' Torch/CUDA merely to install this node pack.
-
-```sh
-python -m pip install -r requirements.txt
-python tools/check_environment.py
-```
-
-Manager can install requirements and run a root `install.py` at installation
-time. A manual directory copy does not necessarily run those steps. The absence
-of an optional dependency should produce a clear feature-specific diagnostic.
-Node imports and queued execution must not invoke pip, install compilers or
-download optional binaries. This follows the official
-[Registry security standards](https://docs.comfy.org/registry/standards) and
-[Manager installation lifecycle](https://docs.comfy.org/custom-nodes/backend/manager).
-
-Any future precompiled binary must identify OS, architecture, Python ABI, Torch,
-CUDA build, source revision, build procedure, SHA256 and recorded license status. Prefer existing
-upstream artifacts when available. A wheel is not a model file and does not belong
-in workflow `properties.models`.
-
-## Declared compatibility versus observed compatibility
-
-Registry metadata can describe Python, ComfyUI, frontend, OS and accelerator
-requirements. Those fields are install guidance, not proof that a specific GPU
-was tested. Only mark platforms as supported to the extent established by the
-release's runtime checks; avoid an unconditional OS Independent declaration.
-Official field reference:
-[Registry pyproject specification](https://docs.comfy.org/registry/specifications).
-
-The current evidence establishes execution and limited visual checks, not
-universal speed improvements, lossless image quality or unattended installation
-on every host. Additional Turing/current-release, Blackwell and Linux runs must
-be recorded before expanding those claims.
+Prepare根据实际CUDA设备、SM、依赖和所选模型检查配置。未知宿主组合会显示具体诊断。
+可选注意力的来源、许可与固定资产见[组件说明](../THIRD_PARTY_NOTICES.md)和[optional_binary_manifest.json](../optional_binary_manifest.json)。

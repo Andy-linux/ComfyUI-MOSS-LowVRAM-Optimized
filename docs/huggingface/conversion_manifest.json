@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "status": "REMOTE_WEIGHT_BYTES_AND_INITIAL_COMPANIONS_VERIFIED",
+  "status": "public",
   "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
-  "scope": "Two shared row FP8 DiT checkpoints: Base and SFT. Runtime activation policy selects FP8-compute or 16-bit weight-only; no training, TE, VAE, tokenizer or binary bundle.",
+  "scope": "Two shared row FP8 DiT checkpoints: Base and SFT. Runtime activation policy selects FP8-compute or 16-bit weight-only.",
   "sources": [
     {
       "id": "base_bf16",
@@ -12,7 +12,7 @@
       "repo_id": "Comfy-Org/MOSS-Image",
       "repo_filename": "diffusion_models/moss_image_base_bf16.safetensors",
       "snapshot_revision": null,
-      "revision_status": "This immutable public snapshot contains matching source bytes (size and LFS SHA256 verified); historical download-session revision remains unconfirmed.",
+      "revision_status": "Historical download revision unknown; matching immutable source revision is recorded separately.",
       "matched_source_revision": "24147db865fcdc207270f844777587223fed8d6e"
     },
     {
@@ -20,7 +20,7 @@
       "repo_id": "OpenMOSS-Team/MOSS-Image-SFT",
       "repo_subfolder": "transformer",
       "snapshot_revision": null,
-      "revision_status": "This immutable public snapshot contains matching source bytes (size and LFS SHA256 verified); historical download-session revision remains unconfirmed.",
+      "revision_status": "Historical download revision unknown; matching immutable source revision is recorded separately.",
       "files": [
         {
           "id": "sft_source_diffusion_pytorch_model-00001-of-00003.safetensors",
@@ -65,13 +65,11 @@
       "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
       "public_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b",
       "download_url": "https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/resolve/082aebf29d592d9a9f0ba61b64f780ad160ec72b/moss_image_base_kohaku_fp8_row.safetensors",
-      "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
       "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32",
       "supported_runtime_modes": [
         "fp8",
         "16bit"
-      ],
-      "runtime_validation_status": "Limited real-model shared-row validation passed on Windows SM89: Base/SFT × fp8/16bit × two requests (eight total), each 512x512, two sampling steps and VAE decoding; conditioning/latent/image finite. Eight focused CPU tests passed with no skips; all 263 layers preserved q/scale pointers, hashes and registered tensor byte counts during activation selection. Not a full-step quality assessment or speed benchmark."
+      ]
     },
     {
       "id": "moss_image_sft_kohaku_fp8_row",
@@ -93,13 +91,11 @@
       "public_repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
       "public_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b",
       "download_url": "https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/resolve/082aebf29d592d9a9f0ba61b64f780ad160ec72b/moss_image_sft_kohaku_fp8_row.safetensors",
-      "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
       "nonquantized_tensor_policy": "BF16 floating tensors; rope.bands FP32",
       "supported_runtime_modes": [
         "fp8",
         "16bit"
-      ],
-      "runtime_validation_status": "Limited real-model shared-row validation passed on Windows SM89: Base/SFT × fp8/16bit × two requests (eight total), each 512x512, two sampling steps and VAE decoding; conditioning/latent/image finite. Eight focused CPU tests passed with no skips; all 263 layers preserved q/scale pointers, hashes and registered tensor byte counts during activation selection. Not a full-step quality assessment or speed benchmark."
+      ]
     }
   ],
   "conversion": {
@@ -110,17 +106,9 @@
     "origin_commit_is_exact_local_converter_revision": false,
     "actual_conversion_device": null,
     "actual_conversion_timestamp": null,
-    "unconfirmed_fields_policy": "null means not confirmed; no revision, command log or timing inferred from filenames",
-    "nonquantized_tensor_policy": "row-compute: BF16 floating tensors except rope.bands FP32; weight-only: live BF16/KEEP_FP32 dense dtypes retained, rope FP32",
+    "nonquantized_tensor_policy": "BF16 floating tensors except rope.bands FP32.",
     "training_performed": false,
     "original_sources_modified": false
-  },
-  "hash_measurement": {
-    "evidence_filename": "local-model-provenance.json",
-    "evidence_sha256": "33bbe05ca07a21615868c1cb9d97f12b7f85213f04268ff807c4cf740333e798",
-    "started_epoch": 1792939228.6271667,
-    "finished_epoch": 1792939249.4804726,
-    "hash_source": "operator-measured local source and output bytes; not recomputed from absent multi-GB weights in this staging environment"
   },
   "licenses": {
     "weights": {
@@ -139,116 +127,12 @@
       "output_exception": "Section 10 excludes models/adapters/images and other outputs produced by running the Work from its derivative-work naming requirement"
     }
   },
-  "validation": {
-    "platform": "Windows, RTX 4070 Ti SUPER (SM89), PyTorch 2.10.0+cu130, cudaMallocAsync",
-    "reported_scope": "Shared row Base/SFT × fp8/16bit × two requests: eight 512x512 two-step samples with VAE decoding and finite conditioning/latents/images. Eight focused CPU tests passed with no skips. Not a full-step image-quality assessment, speed benchmark, or blanket profile/shape qualification.",
-    "not_claimed": [
-      "lossless image quality",
-      "all shapes use native FP8 GEMM",
-      "FP8 is always faster",
-      "new 4 GB/8 GB hardware certification",
-      "Linux, SM75, SM86, SM90 or Blackwell qualification",
-      "full Base/SFT quality equivalence"
-    ],
-    "per_case_receipts": "See release validation and original execution receipts when published; no missing matrix entries invented",
-    "isolated_row_dispatch_probe": {
-      "evidence_source": "operator-reported independent real-weight six-case probe; full receipt not embedded here",
-      "layers": [
-        "q",
-        "ffn_up_gate",
-        "ffn_down"
-      ],
-      "M": [
-        64,
-        4096
-      ],
-      "case_count": 6,
-      "selected_backend": "triton configs in all six observed cases",
-      "row_quantization_kernel_count_per_case": 3,
-      "scaled_kernel_count_per_case": 3,
-      "w16_selected_in_observed_cases": false,
-      "scope_limit": "not full model/all shapes, not hardware-instruction certification, not throughput or quality benchmark"
-    },
-    "shared_row_integration_probe": {
-      "status": "PASS",
-      "case_count": 4,
-      "request_count": 8,
-      "variants": [
-        "base",
-        "sft"
-      ],
-      "activation_modes": [
-        "fp8",
-        "16bit"
-      ],
-      "requests_per_case": 2,
-      "width": 512,
-      "height": 512,
-      "sampling_steps": 2,
-      "vae_decoding": true,
-      "finite": {
-        "conditioning": true,
-        "latents": true,
-        "decoded_images": true
-      },
-      "focused_CPU_tests": {
-        "passed": 8,
-        "skipped": 0
-      },
-      "quantized_layers_checked": 263,
-      "activation_selection_invariants": {
-        "q_scale_pointers_unchanged": true,
-        "q_scale_SHA256_unchanged": true,
-        "registered_tensor_bytes_unchanged": true,
-        "requantization_performed": false,
-        "second_full_dense_model_created": false
-      },
-      "session_scope": "Repeated configuration reuse and separation between activation modes checked.",
-      "hardware_gate": "SM89+ remains required for both shared modes; no new architecture qualification inferred.",
-      "scope_limit": "Short finite/storage/session checks only; not full-step quality, image equivalence, speed benchmark, all-shape native-FP8 certification, or physical 4GB/8GB hardware qualification."
-    }
-  },
-  "excluded_local_assets": [
-    "q5_ridge_gptq.safetensors",
-    "q6_direct.safetensors",
-    "moss_image_base_kohaku_fp8_weight_only.safetensors"
-  ],
-  "publish_prerequisites": [
-    "Upload only the two row files and companion model documentation to the confirmed repository",
-    "Verify published byte sizes and LFS SHA256 and record immutable weight revision",
-    "Preserve the completed limited shared-row integration scope; public upload/revision verification remains separate from runtime test completion"
-  ],
-  "legacy_local_exports_not_published": [
-    {
-      "id": "moss_image_base_kohaku_fp8_weight_only",
-      "file": "moss_image_base_kohaku_fp8_weight_only.safetensors",
-      "bytes": 5346415987,
-      "sha256": "03a31fb8a7c2e196b3b0c3b02849442d40503ead10cdf9f9f4bce543525c1c54",
-      "variant": "base",
-      "source_id": "base_bf16",
-      "precision": "fp8_weight_only",
-      "recipe": "row",
-      "quantized_linear_count": 263,
-      "dgrad": false,
-      "training_performed": false,
-      "source_files_modified": false,
-      "weight_codes": "float8_e4m3fn",
-      "weight_scale": "float32 per output row",
-      "format_metadata": "per-layer comfy_quant JSON: format=float8_e4m3fn, convrot=false; no kohakumoss_fp8 record",
-      "activation_policy": "16-bit activations; weight-only path, not W8A8 FP8 compute",
-      "public_repo_id": null,
-      "public_revision": null,
-      "download_url": null,
-      "validation_status": "local conversion completed; finite smoke coverage only, per-artifact/per-profile matrix not asserted",
-      "nonquantized_tensor_policy": "BF16 and KEEP_FP32-sensitive FP32 tensors; rope FP32"
-    }
-  ],
   "publication": {
     "repository": "Andylinux/MOSS-Image-Kohaku-FP8",
     "verified_weight_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b",
-    "initial_companion_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b",
-    "verification": "Two exact weight sizes and LFS SHA256; all five initial companion files fetched at the fixed commit and compared by full SHA256 to stage.",
-    "weight_remote_stream_hash_performed": false,
-    "revision_note": "This manifest references the previously verified immutable weight commit; its own later documentation commit is reported externally to avoid self-reference."
+    "initial_companion_revision": "082aebf29d592d9a9f0ba61b64f780ad160ec72b"
+  },
+  "compatibility": {
+    "hardware_gate": "SM89+ required for both fp8 and 16bit runtime modes."
   }
 }

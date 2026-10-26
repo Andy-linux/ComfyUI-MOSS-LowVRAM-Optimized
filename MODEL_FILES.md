@@ -1,166 +1,63 @@
-# Model files and reproducible downloads
+# 模型与离线导出
 
-Code ships without weights. Opening/importing a workflow never downloads a model.
-`model_manifest.json` pins each public file to a real HF API revision, exact byte
-size, SHA256 and relative destination. Do not substitute Git blob IDs for SHA256.
+## 在界面准备
 
-## Default: prepare the selected files in the unified node
+导入 [00工作流](example_workflows/00_moss_lowvram.json)，在配置节点选择系列、DiT、TE与VAE，点击
+**Prepare / check selected configuration**，确认计划后准备资源。
+默认选择SFT W5、Sumomo INT8 TE v2 / W8A16和原MOSS VAE。
 
-Open `example_workflows/00_moss_lowvram.json`, choose the model family, DiT
-storage/compute, TE format/compute and VAE, then click **Prepare / check selected
-configuration**. Review sizes, paths and sources before confirming download. The
-new 00 default is SFT W5 + Sumomo v2 INT8 TE (W8A16 compute) + original MOSS VAE.
-Only the current selection is prepared; no import-time model download occurs.
-Existing registered model paths can be reused. A conflict is reported rather than
-overwriting a mismatched file. Original TE preparation includes all shards,
-index/config and tokenizer in the correct nested directories.
+| ComfyUI目录 | 用途 |
+| --- | --- |
+| `models/diffusion_models/` | DiT权重 |
+| `models/text_encoders/` | 文本编码器 |
+| `models/vae/` | VAE |
 
-The independent maintenance CLI keeps its older default selection of Base INT8
-(Sumomo separate Q/K/V), Sumomo v2 INT8 TE and original MOSS VAE. This older CLI
-default is distinct from the new 00 UI default. Commands below are optional
-maintenance tools, not required for the default user flow.
+支持 `extra_model_paths.yaml` 注册目录。匹配文件经过完整SHA256校验后原位复用；Original TE按计划准备完整目录。
+INT8 TE v2推荐别名为 `moss-image-qwen35-int8-convrot-v2.safetensors`，以区分旧v1。
 
-```sh
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --dry-run
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets base_w8 te_int8 vae
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets base_w8 te_int8 vae --verify-only
-```
+## 可选资产
 
-`--dry-run` validates metadata and prints exact total selected bytes without network
-or filesystem writes. `--verify-only` reads local bytes, returns nonzero for a
-missing/mismatched file and never downloads. Downloads refuse incomplete hashes or
-floating revisions. Existing mismatched files are not overwritten. New bytes are
-streamed to a same-directory temporary file, size/hash checked, then atomically
-published without overwrite. This requires hard-link support (e.g. NTFS/ext4);
-unsupported filesystems fail safely. Temporary files are removed after failures.
-No Python package installation is performed. Credentials are never stored in JSON.
+文件名、固定revision、精确大小、SHA256、目标路径和许可来源统一记录于 [model_manifest.json](model_manifest.json)。
 
-## Public and local assets
+| Asset ID | 模型 | 文件总字节数 |
+| --- | --- | ---: |
+| `base_w8` | Base INT8 ConvRot | 5,413,723,800 |
+| `base_w8_comfy` | Base INT8 fused QKV | 5,413,698,958 |
+| `sft_w8` | SFT INT8 ConvRot | 5,413,698,958 |
+| `te_int8` | Sumomo INT8 TE v2（默认） | 8,452,959,908 |
+| `te_int8_comfy` | INT8 TE Comfy封装 | 9,748,121,532 |
+| `te_w4` | W4 GPTQ TE | 7,343,591,088 |
+| `vae` | 原MOSS VAE（默认） | 249,521,372 |
+| `vae_flux2_small` | Flux2 small VAE | 249,521,340 |
+| `te_original` | Original TE完整目录 | 16,805,544,650 |
+| `sft_w5` | SFT W5（默认） | 3,630,052,176 |
+| `sft_w6` | SFT W6 | 4,224,594,400 |
+| `base_fp8` | Base Kohaku FP8 row | 5,174,879,864 |
+| `sft_fp8` | SFT Kohaku FP8 row | 5,174,879,840 |
 
-| Asset ID | File bytes (exact) | Status / scope |
-|---|---:|---|
-| `base_w8` | 5,413,723,800 | public; Default public Base INT8, separate Q/K/V; original validated community checkpoint. |
-| `base_w8_comfy` | 5,413,698,958 | public; Alternative fused-QKV packing; distinct file/hash, requires normalization; do not silently substitute. |
-| `sft_w8` | 5,413,698,958 | public; Public SFT INT8 fused variant; distinct from local benchmark weight; verify checkpoint compatibility before claiming R4 equality. |
-| `te_int8` | 8,452,959,908 | public; Pinned Sumomo v2 core-compatible keys; 8,452,959,908 bytes. Matches existing community asset name. |
-| `te_int8_comfy` | 9,748,121,532 | public; Alternative 9,748,121,532 bytes; NOT byte-identical to 8.45GB Sumomo TE. Do not relabel local measured TE as this file. |
-| `te_w4` | 7,343,591,088 | public; Optional public W4 TE; a different precision path, not default R4 INT8. |
-| `vae` | 249,521,372 | public; Default original MOSS VAE, identical LFS bytes to original HF VAE. |
-| `vae_flux2_small` | 249,521,340 | public; Alternative repack, different file/hash; not silently interchangeable based on similar file size. |
-| `te_original` | 16,805,544,650 | public; Original BF16 TE: all four shards plus index/config and tokenizer. Exact small-file SHA256 required; downloader refuses incomplete metadata. |
-| `sft_w5` | 3,630,052,176 | public; existing Andylinux SFT W5 packed checkpoint, pinned revision/hash; matches the measured local artifact. |
-| `sft_w6` | 4,224,594,400 | public; existing Andylinux SFT W6 packed checkpoint, pinned revision/hash; matches the measured local artifact. |
-| `base_fp8` | 5,174,879,864 | Base Kohaku FP8 row; public at the fixed R1 below. One file supports FP8 or 16-bit compute. |
-| `sft_fp8` | 5,174,879,840 | SFT Kohaku FP8 row; public at the same fixed R1 below. Distinct SFT bytes, not a renamed Base model. |
-| `base_fp8_weight_only` | 5,346,415,987 | Legacy local-only separate weight-only export; not included in the new two-row public distribution. Existing explicit local loading remains compatibility scope. |
+Base/SFT各一份FP8 row文件，支持FP8或16-bit激活计算。
+两份文件位于[Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/64cc4abd4ec6548b935aa75a1dd22e9d43236aab)。
+W5/W6来自[Andylinux/MOSS-Image-SFT-W5A8-W6A8](https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8/tree/bfb77cb73ae7acb4f788d50d4043c2d71989b0a7)。
+旧独立Base weight-only导出仅用于兼容本地已有文件。
 
-The 9,748,121,532-byte Comfy-Org INT8 TE differs from the 8,452,959,908-byte
-Sumomo v2 file. It is an alternative, not proof of the same measured runtime
-weights or layout. Likewise fused Comfy-Org DiT and separate Sumomo DiT have
-different hashes. Loader normalization and real qualification must precede any
-claim that their outputs match. Similar VAE names/sizes do not imply equality.
+## 可选命令行下载
 
-The default `te_int8` asset uses a versioned **local destination**:
-`text_encoders/moss-image-qwen35-int8-convrot-v2.safetensors`.
-Its upstream filename remains `text_encoders/moss-image-qwen35-int8-convrot.safetensors`,
-with the same pinned revision, 8,452,959,908 bytes and SHA256 `511379...` recorded
-in the manifest. The local alias prevents an installed legacy v1 file with the
-same upstream basename from silently satisfying name-only frontend detection.
-Desktop/downloader placement uses the destination alias. A self-hosted browser
-download may retain the upstream basename and require an explicit local rename;
-prefer the unified GUI preparation/verification to place and check the correct alias,
-or use maintenance `--verify-only` to verify actual bytes. No weights are rewritten.
-
-Original `te_original` downloads all four BF16 shards, index/config and tokenizer
-to `text_encoders/MOSS-Image-Base/`. The model asset resolver finds its
-`text_encoder` directory there. This is much larger than quantized TE; choose it
-explicitly. The SFT original repository has the same four TE shard hashes in the
-captured API snapshot; it is recorded as an alternate source, not auto-substituted.
-
-## Existing public W5/W6 — index, do not upload again
-
-Both files already exist in
-[Andylinux/MOSS-Image-SFT-W5A8-W6A8](https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8)
-at immutable revision `bfb77cb73ae7acb4f788d50d4043c2d71989b0a7`.
-The public file hashes match the measured local bytes:
-
-| Asset | Filename | SHA256 |
-|---|---|---|
-| `sft_w5` | `q5_ridge_gptq.safetensors` | `3f8a775e179a63a7511d469f08430b89f5807ebd181f37f4bbaea7d039096f82` |
-| `sft_w6` | `q6_direct.safetensors` | `dc5af59f22eb89320e457536ae90b170c6548c74a9fca584684139cf88018f87` |
+使用ComfyUI同一Python，从插件目录执行并明确指定所需asset：
 
 ```sh
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets sft_w5 sft_w6 --dry-run
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets sft_w5
+python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets sft_w5 te_int8 vae --dry-run
+python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets sft_w5 te_int8 vae
 ```
 
-Review the pinned repository's
-[README](https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8/blob/bfb77cb73ae7acb4f788d50d4043c2d71989b0a7/README.md),
-[LOWBIT_MANIFEST.json](https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8/blob/bfb77cb73ae7acb4f788d50d4043c2d71989b0a7/LOWBIT_MANIFEST.json)
-and [Apache license](https://huggingface.co/Andylinux/MOSS-Image-SFT-W5A8-W6A8/blob/bfb77cb73ae7acb4f788d50d4043c2d71989b0a7/LICENSE).
-The model repository's weight license is distinct from the packaged inference-code
-licenses. Matching file hashes establishes artifact identity, not automatic
-qualification of every runtime/GPU combination. These existing weights will not
-be re-uploaded to a new HF repository.
+`--verify-only`校验本地文件。下载先写临时文件，大小与SHA256匹配后写入目标；目标文件系统需支持硬链接，如NTFS或ext4。
 
-## Self-produced FP8: two row files, shared compute choices
+## 离线FP8导出
 
-The destination is
-[Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8).
-Base and SFT row checkpoints are the two files selected for public distribution.
-The two Base/SFT FP8 row checkpoints are public at [R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41), totaling 10,349,759,704 bytes. Exact sizes and remote LFS SHA256 match local full-file SHA256; small companion files were read back. The approximately 10GB remote weights were not downloaded again for a full-stream SHA256 check.
-Weight upload commit R0 is `082aebf29d592d9a9f0ba61b64f780ad160ec72b`; R1 adds the finalized documentation with unchanged weight identities. Registry0.1.0 has been submitted/uploaded and was observed Pending; Active status and actual Manager installation/download/generation remain unverified.
+导出接受本地原始dense BF16单文件或HF transformer目录，输出到新文件：
 
-| Asset | Exact bytes | Local full-file / remote LFS SHA256 | Compute choice |
-| --- | --- | --- | --- |
-| `base_fp8` | 5,174,879,864 | `4f18284539c84c804919e7c343ee33b1550dfcd1c4cd5dc5dd7f4569905d0f14` | FP8 / 16-bit, using the same row file |
-| `sft_fp8` | 5,174,879,840 | `06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862` | FP8 / 16-bit, using the same row file |
+```sh
+python tools/export_fp8.py --source /path/to/moss_image_base_bf16.safetensors --output /path/to/base_fp8_row.safetensors --variant base --precision fp8_compute --recipe row --device cuda:0
+```
 
-Storage and matrix arithmetic remain separate. Switching to 16-bit compute does
-not require a second weight-only download. The old 5,346,415,987-byte independent
-Base weight-only export is retained only for legacy local loading; it is not a
-third public upload. Original conversion/source hashes remain in
-`docs/huggingface/`; historical export receipts are preserved unchanged.
-Private `models.local.json` mappings remain excluded from release packaging.
-
-## Workflow download boundary
-
-Official frontend model metadata must match a concrete selected widget filename.
-A node's `properties.models` list is not an instruction to install every listed
-file: an `auto` widget or an HF directory does not select all associated model
-records. Use explicit recommended filenames for downloadable single-file examples.
-The current SFT example uses the verified public filename explicitly; see
-`docs/SHARING_WORKFLOWS.md` for the metadata and placement rules.
-
-The Original TE is a complete directory with shards, config/index and tokenizer.
-Use the new unified node preparation GUI for that complete asset. The optional
-maintenance equivalent is `--assets te_original`. Do not promise that ordinary
-frontend Download all can fetch every JSON/Jinja file or reconstruct the directory.
-Desktop and self-hosted browser downloading have different placement behavior.
-
-## Dependency and license boundaries
-
-Existing ComfyUI supplies Torch/CUDA. Manager requirements processing and its
-install.py hook prepare missing Triton only under the narrow policy documented in
-[INSTALLATION_GUIDE](docs/INSTALLATION_GUIDE.md). The exact Windows automatic
-preparation stack is x64 Python3.12 / Torch2.10.0+cu130 / SM89; SM75 has a historical
-nonstandard pairing, not a new workflow qualification. Unknown hosts are diagnosed,
-not upgraded to latest or given replacement Torch/CUDA/Python. Windows Manager
-may perform queued preparation at the next restart. Runtime routes/checks never
-install packages. Sage is optional and not installed by the default workflow.
-RTX50 qualification remains pending; RTX30 full-workflow support is not promised.
-The user authorized a separate GitHub Release for the self-built SM75 Turing
-bundle; the source package still excludes its binaries. The 43,707,834-byte ZIP and 17-member manifest are now public in the fixed GitHub
-Release. Anonymous complete HTTP200 download and remote asset digest matched
-the pinned SHA256, so strict-ABI Manager preparation is enabled. The pinned upstream repository has no
-confirmed license declaration; actual source/build/component-license/NOTICE
-records will be preserved without inventing blanket clearance. Manager prepares
-only the fixed strict-ABI artifact once published; default auto does not need it.
-The package requires Python >=3.12. Normal declared requirements include
-`accelerate`; use the same Python that launches ComfyUI. Current testing uses
-Python 3.12, not every later version admitted by the lower-bound declaration.
-
-Upstream model-card license declarations are attribution data, not a blanket
-license covering vendored kernels or every derivative. Preserve
-`LICENSE_PROVENANCE.json`, `THIRD_PARTY_NOTICES.md`, `runtime/vendor/SOURCES.json`
-and component license files. The current component source/license inventory has been checked. Preserve these notices and publish only the clean release history.
+SFT使用其自身源文件或目录并指定 `--variant sft`。导出执行量化与格式转换，输出附带recipe和来源记录。
+参数详情见 `python tools/export_fp8.py --help`。权重及转换来源见[conversion_manifest.json](docs/huggingface/conversion_manifest.json)，许可见[组件说明](THIRD_PARTY_NOTICES.md)。

@@ -1,33 +1,19 @@
-# Changelog
+# 更新记录
 
-## 0.1.0 — initial release candidate
+## 0.1.1
 
-- Provide MOSS SFT W5/W6/W8, Base INT8 ConvRot W8A8, and Kohaku FP8 inference
-  through stable ComfyUI node IDs under `MOSS/Optimized`.
-- Add explicit W8A16, genuine W8A8/W4A8, and original BF16/FP16 text encoder
-  modes. The historical `INT8 ConvRot` selection remains compatible.
-- Prefer ComfyUI's `cudaMallocAsync` mechanism with a startup probe and a fresh
-  native-allocator process when that mechanism is unsupported. Integrate model
-  admission, VRAM budgets, transfer scheduling, and unload behavior.
-- Provide only `00_moss_lowvram.json` as the user configuration/preparation
-  workflow. Keep the seven earlier precision examples solely as compatibility
-  fixtures in `tests/historical_workflows/`, excluded from the Registry package.
-  Separate stored weight formats, actual arithmetic, and floating boundary
-  precision; preserve all six earlier internal node IDs.
-- Prepare selected models in the ComfyUI server's registered model directories
-  through an explicit GUI confirmation, with pinned versions, size/SHA256 checks,
-  progress, retries, verified-file reuse, and complete nine-file Original TE sets.
-- Permit reversible isolation of a confirmed corrupt same-name model only after
-  the GUI has shown that repair plan and the user confirms it.
-- Share each Base/SFT row FP8 checkpoint between FP8 and 16-bit activation modes,
-  without requantizing its stored weights; separate session/cache identities.
-- Prepare supported Triton dependencies in the Manager installation lifecycle,
-  including the Windows restart stage, without runtime pip or replacing Torch.
-- Add environment diagnostics at installation, in the model node, and before
-  prompt execution. Preserve the host Torch/CUDA installation.
-- Preserve upstream licenses, component provenance, and modification records.
+- 支持Windows SM89上的普通CPython3.12/3.13、Torch2.10+cu130和固定Triton3.6依赖准备。
+- 改进配置检查、Manager入口和资源准备窗口交互。
+- 完善请求超时提示与配置变更后的状态刷新。
+- 精简安装说明、环境支持表和唯一00工作流引导。
+- FP8模型下载固定到包含新版模型说明的仓库revision。
 
-Publication status and measured hardware scope are recorded in
-`RELEASE_CHECKLIST.md` and `docs/ENVIRONMENT_SUPPORT.md`. A release candidate is
-not a Registry publication. Public download links are enabled only after the
-actual model upload and immutable file metadata have been verified.
+## 0.1.0 — 初始发布候选
+
+- 提供统一00工作流，在一个配置节点选择模型、计算模式和显存预算。
+- 支持SFT W5/W6、Base/SFT INT8及Kohaku FP8 row；同一row文件可选择FP8或16-bit计算。
+- 提供W8A16、W8A8、W4A16/W4A8和Original BF16/FP16文本编码选项。
+- 在界面准备所选资源，支持SHA256校验、匹配文件复用、下载重试及完整Original TE目录。
+- 通过Manager安装阶段准备匹配依赖和可选注意力组件。
+- 优先使用ComfyUI原生cudaMallocAsync，提供独立启动探测与native回退工具。
+- 保留现有节点ID、上游来源和组件许可。

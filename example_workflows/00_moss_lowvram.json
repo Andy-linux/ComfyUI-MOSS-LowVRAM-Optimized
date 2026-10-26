@@ -56,7 +56,7 @@
           }
         ],
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.0"
+        "ver": "0.1.1"
       },
       "widgets_values": [
         "SFT",
@@ -130,7 +130,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedPairedTextEncode",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.0"
+        "ver": "0.1.1"
       },
       "widgets_values": [
         "A quiet riverside village at sunrise, soft golden light on wooden houses and willow trees, natural colors, detailed photography. 清晨的河畔村庄，金色阳光洒在木屋与垂柳上，宁静自然，细节清晰。",
@@ -221,7 +221,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedSampler",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.0"
+        "ver": "0.1.1"
       },
       "widgets_values": [
         314159265,
@@ -274,7 +274,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedVAEDecode",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.0"
+        "ver": "0.1.1"
       },
       "widgets_values": []
     },
@@ -374,7 +374,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedControls",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.0"
+        "ver": "0.1.1"
       },
       "widgets_values": [
         "idle"
@@ -400,7 +400,7 @@
         "Node name for S&R": "Note"
       },
       "widgets_values": [
-        "MOSS · Main workflow · 1024 × 1024 · SFT 16 steps\n首次导入出现 Missing Nodes / 缺少节点：打开 Manager / 管理扩展功能 → 安装 kohaku-moss-lowvram-optimized（MOSS LowVRAM Optimized）→ 按提示 Restart / 重启 ComfyUI → 重新打开 00_moss_lowvram.json → Prepare / check → 检查环境、文件大小与来源 → 明确确认下载 / 校验 → Refresh。\n没有 Manager：Desktop 通常内置；manual / portable 请先按官方说明安装或启用：https://docs.comfy.org/manager/install 。导入此 JSON 不会自行安装 Manager。\nDefault: SFT packed W5 storage → real INT8 × INT8 → INT32 operations; Sumomo v2 INT8 TE → W8A16; 6 GB process allocation profile; FP32 VAE; attention auto.\nWeight storage, matrix operations and boundary precision are separate choices. The 6 GB profile is a process allocation budget, not physical GPU certification.\nSelecting Base preserves prompt, seed and steps. Click Apply recommended sampling parameters to explicitly use Base 50 steps (SFT 16).\nOriginal float TE preparation fetches the complete shard and tokenizer bundle. Manager dependency repairs require a ComfyUI restart.\nCurrent qualification is reported by the authoritative environment check. Importing a workflow never downloads files or executes GPU kernels."
+        "MOSS · 配置与准备\n首次导入：通过Manager安装MOSS LowVRAM Optimized → 应用更改 / 重启。\n选择配置 → Prepare / check selected configuration → 确认准备计划 → 资源就绪后运行。\n已有模型从ComfyUI标准模型目录及extra_model_paths.yaml注册目录匹配复用。\nSFT建议16步，Base建议50步；点击Apply recommended sampling parameters应用。\n尚未安装Manager：https://docs.comfy.org/manager/install"
       ],
       "title": "MOSS · Read before queueing · 使用前必读"
     }
