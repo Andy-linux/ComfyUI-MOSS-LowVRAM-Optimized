@@ -83,7 +83,11 @@ async function request(path, payload, { timeoutMs = 45000 } = {}) {
                 ...(payload === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }),
                 signal: controller.signal,
             });
-            if (response.status === 404 || response.status === 401 || response.status === 403) throw new Error(serviceError(path, response.status));
+            if (response.status === 404 || response.status === 401 || response.status === 403) {
+                const error = new Error(serviceError(path, response.status));
+                error.mossInstallationMissing = response.status === 404 && !path.includes("/jobs/");
+                throw error;
+            }
             let data;
             try { data = await response.json(); } catch { throw new Error(response.ok ? "MOSS 返回的内容无法读取。请刷新页面，确认插件安装完成后重试。" : serviceError(path, response.status)); }
             if (!response.ok) throw new Error(typeof data?.error === "string" ? data.error : serviceError(path, response.status));
@@ -96,6 +100,20 @@ async function request(path, payload, { timeoutMs = 45000 } = {}) {
         if (error instanceof TypeError) throw new Error("无法连接 ComfyUI，请确认服务已启动后重试。");
         throw error;
     } finally { clearTimeout(timer); }
+}
+function compatibilityWarnings(report) {
+    const messages = (report.evaluation?.warnings ?? []).map(issue => issue.message).filter(Boolean);
+    if (!report.evaluation?.errors?.length) {
+        const preparationErrors = report.dependency_plan?.errors ?? [];
+        for (const issue of preparationErrors) if (issue.message) messages.push(`自动依赖准备条件：${issue.message}`);
+        if (!preparationErrors.length && report.dependency_plan?.status === "unsupported") messages.push("当前环境不满足自动依赖准备条件。");
+    }
+    return [...new Set(messages)];
+}
+function needsManager(report) {
+    const errors = report.evaluation?.errors ?? [];
+    const hostBlocked = report.dependency_plan?.status === "unsupported" || Boolean(report.dependency_plan?.errors?.length);
+    return !hostBlocked && errors.some(issue => (issue.code?.startsWith("dependency_") && issue.code !== "dependency_torch") || issue.code === "sm75_triton");
 }
 function invalidate(node) {
     node.properties ??= {};
@@ -124,7 +142,8 @@ async function inspect(node) {
             w.tooltip = options.find(o => o.value === w.value)?.reason || w.tooltip;
         }
         const errors = report.evaluation.errors;
-        status(node, errors.length ? `环境需处理 ${errors.length} 项` : report.assets.ready ? "已就绪，可以运行" : "模型待准备", errors.map(e => e.message).join("\n") || "打开准备窗口查看环境与模型状态。");
+        const warnings = compatibilityWarnings(report);
+        status(node, errors.length ? `环境需处理 ${errors.length} 项` : warnings.length ? "环境检查完成，有兼容提示" : report.assets.ready ? "已就绪，可以运行" : "模型待准备", errors.map(e => e.message).join("\n") || warnings.join("\n") || "打开准备窗口查看环境与模型状态。");
         return report;
     })().finally(() => { if (node._mossInspectPending === pending) node._mossInspectPending = null; });
     node._mossInspectPending = pending;
@@ -202,17 +221,26 @@ async function showSetup(node) {
             for (const issue of report.dependency_plan?.errors ?? []) details.append(element("p", issue.message));
             for (const step of report.dependency_plan?.steps ?? []) details.append(element("p", step.requirement ?? step.message ?? step.id));
         }
+        for (const message of compatibilityWarnings(report)) details.append(element("p", message));
         const optional = report.dependency_plan?.optional_dependencies ?? {};
-        for (const [name, state] of Object.entries(optional)) details.append(element("p", `${name}: ${state.status ?? "未知"}${state.reason ? ` · ${state.reason}` : ""}`));
+        for (const [name, state] of Object.entries(optional)) {
+            if (state.status === "skipped") continue;
+            details.append(element("p", `${name}: ${{ available: "可用", installed: "已安装", missing: "未安装", failed: "准备失败", conflict: "存在冲突", publish_pending: "暂无安装源" }[state.status] ?? state.status ?? "未知"}${state.reason ? ` · ${state.reason}` : ""}`));
+        }
         for (const step of report.dependency_plan?.optional_steps ?? []) {
             const row = element("p", `${step.id ?? "可选功能"}: ${step.message ?? "安装阶段准备"}`);
             if (step.url) row.append(element("span", " · "), link("来源", step.url));
             details.append(row);
         }
+        const unavailable = element("details"); unavailable.append(element("summary", "不可用选项"));
+        let unavailableCount = 0;
         for (const [field, options] of Object.entries(report.options ?? {})) {
-            for (const option of Array.isArray(options) ? options : []) if (option.enabled === false) details.append(element("p", `${field} · ${option.label ?? option.value}: ${option.reason || "与当前配置不兼容"}`));
+            for (const option of Array.isArray(options) ? options : []) if (option.enabled === false) {
+                unavailable.append(element("p", `${field} · ${option.label ?? option.value}: ${option.reason || "与当前配置不兼容"}`));
+                unavailableCount++;
+            }
         }
-        managerHelp(details);
+        if (unavailableCount) details.append(unavailable);
         return details;
     }
     async function render() {
@@ -224,7 +252,8 @@ async function showSetup(node) {
             if (closed) return;
             if (!report) { progress.textContent = "配置已更新，请重新检查。"; return; }
             reviewedReport = report; reviewedSelection = JSON.stringify(selection(node));
-            body.replaceChildren(element("h3", report.evaluation.errors.length ? "环境需要处理" : "环境检查通过"));
+            const warnings = compatibilityWarnings(report);
+            body.replaceChildren(element("h3", report.evaluation.errors.length ? "环境需要处理" : warnings.length ? "环境检查完成，有兼容提示" : "环境检查通过"));
             for (const issue of report.evaluation.errors) body.append(element("p", issue.message));
             if (report.evaluation.errors.length) {
                 for (const action of report.evaluation.actions ?? []) {
@@ -233,14 +262,16 @@ async function showSetup(node) {
                     body.append(element("p", text));
                 }
                 const codes = report.evaluation.errors.map(issue => issue.code ?? "");
-                const hostBlocks = (report.dependency_plan?.errors ?? []).filter(issue => ["host_unqualified", "python_development_files", "python_free_threaded"].includes(issue.code));
-                if (codes.some(code => code.startsWith("dependency_")) && hostBlocks.length) {
+                const hostBlocks = report.dependency_plan?.errors ?? [];
+                const preparationBlocked = report.dependency_plan?.status === "unsupported" || hostBlocks.length > 0;
+                if (codes.some(code => code.startsWith("dependency_") || code === "sm75_triton") && preparationBlocked) {
                     body.append(element("h4", "先处理这些环境条件"));
                     for (const issue of hostBlocks) body.append(element("p", issue.message));
-                    body.append(link("ComfyUI 宿主安装与维护", "https://docs.comfy.org/installation/desktop"));
+                    if (!hostBlocks.length) body.append(element("p", "当前环境无法自动准备依赖，请先维护 ComfyUI 宿主环境。"));
+                    body.append(link("ComfyUI 宿主安装与维护", "https://docs.comfy.org/installation/manual_install"));
                 } else if (codes.some(code => ["python_version", "python_free_threaded", "cuda_required", "dependency_torch"].includes(code))) {
-                    body.append(element("p", "请先使用满足 Python 要求且启用 NVIDIA CUDA 的 ComfyUI 环境，再重新检查。"), link("ComfyUI 安装与维护", "https://docs.comfy.org/installation/desktop"));
-                } else if (codes.some(code => code.startsWith("dependency_") || code === "sm75_triton")) managerHelp(body);
+                    body.append(element("p", "请先使用满足 Python 要求且启用 NVIDIA CUDA 的 ComfyUI 环境，再重新检查。"), link("ComfyUI 安装与维护", "https://docs.comfy.org/installation/manual_install"));
+                } else if (needsManager(report)) managerHelp(body);
             }
             body.append(environmentDetails(report), element("h3", "模型准备"));
             const plan = report.assets, files = plan.files;
@@ -260,9 +291,9 @@ async function showSetup(node) {
             }
             reviewedRepairs = files.filter(f => f.repair_action === "quarantine_then_download").map(f => f.destination);
             download.textContent = reviewedRepairs.length ? "确认保留旧文件并下载替代文件" : "确认下载 / 校验";
-            progress.textContent = plan.ready ? report.evaluation.errors.length ? "模型已就绪，请先处理环境项目。" : "准备完成，可以运行。" : "核对模型后，确认下载 / 校验。";
+            progress.textContent = plan.ready ? report.evaluation.errors.length ? "模型已就绪，请先处理环境项目。" : warnings.length ? "模型已就绪，请先查看“环境与可选功能”中的兼容提示。" : "准备完成，可以运行。" : "核对模型后，确认下载 / 校验。";
         } catch (error) {
-            if (!closed) { body.replaceChildren(element("h3", "检查未完成")); managerHelp(body); progress.textContent = error.message; status(node, "检查未完成，请重试", error.message); }
+            if (!closed) { body.replaceChildren(element("h3", "检查未完成")); if (error.mossInstallationMissing) managerHelp(body); progress.textContent = error.message; status(node, "检查未完成，请重试", error.message); }
         } finally { checking = false; controls(); }
     }
     refresh.onclick = render;

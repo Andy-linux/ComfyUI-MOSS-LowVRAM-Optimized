@@ -13,13 +13,13 @@ def main(argv=None):
     if "--dry-run" in (sys.argv[1:] if argv is None else argv):
         print(json.dumps(plan, ensure_ascii=False, indent=2))
         return 1 if plan["status"] == "unsupported" else 0
-    print("MOSS：Manager 安装阶段依赖准备。不会替换 Torch/CUDA/Python，不下载模型。仅精确匹配宿主会尝试固定SM89 Sage或SM75 Turing公开资产；未发布清单不下载，失败保持auto。")
+    print("MOSS：正在准备当前环境所需依赖及匹配的可选组件。模型请在节点准备窗口下载。")
     result = module.execute_plan(plan)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     for action in result["actions"]:
         print(action)
     if result["exit_code"] == 0:
-        print("依赖准备完成。请在 Manager 点击 Restart / 重启，再打开 MOSS 节点环境检查；依赖齐备不等于整工作流验证。")
+        print("依赖准备完成。请按 Manager 提示应用更改或重启，再打开 MOSS 配置与准备。")
     return result["exit_code"]
 
 

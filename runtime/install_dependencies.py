@@ -209,16 +209,16 @@ def dependency_plan(report=None):
     else:
         error("platform_unsupported", "自动准备仅支持 NVIDIA Windows x64 / Linux 环境。")
     if triton.get("shadow_conflict"):
-        error("triton_shadow", "发现多个 Triton 导入候选，需先通过 Manager 修复冲突。")
+        error("triton_shadow", "当前 Triton 存在重复安装，请通过 ComfyUI 环境维护流程处理后重启。")
     if requirement:
         expected = requirement.split("==")[1]
         if triton.get("status") == "missing" and not triton.get("version"):
             plan["steps"].append({"id": "triton", "kind": "pip", "requirement": requirement, "message": "安装与当前 Torch 匹配的固定 Triton wheel。"})
         elif (triton.get("status") != "available" or triton.get("version") != expected or
               triton.get("distribution") != requirement.split("==")[0]):
-            error("triton_conflict", "Triton 版本或原生扩展冲突，请通过 Manager 或宿主维护流程修复后重启。")
+            error("triton_conflict", "Triton 版本或原生扩展冲突，请通过 ComfyUI 宿主维护流程修复后重启。")
         elif not prerequisites.get("cuda_compiler") or (platform == "win32" and not prerequisites.get("c_compiler")):
-            error("triton_toolchain_missing", "现有 Triton wheel 缺少编译器工具；请在 Manager 修复依赖后重启。")
+            error("triton_toolchain_missing", "当前 Triton 缺少编译器组件，请重新完成节点包安装；若仍报错，请修复宿主 Triton 安装。")
     sage, optional_steps = _sage_plan(report)
     plan["optional_dependencies"]["sageattention"] = sage
     if sage["status"] == "conflict":
