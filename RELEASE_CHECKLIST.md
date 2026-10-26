@@ -8,9 +8,12 @@
 - Registry package: `kohaku-moss-lowvram-optimized`; display name:
   **MOSS LowVRAM Optimized**, using KohakuMoss inference components.
 - Registry publisher: `xianbei`, public status **Active**. The local DPAPI-encrypted
-  credential can be read/decrypted successfully. Registry service authentication
-  with that PAT remains unverified; local decryption is not an authorization test.
-  No suitable official read-only PAT verification endpoint has been established.
+  credential was used for one successful secure-bridge publication of0.1.0:
+  version_response_received=true and upload_completed=true, with no retry. This
+  actual request verified service-side PAT authentication. Public node/version
+  HTTP200 identifies publisher xianbei; at03:24:01 UTC the version was
+  NodeVersionStatusPending, with mapping0/search0 and extract=null. This is not
+  Active or a manual-review conclusion; do not republish or trigger scans for Pending.
 - A GitHub Actions secret is optional for a future CI publishing path and is not
   currently set by this preparation. Manual publication can use the private local
   credential; never commit it, print it or put it in workflow JSON.
@@ -84,8 +87,8 @@ missing HF identity or bypass a structural/metadata failure. Record actual outpu
   pack simultaneously. Update/migrate one installation; the existing folder name
   may remain for launcher compatibility. Preserve any local `models.local.json`
   privately when migrating, never in the published archive.
-  Current00 cnr_id/ver are planned publication metadata, not proof of Registry
-  publication. After publishing and installing the real Registry version, verify
+  Current00 cnr_id/ver match submitted0.1.0 metadata, not proof of Active status
+  or Manager installation. After installing the real Registry version, verify
   those fields, then re-export and validate the resulting JSON/PNG artifacts.
 - Validate the new 00 entry independently: changing Base/SFT, DiT storage/compute,
   TE format/compute, budget and VAE must create the correct selected asset plan.
@@ -147,7 +150,14 @@ missing HF identity or bypass a structural/metadata failure. Record actual outpu
   matched 43,707,834 bytes and the full pinned SHA, as did remote asset digest.
   The optional manifest is public; runtime code remains frozen and strict SM75.
 - The two Base/SFT FP8 row checkpoints are public at [R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41), totaling 10,349,759,704 bytes. Exact sizes and remote LFS SHA256 match local full-file SHA256; small companion files were read back. The approximately 10GB remote weights were not downloaded again for a full-stream SHA256 check.
-  GitHub is public; Registry publication and real empty-baseline Manager installation remain pending.
+  GitHub canonical c71ead06bad6fb77002c81b5f6b442bb905cf271 is public. Registry0.1.0
+  was submitted/uploaded once and observed Pending; actual Manager installation
+  remains pending. Official CLI and publication validation passed. The actual607-file
+  Registry ZIP is4,989,105 bytes, SHA256
+  b5356b40fb0819b426937048c54885349d1dbd5f5014ac1777c8cbaed9a3a2f8.
+  Its sole00 template and four packaged tokenizer resources were checked. Anonymous
+  CDN HTTP200 full readback matched size/SHA (registry-anonymous-download-0.1.0.json);
+  this verifies archive delivery, not Manager installation.
 
 ## Explicit publishing only
 

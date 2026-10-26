@@ -36,7 +36,7 @@ LICENSE/NOTICE字节不变。此清单记录工程分发决定，不作为额外
 ## 两份新FP8 row与历史本地产物
 
 两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。
-精确文件大小与固定revision表见[模型文件](../MODEL_FILES.md)；Registry与实际Manager安装仍待完成。
+精确文件大小与固定revision表见[模型文件](../MODEL_FILES.md)；Registry0.1.0已提交并观察为Pending，Active与实际Manager安装仍待验证。
 
 | 文件 | 分发范围 | SHA256 |
 | --- | --- | --- |

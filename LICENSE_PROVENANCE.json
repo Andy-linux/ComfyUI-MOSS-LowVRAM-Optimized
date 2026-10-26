@@ -178,7 +178,7 @@
           "sha256": "06c58d186852abd0fd073fba6486a82543a6006a8c17a3eac7d62828b9c03862"
         }
       ],
-      "verification": "Exact remote sizes and LFS SHA256 matched local full-file SHA256; finalized small companion files read back at R1. No repeat full-stream download/hash of approximately10GB remote weights. No Registry or Manager lifecycle completion inferred."
+      "verification": "Exact remote sizes and LFS SHA256 matched local full-file SHA256; finalized small companion files read back at R1. No repeat full-stream download/hash of approximately10GB remote weights. Registry0.1.0 submitted/uploaded and observed Pending; no Active status or Manager lifecycle completion inferred."
     },
     "preencoded_prompt_tensors": "Not distributed or required for ordinary live TE; calibration/benchmark caches are not default dependencies"
   },

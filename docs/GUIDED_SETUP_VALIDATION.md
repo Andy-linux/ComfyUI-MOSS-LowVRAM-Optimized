@@ -2,7 +2,7 @@
 
 本页记录新增00工作流的实际验证，和历史01–07回执分别保存。
 下列结果不等于新机器从公开Registry完成缺节点安装，亦不表示模型首次网络下载已经测试。
-GitHub源码与Turing Release已公开，Registry尚未发布。两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。
+GitHub源码与Turing Release已公开，Registry0.1.0已提交并观察为Pending。两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。
 
 
 匿名访问记录 `hf-public-anonymous-01.json`（Windows bench）进一步确认固定R1可公开读取：
@@ -72,7 +72,7 @@ HTTP确认ComfyUI0.41、SM89，宿主默认自动选择 `cudaMallocAsync`。
 `/object_info` 无MOSS节点，Triton与accelerate仍缺失，模型目录中大于1MB的文件为0，queue为空。
 对应原始记录为 `manager-server-process-cold-03.json` 与 `manager-cold-baseline-03.json`。
 这轮只建立更严格的空缓存、默认启动基线；**尚未完成Manager安装本包、模型下载或出图**，
-不能作为这些步骤的PASS；HF权重公开验证是独立结果，Registry发布与实际Manager闭环仍待完成。
+不能作为这些步骤的PASS；HF权重公开验证是独立结果，Registry Active/映射可用性与实际Manager闭环仍待完成。
 
 ## 独立证据层次
 
@@ -98,6 +98,27 @@ LICENSE的事实继续披露，用户授权分发不被描述为补造上游许�
 冻结helper `ff162c…` 已在Windows另跑8项focused测试通过（该轮日志`turing-focused-07.log`），
 并通过真实17成员ZIP的纯 `validate_archive` 检查。这不表示137项全套又重新运行；
 这些资产/hash/单元测试也不是新增SM75实卡采样或Flash图像质量验证。
+
+## Registry阶段：已提交Pending与匿名ZIP核验
+
+公开canonical提交为 `c71ead06bad6fb77002c81b5f6b442bb905cf271`。
+官方CLI验证与publication validator均通过。实际Registry ZIP含607个文件、4,989,105 bytes，
+SHA256为 `b5356b40fb0819b426937048c54885349d1dbd5f5014ac1777c8cbaed9a3a2f8`。
+实包已核对唯一用户模板00（SHA前缀 `a41d5f8b…`）及四份tokenizer资源均存在；
+这是归档内容核验，不把cloud源码目录存在资源当作打包证据。
+
+Secure bridge仅发布一次0.1.0，无重试；实际返回 `version_response_received=true`、
+`upload_completed=true`，既有DPAPI PAT经该真实请求完成服务端认证。
+Registry公开node/version请求均为HTTP200，publisher为 `xianbei`。
+03:24:01 UTC观察到 `NodeVersionStatusPending`、mapping0/search0、`extract=null`；
+这是平台待处理状态，不是Active、映射提取成功、人工审核通过或失败的结论。
+不要求用户为Pending重新登录、重复发布或触发security scan。
+
+`registry-anonymous-download-0.1.0.json` 另记录CDN匿名完整下载HTTP200，
+精确大小与上述SHA256一致，证明已上传ZIP可匿名交付。
+这与真实Manager安装是独立阶段：cold03及GUI baseline08仍无MOSS、无模型、未安装本包，
+尚未完成缺失节点发现、Manager安装/重启、模型下载或生成闭环。
+当前00的cnr_id/ver为已提交0.1.0的metadata，不凭这些字段宣称Active或安装成功。
 
 ## 发布前仍需完成
 

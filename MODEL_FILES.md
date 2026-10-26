@@ -109,7 +109,7 @@ The destination is
 [Andylinux/MOSS-Image-Kohaku-FP8](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8).
 Base and SFT row checkpoints are the two files selected for public distribution.
 The two Base/SFT FP8 row checkpoints are public at [R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41), totaling 10,349,759,704 bytes. Exact sizes and remote LFS SHA256 match local full-file SHA256; small companion files were read back. The approximately 10GB remote weights were not downloaded again for a full-stream SHA256 check.
-Weight upload commit R0 is `082aebf29d592d9a9f0ba61b64f780ad160ec72b`; R1 adds the finalized documentation with unchanged weight identities. Registry publication and actual Manager installation/download/generation remain pending.
+Weight upload commit R0 is `082aebf29d592d9a9f0ba61b64f780ad160ec72b`; R1 adds the finalized documentation with unchanged weight identities. Registry0.1.0 has been submitted/uploaded and was observed Pending; Active status and actual Manager installation/download/generation remain unverified.
 
 | Asset | Exact bytes | Local full-file / remote LFS SHA256 | Compute choice |
 | --- | --- | --- | --- |

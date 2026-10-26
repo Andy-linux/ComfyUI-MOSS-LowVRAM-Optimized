@@ -145,7 +145,7 @@ INT8 TE v2的推荐目标别名为 `text_encoders/moss-image-qwen35-int8-convrot
 
 旧01–07图已移到 `tests/historical_workflows/`，仅为GitHub历史测试fixture，
 由 `.comfyignore` 排除Registry包，不再作为用户模板或当前分享方案。
-当前00的 `cnr_id` / `ver` 是待发布metadata，不表示Registry已发布或安装已验证；真实发布、安装后需核对并重新导出。
+当前00的 `cnr_id` / `ver` 对应已提交的0.1.0 metadata，不表示版本已Active或Manager安装已验证；实际安装后仍需核对并重新导出。
 
 ## 验证范围
 
@@ -179,12 +179,12 @@ python tools/validate_release.py --publication
 
 本地检查与公开发布门槛分开。GitHub源码仓库已公开：
 [Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized)，
-已确认公开源码提交 `523e1e68190d1a17138b2189ad24349e175d938d`。Turing独立Release也已公开并完成匿名文件大小/hash核验；
-Registry仍未发布，真正空基线Manager安装仍待完成。
-Registry Publisher `xianbei`的公开状态已确认为**Active**。本地加密凭证读取/
-解密检查已成功；**PAT在Registry服务上的认证仍未验证**，不能据此宣称已可发布。
-尚无用于这项PAT认证检查的官方只读验证端点，不探测可能产生写入的发布接口，
-文档也不包含凭证内容。两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。旧weight-only不纳入本次公开分发。
+本次Registry 0.1.0包对应实现提交 `c71ead06bad6fb77002c81b5f6b442bb905cf271`。Turing独立Release也已公开并完成匿名文件大小/hash核验；
+Registry 0.1.0已提交并上传完成；03:24:01 UTC观察版本状态为Pending，真正空基线Manager安装仍待完成。
+Registry Publisher `xianbei`的公开状态已确认为**Active**。
+既有PAT已通过本次实际Registry发布请求的服务端认证；secure bridge仅提交一次，无重试。
+Pending表示平台仍待处理，不是要求用户重新登录、重复发布或触发扫描；尚不能宣称Active或Manager已安装。
+文档不包含凭证内容。两份Base/SFT FP8 row已公开并固定于[R1 `d8a0b2f46a79770fe711bf5322cf6cb3219c8d41`](https://huggingface.co/Andylinux/MOSS-Image-Kohaku-FP8/tree/d8a0b2f46a79770fe711bf5322cf6cb3219c8d41)，合计10,349,759,704 bytes。已核对两文件精确大小、远端LFS SHA256与本地完整文件SHA256，并读回小型配套文件；没有重新下载约10GB远端权重做全流SHA256核验。旧weight-only不纳入本次公开分发。
 GitHub、Turing与HF资产公开不代表Registry注册或实际Manager安装完成。
 
 新增00的候选服务复用/生成已通过；此前01–07图证据保留原范围。真正新用户Manager安装闭环尚待完成。
@@ -192,7 +192,7 @@ GitHub、Turing与HF资产公开不代表Registry注册或实际Manager安装完
 完成requirements与install.py直接执行，两者退出码均为0；这证明安装钩子可在该基线运行，
 **不等于经过Manager UI发现、安装和重启的端到端验收**。源码上传进度、仓库可见性和Registry实际发布结果见
 [发布计划](docs/PUBLISHING_PLAN_ZH.md)及操作者后续的真实回执；不从本地验证通过推断
-这些外部写入已完成。当前验证数据记录Registry发布未尝试。
+这些外部写入已完成。Registry 0.1.0已提交并上传完成，平台Active状态与真实Manager全链条仍待验证。
 
 20系仅保留历史2080 Ti **22 GB物理显存卡**的W5 auto端到端回执，4g/6g是软件
 预算，不是物理4/6GB卡。当前版本未实卡复测；40系是当前SM89验收，50系待补，30系未承诺整流程支持，
