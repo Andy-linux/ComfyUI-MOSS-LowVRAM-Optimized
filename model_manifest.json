@@ -5,12 +5,12 @@
     "te_int8",
     "vae"
   ],
-  "metadata_source": "Live HF API ?blobs=true snapshot supplied by operator; immutable revisions and LFS SHA256, no weights downloaded.",
+  "metadata_source": "Hugging Face immutable revisions and LFS SHA256 metadata.",
   "assets": [
     {
       "id": "base_w8",
       "status": "public",
-      "notes": "Default public Base INT8, separate Q/K/V; original validated community checkpoint.",
+      "notes": "Base INT8 ConvRot with separate Q/K/V tensors.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/blob/16364ffd306244f33be05d64b34b47f6e15d0328/LICENSE",
@@ -30,7 +30,7 @@
     {
       "id": "base_w8_comfy",
       "status": "public",
-      "notes": "Alternative fused-QKV packing; distinct file/hash, requires normalization; do not silently substitute.",
+      "notes": "Base INT8 ConvRot with fused QKV packing.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
@@ -50,7 +50,7 @@
     {
       "id": "sft_w8",
       "status": "public",
-      "notes": "Public SFT INT8 fused variant; distinct from local benchmark weight; verify checkpoint compatibility before claiming R4 equality.",
+      "notes": "SFT INT8 ConvRot with fused QKV packing.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
@@ -70,7 +70,7 @@
     {
       "id": "te_int8",
       "status": "public",
-      "notes": "Pinned exact Sumomo v2 bytes with a versioned local basename to avoid silently selecting legacy v1 under the same upstream name. Upstream filename/revision/hash are unchanged.",
+      "notes": "Sumomo INT8 TE v2 with a versioned local filename.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/blob/16364ffd306244f33be05d64b34b47f6e15d0328/LICENSE",
@@ -90,7 +90,7 @@
     {
       "id": "te_int8_comfy",
       "status": "public",
-      "notes": "Alternative 9,748,121,532 bytes; NOT byte-identical to 8.45GB Sumomo TE. Do not relabel local measured TE as this file.",
+      "notes": "Comfy-packaged INT8 text encoder.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
@@ -110,7 +110,7 @@
     {
       "id": "te_w4",
       "status": "public",
-      "notes": "Optional public W4 TE; a different precision path, not default R4 INT8.",
+      "notes": "W4 GPTQ text encoder.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
@@ -130,7 +130,7 @@
     {
       "id": "vae",
       "status": "public",
-      "notes": "Default original MOSS VAE, identical LFS bytes to original HF VAE.",
+      "notes": "Original MOSS VAE.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/SumomoLee/MOSS-Image-Base-ConvRot-ComfyUI/blob/16364ffd306244f33be05d64b34b47f6e15d0328/LICENSE",
@@ -150,7 +150,7 @@
     {
       "id": "vae_flux2_small",
       "status": "public",
-      "notes": "Alternative repack, different file/hash; not silently interchangeable based on similar file size.",
+      "notes": "Flux2 small VAE repack.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/Comfy-Org/MOSS-Image/blob/24147db865fcdc207270f844777587223fed8d6e/LICENSE",
@@ -170,7 +170,7 @@
     {
       "id": "te_original",
       "status": "public",
-      "notes": "Original BF16 TE: all four shards plus index/config and tokenizer. Exact small-file SHA256 required; downloader refuses incomplete metadata.",
+      "notes": "Original BF16 text encoder directory with four shards, index, configuration and tokenizer.",
       "license": {
         "declared_upstream": "apache-2.0",
         "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base/blob/85975793d8b3d432f1b6e27f352abaa4c2a4c0d3/LICENSE"
@@ -254,7 +254,7 @@
       "id": "sft_w5",
       "status": "public",
       "local_filename": "q5_ridge_gptq.safetensors",
-      "notes": "Existing public SFT packed checkpoint; exact file SHA256 matches the measured local artifact. Direct upstream index, no duplicate upload. See pinned LOWBIT_MANIFEST and README for conversion provenance; this file license does not relicense runtime source.",
+      "notes": "SFT packed W5 checkpoint; conversion provenance is in the source repository LOWBIT_MANIFEST and README.",
       "files": [
         {
           "repo_id": "Andylinux/MOSS-Image-SFT-W5A8-W6A8",
@@ -277,7 +277,7 @@
       "id": "sft_w6",
       "status": "public",
       "local_filename": "q6_direct.safetensors",
-      "notes": "Existing public SFT packed checkpoint; exact file SHA256 matches the measured local artifact. Direct upstream index, no duplicate upload. See pinned LOWBIT_MANIFEST and README for conversion provenance; this file license does not relicense runtime source.",
+      "notes": "SFT packed W6 checkpoint; conversion provenance is in the source repository LOWBIT_MANIFEST and README.",
       "files": [
         {
           "repo_id": "Andylinux/MOSS-Image-SFT-W5A8-W6A8",
@@ -300,7 +300,7 @@
       "id": "base_fp8",
       "status": "public",
       "local_filename": "moss_image_base_kohaku_fp8_row.safetensors",
-      "notes": "Public Base/SFT shared row checkpoint, verified at the pinned immutable revision. The same row file is reused at runtime for FP8 or FP16/BF16 activation modes without requantization or a duplicate weight download; arithmetic dispatch remains shape-dependent.",
+      "notes": "Base Kohaku FP8 row checkpoint supporting FP8 or 16-bit activation modes.",
       "files": [
         {
           "repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
@@ -323,7 +323,7 @@
       "id": "sft_fp8",
       "status": "public",
       "local_filename": "moss_image_sft_kohaku_fp8_row.safetensors",
-      "notes": "Public Base/SFT shared row checkpoint, verified at the pinned immutable revision. The same row file is reused at runtime for FP8 or FP16/BF16 activation modes without requantization or a duplicate weight download; arithmetic dispatch remains shape-dependent.",
+      "notes": "SFT Kohaku FP8 row checkpoint supporting FP8 or 16-bit activation modes.",
       "files": [
         {
           "repo_id": "Andylinux/MOSS-Image-Kohaku-FP8",
@@ -346,7 +346,7 @@
       "id": "base_fp8_weight_only",
       "status": "legacy_local_only",
       "local_filename": "moss_image_base_kohaku_fp8_weight_only.safetensors",
-      "notes": "Historical separate Base weight-only export retained for explicit legacy loading only. Not scheduled for public upload: the new Base row checkpoint supplies both activation modes. Its nonquantized dtypes differ; do not claim byte or output equivalence.",
+      "notes": "Separate Base weight-only export for existing local files.",
       "files": [],
       "local_artifact_bytes": 5346415987,
       "local_artifact_sha256": "03a31fb8a7c2e196b3b0c3b02849442d40503ead10cdf9f9f4bce543525c1c54"
@@ -355,6 +355,6 @@
   "alternate_original_te_source": {
     "repo_id": "OpenMOSS-Team/MOSS-Image-SFT",
     "revision": "f972bd4b4b9e3852133cc5da954d87bc32cd8fb9",
-    "notes": "Four TE shard LFS hashes match Base snapshot; no automatic source substitution."
+    "notes": "Alternate source for the four Original TE shards."
   }
 }

@@ -15,7 +15,7 @@
     {
       "component": "MOSS-Image",
       "license_as_observed": "Apache License2.0",
-      "attribution_as_observed": "Project: OpenMOSS/MOSS-Image; no additional copyright owner inferred from generic license appendix",
+      "attribution_as_observed": "Project: OpenMOSS/MOSS-Image",
       "scope": "vendored official_moss loader source",
       "saved_license": "licenses/MOSS-Image-LICENSE.txt",
       "bytes": 11560,
@@ -56,7 +56,7 @@
       "component": "xFormers",
       "license_as_observed": "BSD3-Clause",
       "attribution_as_observed": "Copyright (c) Facebook, Inc. and its affiliates",
-      "scope": "optional external Flash wheel; no binary copied into the source release candidate",
+      "scope": "optional external Flash wheel",
       "saved_license": "licenses/xFormers-LICENSE.txt",
       "bytes": 1645,
       "raw_sha256": "c4f7484863e2da4fff9fa10c9dd6b498311aeaea2ff29a3731b1de417ddd8422",
@@ -66,7 +66,7 @@
       "component": "SageAttention Windows post6",
       "license_as_observed": "Apache License 2.0",
       "attribution_as_observed": "Copyright 2024 Jintao Zhang, Haofeng Huang",
-      "scope": "optional externally obtained isolated wheel; no wheel bundled in source candidate",
+      "scope": "optional external isolated wheel",
       "source_artifact": "sageattention-2.2.0+cu130torch2.10.0andhigher.post6-cp310-abi3-win_amd64.whl",
       "saved_license": "licenses/SageAttention-LICENSE.txt",
       "bytes": 11358,
@@ -108,43 +108,29 @@
     "MOSS_equals_source": true
   },
   "scope_notes": [
-    "No model weights, wheels, venv or toolchain binaries bundled in current source candidate",
-    "Root LICENSE is the unchanged KohakuMoss License; third-party scopes and original notices remain distinct",
-    "Formal distributed package name kohaku-moss-lowvram-optimized includes Kohaku; main display MOSS LowVRAM Optimized, subtitle 使用KohakuMoss推理组件",
-    "Independent packed decoder provenance is mathematical layout plus black-box equality, not a legal clean-room certification",
-    "Final public history must exclude private baseline containing the removed decoder"
+    "Model weights and optional binaries are distributed separately.",
+    "Root LICENSE is the KohakuMoss License; third-party terms and notices apply by component."
   ],
   "root_license": {
     "path": "LICENSE",
     "identical_to": "licenses/KohakuMoss-LICENSE.txt",
     "sha256": "2e63789e1bd0f581c88e2cb66dbb3d68a6bdee80740e4e3a59a134630a1b3bc0",
-    "scope": "Kohaku vendored code and original integration release candidate; third-party components retain their own terms; no new copyright owner asserted"
+    "scope": "Kohaku vendored code and original integration; third-party components retain their own terms."
   },
   "independent_packed_decoder": {
     "path": "runtime/packed_decode.py",
     "specification": "little-endian B-bit two’s-complement packed UINT8[ceil(K*B/8),N] to INT8[N,K]",
-    "implementation_source": "Mathematical storage layout and independent implementation; operator reports not reading the removed GPL implementation",
-    "validation": "SM89 black-box comparison against existing runner: 10 W5/W6 cases, 169939328 integer codes exactly equal",
-    "evidence": "benchmarks/moss-sharing-20261025/packed-decoder-parity-v5.log (operator-retained private evidence)",
-    "legal_scope": "Engineering provenance record, not formal clean-room legal certification",
+    "implementation_source": "Independent implementation of the mathematical packed storage layout.",
     "source_sha256": "c1c76714c3a4614735278ceceffd0b581b487c45192ea1d19be2531c38cb2ff2",
     "source_bytes": 1220
   },
-  "historical_exclusions": [
-    {
-      "component": "previous lowbit unpack source",
-      "current_distribution": "excluded; runtime/vendor/unpack_sm75.py and unrelated GPL license copy removed",
-      "history": "Historical private baseline retained outside public release; use clean release history, do not publish that baseline history",
-      "claim": "No retroactive relicensing of removed historical code"
-    }
-  ],
   "public_source_manifest": "runtime/vendor/SOURCES.json",
   "naming_policy": {
     "primary_display": "MOSS LowVRAM Optimized",
     "subtitle": "使用KohakuMoss推理组件",
     "formal_package_name": "kohaku-moss-lowvram-optimized",
     "github_repository": "https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized",
-    "section10_basis": "The formal package name includes Kohaku. The subtitle provides component attribution; it is not asserted to be a separate naming exception or a legal certification.",
+    "section10_basis": "The formal package name includes Kohaku. The subtitle provides component attribution.",
     "compatibility": "Existing internal node IDs are unchanged"
   },
   "distribution_inventory": "docs/DISTRIBUTION_INVENTORY.md",

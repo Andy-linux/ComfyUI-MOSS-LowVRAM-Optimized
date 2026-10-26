@@ -1,6 +1,4 @@
-# Validated environment: diffusers 0.41.0, transformers 5.20.1, einops 0.8.2, comfy-kitchen 0.2.37, safetensors 0.8.0.
-# These lower bounds do not promise every future combination is qualified.
-# Runtime dependencies only. Existing ComfyUI owns torch, CUDA and its ABI.
+# ComfyUI provides Torch and CUDA; Manager install.py prepares platform-specific Triton.
 numpy
 Pillow
 einops>=0.8.2
@@ -9,6 +7,3 @@ transformers>=5.20.1,<6
 diffusers>=0.41.0,<0.42
 accelerate
 comfy-kitchen>=0.2.37
-# Triton is an explicit platform prerequisite, not an unconditional pip dependency.
-# Windows requires the tested triton-windows build; Linux requires a matching
-# Triton/Torch/CUDA combination. Sage is optional: tools/install_optional_sage.py.

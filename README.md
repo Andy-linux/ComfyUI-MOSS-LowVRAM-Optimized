@@ -1,6 +1,6 @@
 # MOSS LowVRAM Optimized
 
-使用 **KohakuMoss** 推理组件的ComfyUI节点包，提供MOSS Base/SFT多精度推理、显存预算管理和模型资源准备。
+使用 **KohakuMoss** 推理组件的 ComfyUI 节点包，提供 MOSS Base/SFT 多精度推理、显存预算管理和模型资源准备。
 
 ## 安装与首次运行
 

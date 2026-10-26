@@ -33,8 +33,8 @@ Original TE下载计划包含完整分片、index/config及tokenizer。切换配
 安装器保持现有Torch/CUDA/Python版本；其他组合由环境检查给出诊断。便携Python缺少开发文件时，
 精确匹配的安装策略会准备固定来源的include/libs文件。
 
-默认auto使用PyTorch SDPA。匹配的Windows Python3.12 / SM89宿主可准备固定Sage wheel。Sage与Turing按 [optional_binary_manifest.json](../optional_binary_manifest.json)
-及固定安装策略准备到插件隔离目录；可选准备失败时使用auto。
+默认auto使用PyTorch SDPA。匹配的Windows Python3.12 / SM89宿主可准备固定Sage wheel。Sage使用[固定wheel发行源](https://github.com/woct0rdho/SageAttention/releases/tag/v2.2.0-windows.post6)，Turing资产记录于
+[optional_binary_manifest.json](../optional_binary_manifest.json)。可选组件按安装策略准备到插件隔离目录；准备失败时使用auto。
 Turing仅适用Windows x64、Python3.12、Torch2.10+cu130、SM75及FP16限定路径，来源与许可见[组件说明](../THIRD_PARTY_NOTICES.md)。
 
 ## 显存分配器启动选项
