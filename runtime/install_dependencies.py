@@ -19,6 +19,8 @@ import zipfile
 SOURCE = "https://github.com/triton-lang/triton-windows/blob/readme/README.md"
 HEADERS_URL = "https://github.com/woct0rdho/triton-windows/releases/download/v3.0.0-windows.post1/python_3.12.7_include_libs.zip"
 HEADERS_SHA256 = "145cde69c753dd5a78f4525ef1f5cbe0f2642678fdefd9e79e2bbea1a91d80ea"
+HEADERS_313_URL = "https://github.com/woct0rdho/triton-windows/releases/download/v3.0.0-windows.post1/python_3.13.2_include_libs.zip"
+HEADERS_313_SHA256 = "e3e8c3abb17ea8de1cd2cd264ad15aae3de5eb7dc61ab37cb1a3d07f9c86238d"
 SAGE_URL = "https://github.com/woct0rdho/SageAttention/releases/download/v2.2.0-windows.post6/sageattention-2.2.0%2Bcu130torch2.10.0andhigher.post6-cp310-abi3-win_amd64.whl"
 SAGE_SHA256 = "1635283f5c01ec3cda58a784d0d7eabbcaffaf9511d1b263db4750e1ed7958bb"
 SAGE_BYTES = 16656067
@@ -173,19 +175,30 @@ def dependency_plan(report=None):
         implementation = str(report.get("python_implementation") or ("cpython" if py312 else "")).lower()
         if _free_threaded(report):
             error("python_free_threaded", "free-threaded Python 不支持此原生扩展，请使用普通带 GIL 的 CPython。")
-        if (not (py312 or (py313 and sm == 89)) or implementation != "cpython" or _free_threaded(report)
-                or report.get("machine") not in ("AMD64", "x86_64")
-                or torch.get("version") != "2.10.0+cu130" or report.get("cuda_build") != "13.0" or sm not in (75, 89)):
-            error("host_unqualified", "自动准备要求 Windows x64、普通 CPython 3.12 或 3.13（SM75 仅 3.12）、Torch 2.10.0+cu130、CUDA 13.0，GPU 为 SM89 或 SM75。")
+        qualified = (
+            report.get("machine") in ("AMD64", "x86_64")
+            and implementation == "cpython" and not _free_threaded(report)
+            and report.get("cuda_build") == "13.0"
+            and (
+                (sm == 75 and py312 and torch.get("version") == "2.10.0+cu130")
+                or (sm == 89 and (py312 or py313) and torch.get("version") == "2.10.0+cu130")
+                or (sm == 120 and (py312 or py313) and torch.get("version") == "2.14.0+cu130")
+            )
+        )
+        if not qualified:
+            error("host_unqualified", "自动准备要求 Windows x64、普通 CPython 3.12/3.13、CUDA 13.0、SM75/SM89 配合 Torch 2.10，或 SM120 配合 Torch 2.14。")
         else:
-            requirement = "triton-windows==" + ("3.2.0.post21" if sm == 75 else "3.6.0.post26")
-            if sm == 75:
-                plan["warnings"].append({"code": "historical_sm75", "message": "SM75 为实验性兼容路径：Python 3.12 / Torch 2.10 / Triton 3.2。"})
+            requirement = "triton-windows==" + ("3.2.0.post21" if sm == 75 else "3.8.0.post29" if sm == 120 else "3.6.0.post26")
+            if sm in (75, 120):
+                plan["warnings"].append({"code": "gpu_unvalidated", "message": f"SM{sm} 依赖可自动准备；MOSS 完整 GPU 推理仍待实卡验收。"})
         if prerequisites.get("compiler_override"):
             error("compiler_override", "检测到 CC 编译器覆盖，请先在宿主环境中确认该设置。")
         if not prerequisites.get("python_headers") or not prerequisites.get("python_import_library"):
-            if prerequisites.get("embedded_python") and requirement and py312:
-                plan["steps"].append({"id": "python_headers", "kind": "python_headers", "message": "为当前便携 Python 3.12 补充固定 include/libs 开发文件。", "url": HEADERS_URL, "sha256": HEADERS_SHA256})
+            if prerequisites.get("embedded_python") and requirement and (py312 or py313):
+                headers_url, headers_sha = (HEADERS_313_URL, HEADERS_313_SHA256) if py313 else (HEADERS_URL, HEADERS_SHA256)
+                plan["steps"].append({"id": "python_headers", "kind": "python_headers",
+                                      "message": f"为便携 Python {'3.13' if py313 else '3.12'} 准备 include/libs 开发文件。",
+                                      "url": headers_url, "sha256": headers_sha})
             else:
                 library = prerequisites.get("python_library_name", "python313.lib" if py313 else "python312.lib")
                 missing = []
@@ -239,13 +252,21 @@ def dependency_plan(report=None):
     return plan
 
 
-def _install_headers():
+def _install_headers(step):
     base = Path(sys.base_prefix).resolve()
-    if sys.platform != "win32" or sys.version_info[:2] != (3, 12) or not (base / "python312._pth").is_file():
-        raise RuntimeError("Header preparation requires this Python3.12 portable interpreter")
-    with urllib.request.urlopen(HEADERS_URL, timeout=60) as response:
+    version = sys.version_info[:2]
+    archives = {
+        (3, 12): (HEADERS_URL, HEADERS_SHA256, "python312._pth", "libs/python312.lib"),
+        (3, 13): (HEADERS_313_URL, HEADERS_313_SHA256, "python313._pth", "libs/python313.lib"),
+    }
+    if sys.platform != "win32" or version not in archives:
+        raise RuntimeError("Python header preparation requires portable CPython 3.12/3.13")
+    url, checksum, marker, import_library = archives[version]
+    if not (base / marker).is_file() or (step["url"], step["sha256"]) != (url, checksum):
+        raise RuntimeError("Python header preparation does not match this interpreter")
+    with urllib.request.urlopen(url, timeout=60) as response:
         data = response.read(2_000_001)
-    if len(data) > 2_000_000 or hashlib.sha256(data).hexdigest() != HEADERS_SHA256:
+    if len(data) > 2_000_000 or hashlib.sha256(data).hexdigest() != checksum:
         raise RuntimeError("Python header archive size/hash verification failed")
     with zipfile.ZipFile(io.BytesIO(data)) as archive:
         members = archive.infolist()
@@ -260,7 +281,7 @@ def _install_headers():
             target = base.joinpath(*path.parts)
             if base not in target.resolve().parents:
                 raise RuntimeError("Python header target escapes interpreter")
-        if not {"include/Python.h", "libs/python312.lib"}.issubset(archive.namelist()):
+        if not {"include/Python.h", import_library}.issubset(archive.namelist()):
             raise RuntimeError("Python header archive missing required files")
         for member in members:
             target = base.joinpath(*PurePosixPath(member.filename).parts)
@@ -310,7 +331,7 @@ def execute_plan(plan):
     try:
         for step in fresh["steps"]:
             if step["kind"] == "python_headers":
-                _install_headers()
+                _install_headers(step)
             elif step["kind"] == "pip":
                 requirement = step["requirement"]
                 if not re.fullmatch(r"(?:triton|triton-windows)==\d+\.\d+\.\d+(?:\.post\d+)?", requirement):
