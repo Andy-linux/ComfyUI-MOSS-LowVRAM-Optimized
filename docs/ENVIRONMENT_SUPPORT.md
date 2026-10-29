@@ -13,7 +13,7 @@
 | RTX40 / Ada、SM89 | 当前主要运行平台，已使用RTX4070TiSUPER 16GB；其他卡按资源与内核条件检查 |
 | RTX20 / Turing、SM75 | 历史W5 auto兼容范围，历史设备为2080Ti 22GB；当前版本待复验 |
 | RTX30 | 整工作流支持尚未承诺；按各计算模式的SM要求选择 |
-| RTX50 / Blackwell | 待验证 |
+| RTX50 / Blackwell、SM120 | Python3.12/3.13 + Torch2.14.0+cu130 的依赖准备可用；完整推理待实卡验收 |
 | Linux NVIDIA | 依赖准备支持读取现有Torch的精确Triton要求；整工作流待验证 |
 | CPU-only、AMD、Apple Metal、Intel加速器 | 当前不可用 |
 

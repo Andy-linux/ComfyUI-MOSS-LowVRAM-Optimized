@@ -39,6 +39,7 @@ Original TE下载计划包含完整分片、index/config及tokenizer。切换配
 | --- | --- |
 | Windows x64 / 普通CPython3.12或3.13 / Torch2.10.0+cu130 / CUDA build13.0 / SM89 | 固定Triton3.6.0.post26；默认auto注意力 |
 | Windows x64 / Python3.12 / Torch2.10.0+cu130 / CUDA build13.0 / SM75 | 历史配对Triton3.2.0.post21；严格ABI匹配时准备独立Turing资产 |
+| Windows x64 / CPython3.12或3.13 / Torch2.14.0+cu130 / CUDA build13.0 / SM120 | Triton3.8.0.post29；便携Python3.13缺少include/libs时一并准备，完整GPU推理待验证 |
 | Linux NVIDIA | 按现有Torch元数据中适用的精确Triton版本准备 |
 
 普通依赖由Manager处理，包括diffusers、transformers、accelerate、comfy-kitchen等。

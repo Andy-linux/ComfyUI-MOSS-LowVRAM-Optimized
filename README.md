@@ -48,7 +48,7 @@ Base/SFT各一份FP8 row权重，可选择FP8或16-bit计算。模型清单、�
 ## 兼容要求
 
 当前主要环境为 **Windows x64、NVIDIA RTX40 / SM89、普通CPython3.12/3.13、Torch2.10.0+cu130、Triton3.6.0.post26、ComfyUI≥0.41**。
-固定依赖自动准备覆盖精确匹配的宿主组合；CPU-only不可用。RTX20保留历史W5 auto范围，RTX50与Linux尚待验证。
+自动依赖准备还覆盖 RTX50 / SM120、Python3.12/3.13、Torch2.14.0+cu130（Triton3.8）；该架构的完整推理尚待实卡验收。CPU-only不可用。
 显式A8 TE要求SM80+，FP8计算要求SM89+；完整范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
 
 ComfyUI前端1.55.17的Manager详情可能在CUDA宿主上误报CPU/CUDA冲突；已有CUDA宿主可继续正常安装确认，
