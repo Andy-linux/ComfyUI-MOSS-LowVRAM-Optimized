@@ -24,7 +24,7 @@ def validation_message(evaluation):
     if not evaluation["errors"]:
         return True
     details = [item["message"] for item in evaluation["errors"]]
-    return "MOSS environment: " + "; ".join(details) + ". Use the node's environment check for installation guidance."
+    return "MOSS 环境尚未就绪：" + "；".join(details) + "。请点击配置节点的 Prepare 查看安装或兼容性处理建议。"
 
 
 def register_routes(selection_mapper):

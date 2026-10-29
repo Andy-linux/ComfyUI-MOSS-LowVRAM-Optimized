@@ -37,10 +37,11 @@ class MOSSOptimizedConfiguration(MOSSOptimizedSessionLoader):
         return {"required": required, "optional": optional}
 
     @classmethod
-    def VALIDATE_INPUTS(cls, **kwargs):
+    def VALIDATE_INPUTS(cls, model_family):
         from .runtime.environment_service import check_selection, validation_message
         try:
-            return validation_message(check_selection(environment_selection(kwargs))["evaluation"])
+            selected = environment_selection({})
+            return validation_message(check_selection(selected)["evaluation"])
         except (KeyError, TypeError, ValueError) as error:
             return "Invalid MOSS configuration: " + str(error)
 
