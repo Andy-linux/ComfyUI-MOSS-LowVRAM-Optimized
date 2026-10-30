@@ -1,0 +1,9 @@
+﻿MOSS 首次使用
+
+有 Manager：拖入 example_workflows\00_moss_lowvram.json，按工作流顶部说明安装、重启并刷新。
+
+没有 Manager 或市场打不开：先打开 ComfyUI，再双击 Install-MOSS.cmd。确认安装位置，完成后关闭并重新启动 ComfyUI、刷新网页，然后拖入上述 JSON。
+
+准备向导会自动出现。按提示准备运行环境、确认模型下载，看到准备完成后点击运行。无需另装系统 Python，无需手改量化参数。
+
+此包不包含模型；下载大小在准备向导中显示。详细说明见 README.md 或 docs\INSTALLATION_GUIDE.md。

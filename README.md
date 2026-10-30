@@ -4,24 +4,30 @@
 
 ## 安装与首次运行
 
-### 通过工作流安装
+**不需要安装系统 Python，也不需要理解量化参数。先打开你的 ComfyUI，保留工作流默认配置即可。**
 
-1. 在已启用官方ComfyUI Manager的ComfyUI中导入唯一工作流：[00_moss_lowvram.json](example_workflows/00_moss_lowvram.json)。
-2. 出现缺失节点提示时，点击 **查看详情 → 在管理器中查看**，找到 **MOSS LowVRAM Optimized**。
-3. 打开版本选择器，选择最新版本并安装，然后点击 **应用更改 / 重启**。
-4. 在 **MOSS · 配置与准备** 节点选择模型、计算方式与显存预算，点击 **Prepare / check selected configuration**。
-5. 查看资源计划并确认准备。模型就绪后点击ComfyUI的运行按钮。首次运行会编译内核，请等待完成。
+### 拖入工作流
 
-### 命令行安装
+下载 [00_moss_lowvram.json](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest/download/00_moss_lowvram.json)，拖进 ComfyUI。
+缺失节点提示里的 **5 个节点属于同一个 MOSS LowVRAM Optimized 包**。点击 **查看详情 → 安装 → 应用更改 / 重启**。
 
-已安装[comfy-cli](https://docs.comfy.org/comfy-cli/getting-started)和[ComfyUI Manager](https://docs.comfy.org/manager/install)时，先激活ComfyUI使用的Python环境，再运行：
+重启完成后，点击工作流顶部的 **“刷新并继续准备”** 链接（或按 F5 / Ctrl+R）。准备向导会自动打开。
+如果显示 **准备运行环境**，点击它，再点击 **重启并继续**；插件会为这个 ComfyUI 的 Python 补齐 Triton 和必要开发文件，不更换 Torch。
+环境就绪后点击 **确认下载 / 校验**。看到 **准备完成**，关闭窗口并点击顶部 **运行**。
 
-```sh
-comfy --workspace "C:\ComfyUI" node install https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized
-```
+首次生成包含内核编译。以后再次打开同一个工作流，无需重复安装或下载。
 
-将路径替换为自己的ComfyUI根目录。安装完成后重启ComfyUI，导入工作流，点击 **Prepare** 准备模型。
-详细步骤和依赖要求见[安装指南](docs/INSTALLATION_GUIDE.md)。
+### 没有 Manager，或插件市场连接失败
+
+下载 [完整安装包](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest)，解压后双击 **Install-MOSS.cmd**。
+保持 ComfyUI 打开，安装器会识别它实际使用的 Python 和节点目录；有多个实例时会让你选择。
+安装完成后关闭并重新启动 ComfyUI、刷新网页，再拖入包内 `example_workflows/00_moss_lowvram.json`，继续上面的准备向导。
+
+这个入口不依赖插件市场，不安装第二个 Manager；仍需要网络下载 Python 依赖和模型。
+Windows Desktop、Windows Portable 和源码部署使用同一套节点和准备向导。
+Desktop 自带 Manager；Portable / 源码部署不保证已启用 Manager，不能靠一个 JSON 安装 Manager。
+
+[详细安装说明](docs/INSTALLATION_GUIDE.md)包含官方 Manager 启用方式、命令行部署和平台边界。
 
 ## 配置选项
 
@@ -47,8 +53,11 @@ Base/SFT各一份FP8 row权重，可选择FP8或16-bit计算。模型清单、�
 
 ## 兼容要求
 
-当前主要环境为 **Windows x64、NVIDIA RTX40 / SM89、普通CPython3.12/3.13、Torch2.10.0+cu130、Triton3.6.0.post26、ComfyUI≥0.41**。
-自动依赖准备还覆盖 RTX50 / SM120、Python3.12/3.13、Torch2.14.0+cu130（Triton3.8）；该架构的完整推理尚待实卡验收。CPU-only不可用。
+Windows 安装器按 **当前 Torch 的小版本**匹配 Triton，不再把 RTX40 固定绑定到 Torch 2.10，
+也不把 Torch 的补丁升级当成不兼容。支持普通 CPython 3.12/3.13，便携解释器缺少的 `include/libs` 自动准备。
+当前官方 Portable 的 Python 3.13 / Torch 2.14.x + CUDA 13 使用 Triton 3.8。
+依赖能够安装与特定显卡完整推理已验收是不同状态，实际验收范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
+
 显式A8 TE要求SM80+，FP8计算要求SM89+；完整范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
 
 ComfyUI前端1.55.17的Manager详情可能在CUDA宿主上误报CPU/CUDA冲突；已有CUDA宿主可继续正常安装确认，

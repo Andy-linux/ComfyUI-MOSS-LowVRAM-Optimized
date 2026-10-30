@@ -37,3 +37,8 @@ _selected_missing.json
 runtime/vendor/xformers034cu128/
 runtime/vendor/sageattn220/
 runtime/vendor/turing_bundle/
+
+/Install-MOSS.cmd
+/Install-MOSS.ps1
+
+/开始使用.txt
