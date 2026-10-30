@@ -9,6 +9,7 @@ from pathlib import Path
 from . import catalog
 from .environment import evaluate_selection, inspect_environment
 from .install_dependencies import dependency_plan
+from .dependency_preparation import DependencyPreparation
 from .model_preparation import ModelPreparation, PreparationConflict, relative_name
 
 _HARD_CODES = {"bf16_architecture", "te_a8_architecture", "fp8_architecture",
@@ -84,9 +85,10 @@ def hardware_options(selection, environment):
 
 
 class SetupService:
-    def __init__(self, preparation, environment_provider=inspect_environment):
+    def __init__(self, preparation, environment_provider=inspect_environment, dependency_directory=None):
         self.preparation = preparation
         self.environment_provider = environment_provider
+        self.dependencies = DependencyPreparation(dependency_directory or preparation.root / ".moss_lowvram" / "setup")
 
     def inspect(self, selection, verify=False):
         selection = validate_selection(selection)
@@ -120,15 +122,24 @@ class SetupService:
             models.append({"name": name, "url": item["url"], "directory": directory,
                            "hash": item["sha256"], "hash_type": "sha256" if item["sha256"] else None,
                            "size_bytes": item["size_bytes"], "status": item["status"]})
-        return {"environment": environment,
-                "evaluation": evaluate_selection(environment, internal),
+        plan = dependency_plan(environment)
+        evaluation = evaluate_selection(environment, internal)
+        dependency_state = self.dependencies.state()
+        ready = (not evaluation["errors"] and plan["status"] == "ready"
+                 and not dependency_state["restart_required"] and dependency_state["state"] != "running")
+        return {"environment": environment, "runtime_ready": ready,
+                "dependency_preparation": dependency_state,
+                "evaluation": evaluation,
                 "assets": self.preparation.summary(files),
                 "options": hardware_options(selection, environment),
                 "defaults": catalog.checkpoint_defaults(selection), "models": models,
-                "dependency_plan": dependency_plan(environment)}
+                "dependency_plan": plan}
 
     def download(self, selection, repair_files=None):
-        return self.preparation.start(validate_selection(selection), repair_files=repair_files)
+        selection = validate_selection(selection)
+        if not self.inspect(selection)["runtime_ready"]:
+            raise ValueError("请先点击“准备运行环境”，完成重启后再下载模型。")
+        return self.preparation.start(selection, repair_files=repair_files)
 
     def job(self, job_id):
         return self.preparation.get(job_id)
@@ -170,7 +181,8 @@ def default_service():
                  for category in ("diffusion_models", "text_encoders", "vae")}
         _service = SetupService(ModelPreparation(manifest, root, resolver,
                                                  root / ".moss_lowvram" / "verified_models.json",
-                                                 registered_roots=roots, candidate_provider=candidates))
+                                                 registered_roots=roots, candidate_provider=candidates),
+                                dependency_directory=Path(folder_paths.get_user_directory()) / "moss_lowvram" / "setup")
     return _service
 
 
@@ -200,6 +212,20 @@ def register_setup_routes(service=None):
             return web.json_response(result)
         except (ValueError, OSError) as exc:
             return web.json_response({"error": "配置检查失败：" + str(exc)}, status=400)
+
+    @PromptServer.instance.routes.post("/moss_lowvram/setup/dependencies")
+    async def setup_dependencies(request):
+        body = await request.json()
+        if body != {}:
+            return web.json_response({"error": "运行环境由当前 ComfyUI 自动识别，无需传入命令或路径。"}, status=400)
+        running, queued = PromptServer.instance.prompt_queue.get_current_queue()
+        if running or queued:
+            return web.json_response({"error": "请先等待生成队列完成，再准备运行环境。"}, status=409)
+        return web.json_response(await asyncio.to_thread(get_service().dependencies.start))
+
+    @PromptServer.instance.routes.get("/moss_lowvram/setup/dependencies")
+    async def setup_dependencies_state(request):
+        return web.json_response(get_service().dependencies.state())
 
     @PromptServer.instance.routes.post("/moss_lowvram/setup/download")
     async def setup_download(request):

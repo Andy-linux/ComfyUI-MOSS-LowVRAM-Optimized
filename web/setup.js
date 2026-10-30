@@ -3,6 +3,8 @@ import { api } from "../../scripts/api.js";
 
 // Setup controls belong only to the unified node.
 const TYPE = "MOSSOptimizedConfiguration";
+const RESUME_KEY = "moss.setup.resume-workflow";
+let setupOffered = false;
 const INTEGER_OP = "INT8 × INT8 → INT32";
 const NEW_FIELDS = ["model_family", "dit_storage", "dit_compute", "te_storage", "te_compute", "profile", "precision", "attention", "vae_precision", "vae_asset"];
 const PINNED_NAMES = {
@@ -143,7 +145,7 @@ async function inspect(node) {
         }
         const errors = report.evaluation.errors;
         const warnings = compatibilityWarnings(report);
-        status(node, errors.length ? `环境需处理 ${errors.length} 项` : warnings.length ? "环境检查完成，有兼容提示" : report.assets.ready ? "已就绪，可以运行" : "模型待准备", errors.map(e => e.message).join("\n") || warnings.join("\n") || "打开准备窗口查看环境与模型状态。");
+        status(node, !report.runtime_ready ? "运行环境待准备，点击下方按钮" : report.assets.ready ? "已就绪，可以运行" : "模型待准备，点击下方按钮", errors.map(e => e.message).join("\n") || warnings.join("\n") || "打开准备窗口查看环境与模型状态。");
         return report;
     })().finally(() => { if (node._mossInspectPending === pending) node._mossInspectPending = null; });
     node._mossInspectPending = pending;
@@ -199,15 +201,24 @@ async function showSetup(node) {
     progress.style.cssText = "white-space:pre-wrap;overflow-wrap:anywhere";
     actions.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;margin-top:18px";
     const refresh = element("button", "重新检查"), copy = element("button", "复制环境信息"), download = element("button", "确认下载 / 校验"), close = element("button", "关闭");
+    const prepare = element("button", "准备运行环境"), restart = element("button", "重启并继续");
     let busy = false, checking = false, closed = false, reviewedSelection = null, reviewedRepairs = [], reviewedReport = null;
     const diagnostics = element("div");
-    dialog.append(heading, body, progress, diagnostics, actions); actions.append(refresh, copy, download, close);
+    dialog.append(heading, body, progress, diagnostics, actions); actions.append(prepare, restart, download, refresh, copy, close);
+    for (const button of actions.children) button.style.cssText = "padding:9px 14px;border:1px solid #617080;border-radius:6px;background:#303a46;color:#fff;cursor:pointer;font:inherit";
+    prepare.style.background = download.style.background = "#076b9c";
     close.onclick = () => dialog.close();
     dialog.addEventListener("close", () => { closed = true; if (node._mossSetupDialog === dialog) node._mossSetupDialog = null; dialog.remove(); });
     function controls() {
         refresh.disabled = busy || checking;
         copy.disabled = !reviewedReport || checking;
-        download.disabled = busy || checking || !reviewedReport || Boolean(reviewedReport.assets.ready) || reviewedReport.assets.files.length === 0;
+        const waitingRestart = Boolean(reviewedReport?.dependency_preparation?.restart_required);
+        prepare.hidden = !reviewedReport || reviewedReport.runtime_ready || waitingRestart || reviewedReport.dependency_plan.status === "unsupported";
+        prepare.disabled = busy || checking;
+        restart.hidden = !waitingRestart;
+        restart.disabled = busy || checking;
+        download.hidden = !reviewedReport?.runtime_ready;
+        download.disabled = busy || checking || !reviewedReport?.runtime_ready || Boolean(reviewedReport.assets.ready) || reviewedReport.assets.files.length === 0;
     }
     function managerHelp(container) {
         const button = element("button", "打开 Manager"), message = element("p", "在 Manager 完成 MOSS 节点包安装，按提示应用更改或重启，再重新检查。");
@@ -253,25 +264,19 @@ async function showSetup(node) {
             if (!report) { progress.textContent = "配置已更新，请重新检查。"; return; }
             reviewedReport = report; reviewedSelection = JSON.stringify(selection(node));
             const warnings = compatibilityWarnings(report);
-            body.replaceChildren(element("h3", report.evaluation.errors.length ? "环境需要处理" : warnings.length ? "环境检查完成，有兼容提示" : "环境检查通过"));
-            for (const issue of report.evaluation.errors) body.append(element("p", issue.message));
-            if (report.evaluation.errors.length) {
-                for (const action of report.evaluation.actions ?? []) {
-                    const text = String(action);
-                    if (/^(SM(?:75|89).*Triton|在 Manager)/.test(text)) continue;
-                    body.append(element("p", text));
+            const waitingRestart = report.dependency_preparation.restart_required;
+            body.replaceChildren(element("h3", report.runtime_ready ? "运行环境已就绪" : waitingRestart ? "环境已准备，请重启并继续" : "先准备运行环境"));
+            if (waitingRestart) {
+                body.append(element("p", "点击“重启并继续”。工作流将被保留，重新连接后自动打开本向导。"));
+            } else if (!report.runtime_ready) {
+                if (report.dependency_plan.status === "unsupported") {
+                    for (const issue of report.dependency_plan.errors) body.append(element("p", issue.message));
+                    body.append(link("查看当前环境的安装说明", "https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/blob/main/docs/INSTALLATION_GUIDE.md"));
+                } else {
+                    body.append(element("p", "点击“准备运行环境”，自动为当前 ComfyUI 补齐缺少的运行组件；不更换 Python、Torch 或模型配置。"));
+                    for (const step of report.dependency_plan.steps) body.append(element("p", step.requirement ?? step.message));
                 }
-                const codes = report.evaluation.errors.map(issue => issue.code ?? "");
-                const hostBlocks = report.dependency_plan?.errors ?? [];
-                const preparationBlocked = report.dependency_plan?.status === "unsupported" || hostBlocks.length > 0;
-                if (codes.some(code => code.startsWith("dependency_") || code === "sm75_triton") && preparationBlocked) {
-                    body.append(element("h4", "先处理这些环境条件"));
-                    for (const issue of hostBlocks) body.append(element("p", issue.message));
-                    if (!hostBlocks.length) body.append(element("p", "当前环境无法自动准备依赖，请先维护 ComfyUI 宿主环境。"));
-                    body.append(link("ComfyUI 宿主安装与维护", "https://docs.comfy.org/installation/manual_install"));
-                } else if (codes.some(code => ["python_version", "python_free_threaded", "cuda_required", "dependency_torch"].includes(code))) {
-                    body.append(element("p", "请先使用满足 Python 要求且启用 NVIDIA CUDA 的 ComfyUI 环境，再重新检查。"), link("ComfyUI 安装与维护", "https://docs.comfy.org/installation/manual_install"));
-                } else if (needsManager(report)) managerHelp(body);
+                for (const issue of report.evaluation.errors) body.append(element("p", issue.message));
             }
             body.append(environmentDetails(report), element("h3", "模型准备"));
             const plan = report.assets, files = plan.files;
@@ -291,11 +296,47 @@ async function showSetup(node) {
             }
             reviewedRepairs = files.filter(f => f.repair_action === "quarantine_then_download").map(f => f.destination);
             download.textContent = reviewedRepairs.length ? "确认保留旧文件并下载替代文件" : "确认下载 / 校验";
-            progress.textContent = plan.ready ? report.evaluation.errors.length ? "模型已就绪，请先处理环境项目。" : warnings.length ? "模型已就绪，请先查看“环境与可选功能”中的兼容提示。" : "准备完成，可以运行。" : "核对模型后，确认下载 / 校验。";
+            progress.textContent = !report.runtime_ready ? "运行环境就绪后才会下载模型。" : plan.ready ? "准备完成。关闭本窗口，点击 ComfyUI 的“运行”生成图片。" : "确认下方大小与来源后，点击“确认下载 / 校验”。";
         } catch (error) {
             if (!closed) { body.replaceChildren(element("h3", "检查未完成")); if (error.mossInstallationMissing) managerHelp(body); progress.textContent = error.message; status(node, "检查未完成，请重试", error.message); }
         } finally { checking = false; controls(); }
     }
+    prepare.onclick = async () => {
+        busy = true; controls();
+        try {
+            await request("/moss_lowvram/setup/dependencies", {});
+            while (!closed) {
+                const state = await request("/moss_lowvram/setup/dependencies");
+                progress.textContent = state.log || "正在为当前 ComfyUI 准备运行环境…";
+                if (state.state !== "running") {
+                    if (state.state === "failed") throw new Error(state.error || state.result?.errors.map(e => e.message).join("\n") || "环境准备失败，完整日志见上方。可再次点击准备继续。");
+                    break;
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            busy = false;
+            if (!closed) await render();
+        } catch (error) { if (!closed) progress.textContent += `\n${error.message}`; }
+        finally { busy = false; controls(); }
+    };
+    restart.onclick = async () => {
+        busy = true; controls();
+        sessionStorage.setItem(RESUME_KEY, JSON.stringify(app.graph.serialize()));
+        const reload = () => location.reload();
+        api.addEventListener("reconnected", reload, { once: true });
+        progress.textContent = "正在重启 ComfyUI；重新连接后继续。若浏览器询问是否离开，选择“离开”；当前工作流已保留。";
+        try {
+            let response = await api.fetchApi("/v2/manager/reboot", { method: "POST", headers: { "Content-Type": "application/json" }, body: "null" });
+            if (response.status === 404) response = await api.fetchApi("/manager/reboot");
+            if (!response.ok) throw new Error("请关闭并重新启动 ComfyUI，然后刷新此页；已保留当前工作流。");
+            progress.textContent = "正在重启 ComfyUI；重新连接后继续。若浏览器询问是否离开，选择“离开”；当前工作流已保留。";
+        } catch (error) {
+            // A successful process restart can close HTTP before its response.
+            if (error instanceof TypeError) return;
+            api.removeEventListener("reconnected", reload);
+            progress.textContent = error.message; busy = false; controls();
+        }
+    };
     refresh.onclick = render;
     copy.onclick = () => reviewedReport ? copyEnvironmentInfo(reviewedReport, diagnostics) : undefined;
     download.onclick = async () => {
@@ -337,6 +378,21 @@ function applySampling(node) {
 }
 app.registerExtension({
     name: "MOSS.LowVRAM.UnifiedSetup",
+    async afterConfigureGraph() {
+        const saved = sessionStorage.getItem(RESUME_KEY);
+        if (saved) {
+            sessionStorage.removeItem(RESUME_KEY);
+            await app.loadGraphData(JSON.parse(saved));
+            return;
+        }
+        const node = app.graph._nodes.find(n => n.type === TYPE);
+        if (!node || setupOffered) return;
+        setupOffered = true;
+        try {
+            const report = await inspect(node);
+            if (report && (!report.runtime_ready || !report.assets.ready || new URL(location.href).searchParams.has("moss_setup"))) await showSetup(node);
+        } catch (error) { status(node, "请打开准备向导", error.message); }
+    },
     async beforeRegisterNodeDef(nodeType, nodeData) {
         if (nodeData.name !== TYPE) return;
         const created = nodeType.prototype.onNodeCreated;
