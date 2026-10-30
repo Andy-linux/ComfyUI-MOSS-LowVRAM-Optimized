@@ -26,7 +26,7 @@ SAGE_SHA256 = "1635283f5c01ec3cda58a784d0d7eabbcaffaf9511d1b263db4750e1ed7958bb"
 SAGE_BYTES = 16656067
 SAGE_ROOT = Path(__file__).resolve().parent / "vendor/sageattn220"
 SAGE_MEMBERS = ("sageattention/core.py", "sageattention/_fused.pyd", "sageattention/_qattn_sm80.pyd", "sageattention/_qattn_sm89.pyd", "sageattention/_qattn_sm90.pyd")
-MANAGER_ACTION = "请在 Manager 完成节点包安装，按提示应用更改或重启，再重新检查。"
+MANAGER_ACTION = "请在配置节点点击“准备运行环境”；完成后按引导重启并刷新页面。"
 HOST_ACTION = "请先通过 ComfyUI 安装与维护流程准备上述 Python、Torch 和 CUDA 环境，再重新检查：https://www.comfy.org/download"
 
 
@@ -150,7 +150,7 @@ def dependency_plan(report=None):
     report = _environment() if report is None else report
     prerequisites = _prerequisites(report)
     plan = {"schema_version": 1, "status": "ready", "read_only": True,
-            "execution_phase": "manager_install_only",
+            "execution_phase": "explicit_dependency_preparation",
             "scope": "automatic_dependency_preparation", "runtime_readiness": "see_environment_evaluation",
             "steps": [], "optional_steps": [], "optional_dependencies": {}, "errors": [],
             "warnings": [], "actions": [MANAGER_ACTION], "source": SOURCE,
@@ -175,26 +175,26 @@ def dependency_plan(report=None):
         implementation = str(report.get("python_implementation") or ("cpython" if py312 else "")).lower()
         if _free_threaded(report):
             error("python_free_threaded", "free-threaded Python 不支持此原生扩展，请使用普通带 GIL 的 CPython。")
-        qualified = (
-            report.get("machine") in ("AMD64", "x86_64")
-            and implementation == "cpython" and not _free_threaded(report)
-            and report.get("cuda_build") == "13.0"
-            and (
-                (sm == 75 and py312 and torch.get("version") == "2.10.0+cu130")
-                or (sm == 89 and (py312 or py313) and torch.get("version") == "2.10.0+cu130")
-                or (sm == 120 and (py312 or py313) and torch.get("version") == "2.14.0+cu130")
-            )
-        )
-        if not qualified:
-            error("host_unqualified", "自动准备要求 Windows x64、普通 CPython 3.12/3.13、CUDA 13.0、SM75/SM89 配合 Torch 2.10，或 SM120 配合 Torch 2.14。")
+        torch_match = re.fullmatch(r"(\d+)\.(\d+)\.\d+(?:\+[^ ]+)?", str(torch.get("version", "")))
+        torch_minor = tuple(map(int, torch_match.groups())) if torch_match else None
+        # Upstream pairs Torch/Triton by minor release, not GPU or patch release.
+        pins = {(2, 10): "3.6.0.post26", (2, 11): "3.6.0.post26",
+                (2, 12): "3.7.1.post27", (2, 13): "3.7.1.post27",
+                (2, 14): "3.8.0.post29"}
+        if report.get("machine") not in ("AMD64", "x86_64") or implementation != "cpython" or not (py312 or py313):
+            error("python_unsupported", "需要 Windows x64 的普通 CPython 3.12 或 3.13；请使用官方 ComfyUI Portable 或 Desktop。")
+        elif sm == 75 and torch_minor == (2, 10) and py312:
+            requirement = "triton-windows==3.2.0.post21"
+        elif sm and sm >= 80 and torch_minor in pins:
+            requirement = "triton-windows==" + pins[torch_minor]
         else:
-            requirement = "triton-windows==" + ("3.2.0.post21" if sm == 75 else "3.8.0.post29" if sm == 120 else "3.6.0.post26")
-            if sm in (75, 120):
-                plan["warnings"].append({"code": "gpu_unvalidated", "message": f"SM{sm} 依赖可自动准备；MOSS 完整 GPU 推理仍待实卡验收。"})
+            error("host_unqualified", f"当前 Torch {torch.get('version')} / SM{sm} 没有匹配的运行依赖方案。请使用官方 NVIDIA ComfyUI；本插件不会更换宿主 Torch。")
+        if sm in (75, 120):
+            plan["warnings"].append({"code": "gpu_unvalidated", "message": f"SM{sm} 依赖可自动准备；完整推理验收范围见环境支持说明。"})
         if prerequisites.get("compiler_override"):
             error("compiler_override", "检测到 CC 编译器覆盖，请先在宿主环境中确认该设置。")
         if not prerequisites.get("python_headers") or not prerequisites.get("python_import_library"):
-            if prerequisites.get("embedded_python") and requirement and (py312 or py313):
+            if prerequisites.get("embedded_python") and (py312 or py313):
                 headers_url, headers_sha = (HEADERS_313_URL, HEADERS_313_SHA256) if py313 else (HEADERS_URL, HEADERS_SHA256)
                 plan["steps"].append({"id": "python_headers", "kind": "python_headers",
                                       "message": f"为便携 Python {'3.13' if py313 else '3.12'} 准备 include/libs 开发文件。",
@@ -206,7 +206,7 @@ def dependency_plan(report=None):
                     missing.append("include/Python.h")
                 if not prerequisites.get("python_import_library"):
                     missing.append("libs/" + library)
-                detail = "；Python 3.13 嵌入式开发文件需通过完整 Python 安装修复" if py313 and prerequisites.get("embedded_python") else "；请通过 Python 安装器修复开发文件"
+                detail = "；当前解释器不是受支持的便携 Python，请通过该 Python 的安装器补齐开发文件"
                 error("python_development_files", "缺少 Python " + version + " 开发文件：" + "、".join(missing) + detail + "。")
     elif platform == "linux":
         requirement = _linux_requirement(report)
@@ -227,9 +227,10 @@ def dependency_plan(report=None):
         expected = requirement.split("==")[1]
         if triton.get("status") == "missing" and not triton.get("version"):
             plan["steps"].append({"id": "triton", "kind": "pip", "requirement": requirement, "message": "安装与当前 Torch 匹配的固定 Triton wheel。"})
-        elif (triton.get("status") != "available" or triton.get("version") != expected or
+        elif (triton.get("status") != "available" or
+              str(triton.get("version", "")).split(".")[:2] != expected.split(".")[:2] or
               triton.get("distribution") != requirement.split("==")[0]):
-            error("triton_conflict", "Triton 版本或原生扩展冲突，请通过 ComfyUI 宿主维护流程修复后重启。")
+            error("triton_conflict", "当前 Triton 与 Torch 的版本组合不匹配。请在 Manager 更新本节点包并应用更改；不会静默替换已加载的二进制组件。")
         elif not prerequisites.get("cuda_compiler") or (platform == "win32" and not prerequisites.get("c_compiler")):
             error("triton_toolchain_missing", "当前 Triton 缺少编译器组件，请重新完成节点包安装；若仍报错，请修复宿主 Triton 安装。")
     sage, optional_steps = _sage_plan(report)
@@ -321,7 +322,7 @@ def _verify_sage():
 
 
 def execute_plan(plan):
-    """Execute the current host plan during Manager installation."""
+    """Prepare the detected interpreter without replacing its Torch installation."""
     fresh = dependency_plan()
     if fresh["status"] == "unsupported":
         return dict(fresh, read_only=False, exit_code=1, restart_required=False)
