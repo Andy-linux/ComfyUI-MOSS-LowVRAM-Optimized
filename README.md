@@ -11,7 +11,7 @@
 下载 [00_moss_lowvram.json](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest/download/00_moss_lowvram.json)，拖进 ComfyUI。
 缺失节点提示里的 **5 个节点属于同一个 MOSS LowVRAM Optimized 包**。点击 **查看详情 → 安装 → 应用更改 / 重启**。
 
-重启完成后，点击工作流顶部的 **“刷新并继续准备”** 链接（或按 F5 / Ctrl+R）。准备向导会自动打开。
+重启完成后，按键盘 **F5 / Ctrl+R 刷新网页**。准备向导会自动打开。
 如果显示 **准备运行环境**，点击它，再点击 **重启并继续**；插件会为这个 ComfyUI 的 Python 补齐 Triton 和必要开发文件，不更换 Torch。
 环境就绪后点击 **确认下载 / 校验**。看到 **准备完成**，关闭窗口并点击顶部 **运行**。
 

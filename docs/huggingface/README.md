@@ -23,14 +23,21 @@ Each row file supports FP8 or 16-bit activation arithmetic in the node pack. Tex
 
 Total: 10,349,759,704 bytes (about 9.64 GiB). Pipeline memory also includes the text encoder, VAE, activations and runtime buffers.
 
-## Usage
+## Usage / 首次使用
 
-Import the node pack's `00_moss_lowvram.json` into ComfyUI. In the configuration node, choose Base or SFT, **Kohaku FP8 row** storage,
-and FP8 or 16-bit compute. Click **Prepare / check selected configuration** to prepare the selected assets.
+Use the public [MOSS LowVRAM Optimized node pack](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized), version 0.1.5 or newer.
+Download [00_moss_lowvram.json](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest/download/00_moss_lowvram.json) and drag it into ComfyUI.
+Install the single MOSS package from the missing-node prompt, apply changes/restart, then press **F5 / Ctrl+R** to load the new frontend extension.
+The preparation dialog opens automatically. Follow **Prepare runtime → Restart and continue** when needed, then confirm the selected model download.
+Wait for **Ready**, close the dialog and click **Run**. The plugin uses the Python running that ComfyUI, without replacing Torch or requiring a separately installed system Python.
 
-FP8 mode uses activation quantization; kernel dispatch may select a 16-bit path for particular shapes.
-16-bit mode reuses the stored quantized weights with FP16/BF16 activations. Both modes currently require SM89+ in the node pack.
-Current primary platform is Windows/NVIDIA RTX40; see the node pack's [environment support](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/blob/main/docs/ENVIRONMENT_SUPPORT.md) for other platforms.
+没有 Manager 或插件市场连接失败时，从 [Releases](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest) 下载完整 ZIP。
+保持 ComfyUI 打开，解压并双击 `Install-MOSS.cmd`，确认安装位置。完成后关闭并重新启动 ComfyUI、刷新网页，再拖入同一个工作流。
+这条入口不依赖 Registry，不安装第二个 Manager；Python 依赖和模型仍需要网络下载。
+
+For these FP8 files, choose **Base** or **SFT**, **Kohaku FP8 row** storage, then FP8 or 16-bit compute in the configuration node and confirm its preparation plan.
+FP8 mode quantizes activations; particular kernel shapes can use a 16-bit arithmetic path. The 16-bit mode reuses the same stored quantized weights with FP16/BF16 activations.
+The node pack currently requires SM89+ for these FP8 modes. Installation support is separate from full inference qualification; see [environment support](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/blob/main/docs/ENVIRONMENT_SUPPORT.md).
 
 ## Sources and conversion
 

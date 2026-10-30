@@ -7,7 +7,7 @@
       "type": "MOSSOptimizedConfiguration",
       "pos": [
         20,
-        310
+        540
       ],
       "size": [
         450,
@@ -56,7 +56,7 @@
           }
         ],
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.4"
+        "ver": "0.1.5"
       },
       "widgets_values": [
         "SFT",
@@ -91,7 +91,7 @@
       "type": "MOSSOptimizedPairedTextEncode",
       "pos": [
         500,
-        310
+        540
       ],
       "size": [
         450,
@@ -130,7 +130,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedPairedTextEncode",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.4"
+        "ver": "0.1.5"
       },
       "widgets_values": [
         "A quiet riverside village at sunrise, soft golden light on wooden houses and willow trees, natural colors, detailed photography. 清晨的河畔村庄，金色阳光洒在木屋与垂柳上，宁静自然，细节清晰。",
@@ -142,7 +142,7 @@
       "type": "EmptyFlux2LatentImage",
       "pos": [
         500,
-        660
+        890
       ],
       "size": [
         300,
@@ -177,7 +177,7 @@
       "type": "MOSSOptimizedSampler",
       "pos": [
         1000,
-        310
+        540
       ],
       "size": [
         330,
@@ -221,7 +221,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedSampler",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.4"
+        "ver": "0.1.5"
       },
       "widgets_values": [
         314159265,
@@ -239,7 +239,7 @@
       "type": "MOSSOptimizedVAEDecode",
       "pos": [
         1380,
-        310
+        540
       ],
       "size": [
         360,
@@ -274,7 +274,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedVAEDecode",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.4"
+        "ver": "0.1.5"
       },
       "widgets_values": []
     },
@@ -283,7 +283,7 @@
       "type": "PreviewImage",
       "pos": [
         1000,
-        700
+        930
       ],
       "size": [
         350,
@@ -310,7 +310,7 @@
       "type": "SaveImage",
       "pos": [
         1390,
-        700
+        930
       ],
       "size": [
         350,
@@ -339,7 +339,7 @@
       "type": "MOSSOptimizedControls",
       "pos": [
         500,
-        860
+        1090
       ],
       "size": [
         450,
@@ -374,7 +374,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedControls",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.4"
+        "ver": "0.1.5"
       },
       "widgets_values": [
         "idle"
@@ -385,11 +385,11 @@
       "type": "MarkdownNote",
       "pos": [
         20,
-        20
+        130
       ],
       "size": [
         1720,
-        240
+        360
       ],
       "flags": {},
       "order": 8,
@@ -400,7 +400,7 @@
         "Node name for S&R": "MarkdownNote"
       },
       "widgets_values": [
-        "# 首次使用 MOSS\n**安装节点包 → 应用更改 / 重启 → 刷新网页 → 按向导准备 → 运行。**\n\n导入后点击「查看详情 → 安装」；5 个缺失节点属于同一个 **MOSS LowVRAM Optimized** 包。安装完成并重启后，**[点击这里刷新并继续准备](?moss_setup=1)**（也可按 F5 / Ctrl+R）。准备向导会自动打开；默认配置不用修改。\n\n向导如显示「准备运行环境」，点击该按钮，然后「重启并继续」。环境就绪后确认模型下载；看到「准备完成」即可关闭窗口并点击顶部「运行」。\n\n没有管理器或市场连接失败？[打开安装入口](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized#安装与首次运行)。不要重复安装两种 Manager。"
+        "<div style=\"font-size:26px;line-height:1.55;padding:14px;color:#f4f4f4\">\n<strong style=\"font-size:32px\">首次使用：安装 → 重启 → 刷新 → 准备 → 运行</strong><br><br>\n<strong>先安装：</strong>点击缺失节点提示的「查看详情 → 安装」，再「应用更改 / 重启」。<br>\n<strong>再刷新：</strong>按键盘 <strong>F5 / Ctrl+R</strong>，准备向导自动打开。默认参数不用修改。<br>\n<strong>最后准备：</strong>按向导补齐运行环境、确认模型下载；显示「准备完成」后点击顶部「运行」。<br><br>\n没有 Manager 或市场打不开？<a href=\"https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized#安装与首次运行\">下载完整包，双击 Install-MOSS.cmd</a>。5 个节点属于同一个 MOSS 包。\n</div>"
       ],
       "title": "从这里开始 · 安装与首次生成"
     }
