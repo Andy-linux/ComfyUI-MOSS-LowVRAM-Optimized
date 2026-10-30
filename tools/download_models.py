@@ -1,6 +1,7 @@
 """Explicit, pinned, hash-verified model downloads. Importing does no I/O."""
 
 import argparse, hashlib, json, os, re
+from concurrent.futures import ThreadPoolExecutor
 from http.client import IncompleteRead
 from urllib.error import HTTPError, URLError
 from pathlib import Path, PurePosixPath
@@ -91,45 +92,50 @@ def install(row, root, progress=None, *, verify_only=False):
                 size += len(block)
     if size > row["size_bytes"]:
         raise ValueError("Partial model is larger than the pinned file: " + str(temp))
-    failures = 0
-    with temp.open("ab") as out:
-        while size < row["size_bytes"]:
-            start = size
-            end = min(start + 256 * 1024**2, row["size_bytes"]) - 1
+    def fetch_range(start, end):
+        data = bytearray()
+        failures = 0
+        while start + len(data) <= end:
+            offset = start + len(data)
             headers = {"User-Agent": "kohaku-moss-verified-downloader/2",
-                       "Range": f"bytes={start}-{end}", "Accept-Encoding": "identity"}
+                       "Range": f"bytes={offset}-{end}", "Accept-Encoding": "identity"}
             try:
                 with urlopen(Request(url, headers=headers), timeout=60) as response:
-                    if response.status == 206:
-                        content_range = response.headers.get("Content-Range", "")
-                        match = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", content_range)
-                        if not match or tuple(map(int, match.groups())) != (start, end, row["size_bytes"]):
-                            raise ValueError("Model server returned an unexpected byte range")
-                    elif start:
-                        raise ValueError("Model source does not support continuing this download")
-                    expected_end = end + 1 if response.status == 206 else row["size_bytes"]
-                    while size < expected_end:
+                    match = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", response.headers.get("Content-Range", ""))
+                    if response.status != 206 or not match or tuple(map(int, match.groups())) != (offset, end, row["size_bytes"]):
+                        raise ValueError("Model server returned an unexpected byte range")
+                    while start + len(data) <= end:
                         try:
-                            block = response.read(min(8 * 1024**2, expected_end - size))
+                            block = response.read(min(1024**2, end - start + 1 - len(data)))
                         except IncompleteRead as exc:
                             block = exc.partial
                         if not block:
-                            raise ConnectionError("Model download ended before the requested range completed")
-                        out.write(block)
-                        h.update(block)
-                        size += len(block)
-                        if progress:
-                            progress({"phase": "download", "bytes_done": size, "bytes_total": row["size_bytes"]})
-                out.flush()
-                failures = 0
+                            raise ConnectionError("Model connection ended before its range completed")
+                        data.extend(block)
             except HTTPError:
                 raise
             except (OSError, URLError, IncompleteRead) as exc:
-                out.flush()
                 failures += 1
                 if failures >= 3:
-                    raise OSError(f"下载连接中断；已保留 {size} 字节。重新点击准备将继续下载，不会从头开始。{exc}") from exc
-        out.flush()
+                    raise OSError("下载连接中断；已保存的文件部分会在下次准备时继续，不会从头下载。" + str(exc)) from exc
+        return data
+
+    # Four bounded ranges overlap network latency; only contiguous verified-source
+    # bytes are appended, so an interrupted process resumes at the file's length.
+    chunk_size = 64 * 1024**2
+    with temp.open("ab") as out, ThreadPoolExecutor(max_workers=4) as pool:
+        while size < row["size_bytes"]:
+            starts = range(size, min(size + 4 * chunk_size, row["size_bytes"]), chunk_size)
+            futures = [pool.submit(fetch_range, start, min(start + chunk_size, row["size_bytes"]) - 1) for start in starts]
+            for future in futures:
+                block = future.result()
+                out.write(block)
+                out.flush()
+                h.update(block)
+                size += len(block)
+                if progress:
+                    progress({"phase": "download", "bytes_done": size, "bytes_total": row["size_bytes"]})
+            futures.clear()
         os.fsync(out.fileno())
     if progress:
         progress({"phase": "verification", "bytes_done": size, "bytes_total": row["size_bytes"]})
