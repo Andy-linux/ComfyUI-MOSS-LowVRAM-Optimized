@@ -1,6 +1,8 @@
 """Explicit, pinned, hash-verified model downloads. Importing does no I/O."""
 
-import argparse, hashlib, json, os, re, tempfile
+import argparse, hashlib, json, os, re
+from http.client import IncompleteRead
+from urllib.error import HTTPError, URLError
 from pathlib import Path, PurePosixPath
 from urllib.parse import quote
 from urllib.request import Request, urlopen
@@ -78,45 +80,71 @@ def install(row, root, progress=None, *, verify_only=False):
     if target.exists():
         raise ValueError("Existing file differs; refusing overwrite: " + str(target))
     target.parent.mkdir(parents=True, exist_ok=True)
-    handle, name = tempfile.mkstemp(
-        prefix=target.name + ".", suffix=".partial", dir=target.parent
-    )
-    temp = Path(name)
-    try:
-        headers = {"User-Agent": "kohaku-moss-verified-downloader/1"}
-        h = hashlib.sha256()
-        size = 0
-        if progress:
-            progress({"phase": "download", "bytes_done": 0, "bytes_total": row["size_bytes"]})
-        with (
-            os.fdopen(handle, "wb") as out,
-            urlopen(Request(url, headers=headers), timeout=60) as response,
-        ):
-            for block in iter(lambda: response.read(8 * 1024**2), b""):
-                size += len(block)
-                if size > row["size_bytes"]:
-                    raise ValueError("Download exceeds pinned size")
+    # The immutable hash identifies resumable bytes across UI retries/restarts.
+    temp = target.with_name(target.name + "." + row["sha256"][:12] + ".partial")
+    h = hashlib.sha256()
+    size = 0
+    if temp.exists():
+        with temp.open("rb") as existing:
+            for block in iter(lambda: existing.read(8 * 1024**2), b""):
                 h.update(block)
-                out.write(block)
-                if progress:
-                    progress({"phase": "download", "bytes_done": size, "bytes_total": row["size_bytes"]})
-            out.flush()
-            os.fsync(out.fileno())
-        if progress:
-            progress({"phase": "verification", "bytes_done": size, "bytes_total": row["size_bytes"]})
-        if size != row["size_bytes"] or h.hexdigest() != row["sha256"].lower():
-            raise ValueError("Downloaded size/SHA256 mismatch")
-        # Publish only fully verified bytes; recheck an independently created target.
-        if target.exists():
-            if verify(target, row):
-                return {"path": str(target), "status": "VERIFIED_CONCURRENT"}
+                size += len(block)
+    if size > row["size_bytes"]:
+        raise ValueError("Partial model is larger than the pinned file: " + str(temp))
+    failures = 0
+    with temp.open("ab") as out:
+        while size < row["size_bytes"]:
+            start = size
+            end = min(start + 256 * 1024**2, row["size_bytes"]) - 1
+            headers = {"User-Agent": "kohaku-moss-verified-downloader/2",
+                       "Range": f"bytes={start}-{end}", "Accept-Encoding": "identity"}
+            try:
+                with urlopen(Request(url, headers=headers), timeout=60) as response:
+                    if response.status == 206:
+                        content_range = response.headers.get("Content-Range", "")
+                        match = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", content_range)
+                        if not match or tuple(map(int, match.groups())) != (start, end, row["size_bytes"]):
+                            raise ValueError("Model server returned an unexpected byte range")
+                    elif start:
+                        raise ValueError("Model source does not support continuing this download")
+                    expected_end = end + 1 if response.status == 206 else row["size_bytes"]
+                    while size < expected_end:
+                        try:
+                            block = response.read(min(8 * 1024**2, expected_end - size))
+                        except IncompleteRead as exc:
+                            block = exc.partial
+                        if not block:
+                            raise ConnectionError("Model download ended before the requested range completed")
+                        out.write(block)
+                        h.update(block)
+                        size += len(block)
+                        if progress:
+                            progress({"phase": "download", "bytes_done": size, "bytes_total": row["size_bytes"]})
+                out.flush()
+                failures = 0
+            except HTTPError:
+                raise
+            except (OSError, URLError, IncompleteRead) as exc:
+                out.flush()
+                failures += 1
+                if failures >= 3:
+                    raise OSError(f"下载连接中断；已保留 {size} 字节。重新点击准备将继续下载，不会从头开始。{exc}") from exc
+        out.flush()
+        os.fsync(out.fileno())
+    if progress:
+        progress({"phase": "verification", "bytes_done": size, "bytes_total": row["size_bytes"]})
+    if h.hexdigest() != row["sha256"].lower():
+        rejected = temp.with_suffix(".rejected")
+        temp.replace(rejected)
+        raise ValueError("模型完整 SHA256 不符，异常字节已保留为 .rejected；重新准备会下载新的文件。")
+    if target.exists():
+        if not verify(target, row):
             raise ValueError("Destination appeared during download; refusing overwrite")
-        # Same-directory hard-link publication is atomic and never overwrites a
-        # concurrently created destination. Fail safely on unsupported filesystems.
+    else:
         os.link(temp, target)
-        return {"path": str(target), "status": "DOWNLOADED_VERIFIED", "bytes": size}
-    finally:
-        temp.unlink(missing_ok=True)
+    temp.unlink()
+    return {"path": str(target), "status": "DOWNLOADED_VERIFIED", "bytes": size}
+
 
 
 def main():
