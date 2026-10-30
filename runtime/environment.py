@@ -285,10 +285,15 @@ def evaluate_selection(report, selection):
     reference_python = (python_version.startswith("3.12.") or
                         (python_version.startswith("3.13.") and
                          report.get("python_implementation") == "cpython"))
+    legacy_reference = (packages.get("torch", {}).get("version") == "2.10.0+cu130" and
+                        packages.get("comfy_kitchen", {}).get("version") == "0.2.37")
+    portable_reference = (python_version == "3.13.14" and
+                          packages.get("torch", {}).get("version") == "2.14.1+cu130" and
+                          packages.get("comfy_kitchen", {}).get("version") == "0.2.40" and
+                          packages.get("triton", {}).get("version") == "3.8.0.post29")
     exact = (report.get("platform") == "win32" and sm == 89 and
              reference_python and not (report.get("python_abi") or {}).get("free_threaded") and
-             packages.get("torch", {}).get("version") == "2.10.0+cu130" and
-             packages.get("comfy_kitchen", {}).get("version") == "0.2.37")
+             (legacy_reference or portable_reference))
     qualification = "Windows SM89 参考环境" if exact else "其他平台或构建"
     if not exact and sm == 89:
         message = ("当前 Windows、Python、Torch 或 kitchen 组合尚待验证。" if report.get("platform") == "win32"

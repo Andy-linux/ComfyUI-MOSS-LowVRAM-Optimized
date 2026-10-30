@@ -38,3 +38,14 @@
 
 Prepare根据实际CUDA设备、SM、依赖和所选模型检查配置。未知宿主组合会显示具体诊断。
 可选注意力的来源、许可与固定资产见[组件说明](../THIRD_PARTY_NOTICES.md)和[optional_binary_manifest.json](../optional_binary_manifest.json)。
+
+## 0.1.5 首次安装验收记录
+
+2026-10-30：Windows 10、RTX4070Ti SUPER / SM89、官方 ComfyUI Portable 0.43.0、前端1.57.4、Manager4.2.2、
+嵌入式Python3.13.14、Torch2.14.1+cu130、Triton3.8.0.post29、comfy-kitchen0.2.40。
+独立应用环境中通过准备界面补齐运行组件，从空的MOSS模型目录下载并校验所选模型，
+然后实际完成1024×1024、SFT W5、16步、默认6GB进程预算的生成，后端返回success并保存PNG。
+首次执行146.308秒，包含冷启动编译；它不是稳定态速度基准，也不是物理6GB显卡验收。
+
+这项记录不等于RTX50实卡、所有模型精度、Desktop以及所有源码部署组合都经过独立全新安装测试。
+安装器使用实际运行的ComfyUI解释器；Windows完整包安装器的实例选择、安装位置确认与依赖准备已在隔离实例验证。
