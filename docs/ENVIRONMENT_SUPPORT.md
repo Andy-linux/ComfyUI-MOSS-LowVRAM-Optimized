@@ -2,7 +2,7 @@
 
 ## 基本要求
 
-- ComfyUI≥0.41、Python≥3.12、NVIDIA CUDA宿主。
+- ComfyUI≥0.41、普通 CPython>=3.12,<3.15、NVIDIA CUDA宿主。
 - 历史记录与参考环境（不是安装门槛）：Windows x64、普通CPython3.12/3.13、Torch2.10.0+cu130、Triton3.6.0.post26、RTX4070TiSUPER / SM89。
 - Manager与准备向导共用安装器；按实际Python ABI和Torch/Triton小版本关系选择兼容范围，详情见[安装指南](INSTALLATION_GUIDE.md)。
 
@@ -19,7 +19,7 @@
 | RTX20 / Turing、SM75 | Triton 3.2 系列，standalone JIT + eager，不锁 Torch 2.10；历史设备为2080Ti 22GB；当前新宿主组合未实卡复验 |
 | RTX30 | 整工作流支持尚未承诺；按各计算模式的SM要求选择 |
 | RTX50 / Blackwell、SM120 | 跟随宿主 Torch 小版本匹配 Triton；Blackwell 要求 Torch>=2.7、CUDA build>=12.8；完整推理待实卡验收 |
-| Linux NVIDIA | 依赖准备支持读取现有Torch的精确Triton要求；整工作流待验证 |
+| Linux NVIDIA | 依赖准备按Torch小版本选择Triton范围；整工作流待验证 |
 | CPU-only、AMD、Apple Metal、Intel加速器 | 当前不可用 |
 
 显存profile表示进程分配预算。实际运行还需为驱动、上下文和其他进程保留显存。
@@ -32,8 +32,10 @@
 | Kohaku FP8 row计算与共享16-bit模式 | 当前实现要求SM89+ |
 | Original BF16 / FP16 TE | 使用对应浮点权重与计算选项 |
 | auto注意力 | PyTorch SDPA |
-| Sage | SM89、Windows、Python3.12/3.13；上游稳定ABI wheel支持Torch>=2.10,<3与CUDA13，安装后检查原生扩展导入 |
-| Turing Flash | 固定独立资产与精确Windows SM75 ABI，FP16限定路径 |
+| Sage | Windows x64、普通Python>=3.12,<3.15、Torch>=2.10,<3、CUDA12/13、SM80+；PV FP8需要SM89+；优先复用已有Sage |
+| 公共 Flash | PyTorch Flash后端、SM80+、FP16/BF16 |
+| CK INT8 | comfy-kitchen、SM75+，显式量化注意力 |
+| Turing Flash | Windows、Python3.12 ABI、Torch>=2.10,<2.11、CUDA>=13,<14、SM75；FP16路径 |
 | VAE | FP32精度边界 |
 
 Prepare根据实际CUDA设备、SM、依赖和所选模型检查配置。未知宿主组合会显示具体诊断。

@@ -26,14 +26,18 @@
 从 [GitHub Releases](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest) 下载完整 ZIP 并解压。
 保持要使用的 ComfyUI 打开，双击 **Install-MOSS.cmd**。安装器从正在运行的 ComfyUI 识别实际 Python、
 工作目录以及 Desktop 的 base-directory；不会直接调用 PATH 里的 `python` 或 `pip`。
-有多个实例时，在窗口选择对应实例。
+有多个实例时，按端口与目录选择对应实例。安装器会合并 Windows venv 的重复子进程；
+一个旁边实例的探测失败只写入日志，其他有效实例仍可选择。
 
 确认安装位置后，安装器复制节点包并准备依赖。完成后按提示关闭并重新打开 ComfyUI、刷新网页，
 拖入包里的 `example_workflows/00_moss_lowvram.json`，选择已有模型，或按需使用可选下载助手。
-没有启动 ComfyUI 时，可以通过文件夹选择窗口指定 Portable 根目录或带 `.venv` / `venv` 的源码目录。
+没有启动 ComfyUI 时，可以通过文件夹窗口指定 Portable、Desktop 实例或源码目录。
+外置 venv／Conda 布局可进一步选择该环境的 `python.exe`。
+完整安装日志保存在 `%TEMP%\MOSS-install-日期时间.log`，失败窗口直接显示位置。
 
 这条路线不依赖 Registry，不需要先安装 Manager，不会额外安装另一种 Manager。
-它不是完全离线安装包：Python 依赖来自 PyPI，模型来自工作流显示的固定来源。
+依赖和模型分别按需联网下载。Python 依赖遵循当前 pip 配置，模型使用界面显示的来源。
+显式代理环境变量优先；Windows Internet Settings 中的 HTTP/HTTPS 代理会自动用于本次准备进程。
 
 ## 官方宿主与 Python 的关系
 
@@ -68,7 +72,7 @@ comfy --workspace "C:\ComfyUI" node install https://github.com/Andy-linux/ComfyU
 
 ## 依赖准备与推理范围
 
-Windows 普通 CPython 3.12/3.13 的运行组件根据实际显卡和 Torch 小版本准备，不使用 Torch 补丁版本相等作为门槛。
+Windows 普通 CPython>=3.12,<3.15 的运行组件根据实际显卡和 Torch 小版本准备，不使用 Torch 补丁版本相等作为门槛。
 SM89、SM120 的 Torch 2.10/2.11 对应 Triton 3.6，2.12/2.13 对应 3.7，2.14 对应 3.8，2.15 对应 3.9；
 完整映射与来源见 `runtime/compatibility.py`。每个系列使用下限/上限范围，保留已安装且兼容的 patch/post 版本。
 缺失或跨系列不匹配时，向导列出要准备的组件，用户确认后安装，重启生效。
@@ -76,19 +80,21 @@ SM89、SM120 的 Torch 2.10/2.11 对应 Triton 3.6，2.12/2.13 对应 3.7，2.14
 SM75 固定在仍支持 Turing 的 Triton 3.2 系列，使用 standalone JIT 与 eager PyTorch，不使用本包的 Inductor/torch.compile 路线。
 不因此锁死整个 ComfyUI 或要求 Torch 等于 2.10。这个组合不保证其他节点的 torch.compile 可以使用；
 SM75 也不支持本包的 BF16、FP8 和 A8 TE。默认使用 W5、TE W8A16、auto SDPA 与 FP32 VAE。
-SM120 默认使用通用 ring 编码与 SDPA，不套用仅在 SM89 上测得的驻留预算或可选注意力二进制。
+SM120 默认使用 ring 编码和 SDPA；可显式选择 Sage、公共 Flash 或 CK INT8。
+SM89 专用的驻留预算表继续按自身硬件条件工作。
 
-Python 开发文件针对当前解释器补齐；不会把“源码部署”误当成文件齐全，也不会要求再装一套系统 Python。
-安装器使用 PyPI 发行物，保留当前宿主的 Torch、torchvision、torchaudio、comfy-kitchen 与前端组件。
-安装记录里的这些现有版本只是防止安装依赖时被顺带替换，并不是要求所有用户安装同一版本。
-Linux 按现有 Torch 元数据的要求处理 Triton；不擅自打破 Linux Torch 对 Triton 的依赖关系。
+Python 开发文件针对当前解释器 ABI 补齐。3.12/3.13 使用上游开发文件归档；3.14 使用 Python Software Foundation 的官方 NuGet 包，只提取 include/libs。
+完整 CPython／venv 环境直接复用已有开发文件。缺少 pip 时通过当前解释器的 ensurepip 补齐。
+本包的依赖安装和运行版本判断使用兼容范围；按需安装时不生成版本等值约束。
+Linux 的 Triton 按 Torch 小版本选择发布范围；Windows 使用对应的 triton-windows 范围。
+Sage 优先复用已有全局安装，缺失时按 CUDA12/13 准备稳定 ABI wheel 到插件目录。
 
 默认注意力使用 PyTorch SDPA，不依赖 Sage 或第三方 Flash；可选二进制继续遵守其 ABI 条件。
 依赖准备与实卡验证是两回事，已完成的实际执行范围见[环境支持](ENVIRONMENT_SUPPORT.md)。
 
 ## Manager 提示冲突或没有可用更新
 
-先看提示正文。`安全验证待定 / 无法验证兼容性` 表示 Registry 审核状态，而不是已经发现核心依赖冲突。
+先看提示正文。`安全验证待定 / 无法验证兼容性` 表示 Registry 审核状态。运行依赖的检查结果在准备窗口单独显示。
 本包旧版本收到 `policy-v0.7: reflag-pending-review`，后续版本可能仍等待扫描。
 维护人已提交[官方复核请求](https://github.com/Comfy-Org/registry-backend/issues/311)。
 此时直接使用本指南的完整包安装器更新，不要降级 ComfyUI、重复安装 Manager 或降低其安全等级。

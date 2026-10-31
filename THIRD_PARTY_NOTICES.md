@@ -38,3 +38,13 @@ CUTLASS: `df18f5e4f5de76bed8be1de8e4c245f2f5ec3020`. Available build records rep
 The pinned Turing repository has no confirmed LICENSE or repository license declaration. CUTLASS/NVIDIA terms apply to their own components;
 the combined Turing implementation's upstream license status remains unconfirmed.
 The fixed asset and Windows x64/Python3.12/Torch2.10+cu130/SM75 limits are recorded in [optional_binary_manifest.json](optional_binary_manifest.json).
+
+## Windows development-file preparation
+
+Python 3.12/3.13 development archives are obtained from the triton-windows maintainer's documented release.
+Python 3.14 development files are extracted from the Python Software Foundation's official `python` NuGet package;
+the package keeps its upstream Python license. Only include/libs are extracted into the selected embedded interpreter.
+No Python runtime binary is redistributed in this node package. Artifact URLs and SHA256 identities are in `runtime/install_dependencies.py`.
+
+Sage CUDA12 and CUDA13 builds are selected separately. Both upstream artifact identities and sizes are recorded in `runtime/sage_artifacts.py`;
+their original Apache-2.0 terms are retained in the downloaded wheels.

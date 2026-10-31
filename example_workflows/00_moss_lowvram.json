@@ -378,7 +378,7 @@
         "Node name for S&R": "MarkdownNote"
       },
       "widgets_values": [
-        "## 首次使用：安装节点 → 重启 → 刷新网页\n缺少节点时点击 **查看详情 → 安装 → 应用更改 / 重启**，完成后按 **F5 / Ctrl+R**。5 个节点属于同一个 MOSS 包。\n\n**环境**：按向导补齐运行组件；已兼容的 Python / Torch 保留，不要求退回固定旧版。\n**模型**：DiT 放 `models/diffusion_models`，文本编码器放 `models/text_encoders`，VAE 放 `models/vae`；支持子目录和已注册的额外目录。在配置节点或向导中选择文件即可，不需要下载或哈希校验记录。\n**可选下载**：没有模型时只勾选需要的文件。可只下载 VAE，不会连带下载 DiT / TE。已有文件不替换，完整生成才需要对应的三个组件。\n\n[没有 Manager / 市场不可用：下载完整包并双击 Install-MOSS.cmd](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest)。市场“安全验证待定”是审核状态，不代表核心依赖冲突；不要降低安全等级。"
+        "## 首次使用：安装节点 → 重启 → 刷新网页\n缺少节点时点击 **查看详情 → 安装 → 应用更改 / 重启**，完成后按 **F5 / Ctrl+R**。5 个节点属于同一个 MOSS 包。\n\n**环境**：按向导补齐运行组件；已兼容的 Python / Torch 保留，不要求退回固定旧版。\n**模型**：DiT 放 `models/diffusion_models`，文本编码器放 `models/text_encoders`，VAE 放 `models/vae`；支持子目录和已注册的额外目录。在配置节点或向导中选择文件即可，不需要下载或哈希校验记录。\n**可选下载**：没有模型时只勾选需要的文件。可只下载 VAE，不会连带下载 DiT / TE。已有文件不替换，完整生成才需要对应的三个组件。\n\n[没有 Manager / 市场不可用：下载完整包并双击 Install-MOSS.cmd](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest)。市场“安全验证待定”由Registry审核控制，运行组件由准备窗口检查；不要降低安全等级。"
       ],
       "title": "MOSS · 安装、环境与独立模型"
     }

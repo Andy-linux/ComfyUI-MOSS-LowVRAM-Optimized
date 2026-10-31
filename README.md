@@ -22,7 +22,9 @@
 ### 没有 Manager，或插件市场连接失败
 
 下载 [完整安装包](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest)，解压后双击 **Install-MOSS.cmd**。
-保持 ComfyUI 打开，安装器会识别它实际使用的 Python 和节点目录；有多个实例时会让你选择。
+保持 ComfyUI 打开，安装器会识别它实际使用的 Python 和节点目录；有多个实例时按端口和目录选择。
+Windows 虚拟环境的重复子进程会自动合并，旁边实例缺少依赖不会中断目标实例的识别。
+源码／Conda 的外置环境也可在文件选择窗口指定。安装日志保存在 `%TEMP%\MOSS-install-日期时间.log`。
 安装完成后关闭并重新启动 ComfyUI、刷新网页，再拖入包内 `example_workflows/00_moss_lowvram.json`，继续上面的准备向导。
 
 这个入口不依赖插件市场，不安装第二个 Manager；缺少的 Python 依赖需要网络，模型不随插件安装。
@@ -66,10 +68,12 @@ SM120 需要支持 Blackwell 的 Torch/CUDA；不会安装 Turing 的旧版扩�
 
 SM75 / RTX20 使用 `triton-windows>=3.2.0.post13,<3.3`，采用 standalone Triton JIT 与 PyTorch eager，
 不用本包的 torch.compile 路线，也不强制把 Torch 降到 2.10。BF16/FP8 不在 SM75 支持范围内。
-便携 Python 3.12/3.13 缺少开发文件时，按实际解释器补齐。
+普通 CPython 的安装范围为 `>=3.12,<3.15`。便携版按实际 ABI 补齐开发文件；3.14 的开发文件来自 Python Software Foundation 发布的 NuGet 包。
+已有 `HTTP_PROXY` / `HTTPS_PROXY` 设置优先；Windows 系统代理会在准备进程中自动继承。
 
-Diffusers 接受 `>=0.41,<1.0`，不再因人为的 `<0.42` 上限排除新版。安装器保存宿主当前核心组件版本，
-普通依赖安装不得顺带替换 Torch。SM89 的 Sage 使用上游稳定 ABI wheel，支持 Python3.12/3.13、Torch>=2.10,<3、CUDA13；不会为了可选 Sage 强制降级 Torch。
+Diffusers 接受 `>=0.41,<1.0`，不再因人为的 `<0.42` 上限排除新版。安装器使用兼容范围和按需依赖解析，已满足范围的版本直接复用。
+Sage 使用上游稳定 ABI wheel，按 CUDA12/13 选择发行物；支持普通 Python>=3.12,<3.15、Torch>=2.10,<3、SM80+。
+已有全局 Sage 优先复用。QK8/PV-FP8 模式要求 SM89+；公共 Flash 需要 SM80+，CK INT8 使用 comfy-kitchen 的 SM75+ 实现。
 可选 Turing Flash 仍保留其独立的历史 ABI 限制。两者不改变默认 auto 数值路线。
 完整策略、实测环境和未做实卡验收的范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
 
