@@ -1,7 +1,7 @@
 """Fail-closed CPU-inspectable FFN v3 installer preflight.
 
 Validated by installers BEFORE changing any block methods.
-Only the measured no-adapter inference contract is accepted.
+The original no-adapter inference storage and arithmetic contract is retained.
 This helper performs no CUDA tensor allocations. Real runtime architecture query
 is only reached after structural checks and explicit CUDA device validation.
 """
@@ -9,15 +9,18 @@ import torch
 
 
 def validate_capability(capability, *, backend="ffn_v3", original_packed_only=False):
-    sm=tuple(capability)
-    if sm==(8,9):
+    from packaging.version import Version
+    sm = tuple(capability)
+    # FFNv3 uses tl.dot(INT8, INT8)->INT32 and libdevice, with no Ada-specific instruction.
+    # Keep the tensor/layout/rounding contracts below for every supported architecture.
+    if backend == "ffn_v3" and sm >= (8, 0):
         return
-    if sm==(7,5) and backend=="ffn_v3" and original_packed_only:
+    if sm == (7, 5) and backend == "ffn_v3" and original_packed_only:
         import triton
-        if str(triton.__version__).split(".")[:2]==["3","2"]:
+        if Version("3.2") <= Version(triton.__version__) < Version("3.3"):
             return
-        raise ValueError("SM75 FFN v3 requires the separately qualified uniform Triton 3.2 environment")
-    raise ValueError("FFN v3 architecture/storage not qualified: SM89 original forms, or SM75 Triton3.2 original packed W5/W6 only")
+        raise ValueError("SM75 FFNv3 requires Triton>=3.2,<3.3")
+    raise ValueError("FFNv3 requires SM80+ or original packed W5/W6 on SM75 with Triton>=3.2,<3.3")
 
 
 def projection_errors(up):

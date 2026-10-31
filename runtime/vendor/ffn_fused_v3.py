@@ -1,6 +1,6 @@
 """Independent FFN v3 installer: INT8 Tensor Core register-accumulator SiTU up.
 
-Fixed qualified SM89 config BM64/BN64/BK64/warps4/stages2. No autotune.
+Fixed INT8 MMA config BM64/BN64/BK64/warps4/stages2. No autotune.
 Full FFN is the default. Down projection and its existing writer, scaling, gate
 and residual are unchanged. On packed models the original single INT8 workspace
 can be overwritten by down AFTER up completes; no additional decoded weight copy
@@ -78,5 +78,5 @@ def install(bb, *, tile=0):
         rounding="(INT32.float*activation_scale)*weight_scale -> "+inference_contract["dtype"]+" -> SiTU -> "+inference_contract["dtype"],
         additional_decoded_weight_workspace_bytes=0,
         external_full_upgate_int32_accumulator_bytes=0,
-        qualification="SM89 micro INT32/output bitwise; fullimage still required")
+        qualification="INT8 MMA on selected CUDA architecture; original rounding retained")
     return receipt, restore

@@ -2480,7 +2480,7 @@
       "path": "ffn_fused_v3.py",
       "historical_source_sha256": "30011b94fb005bf23915d158e7261fe6b3f61da88f2a07d085e54549bed3688d",
       "historical_vendored_sha256": "97ddc53a81814c49c35b8b33d152bc07f9ed6d64140503e99ae7b84ef92c21d5",
-      "current_sha256": "3b16cc7da85eedee8550aca4084742f6ca4fc2c7c54e3d46a3226a78776386b4",
+      "current_sha256": "21ec9293c3960cccba90f8f20364e2dea4acde5294dcf494e973a285e048d611",
       "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
     },
     {
@@ -2494,7 +2494,7 @@
       "path": "inference_contracts_v3.py",
       "historical_source_sha256": "9a097e5d2d282a36496802d9c5d457d89f82ed13157e9a61660fbb0990399242",
       "historical_vendored_sha256": "1a94214ed38925de31592e8b139acd4c1c1fd90ea52067641e1fc4c3f660e511",
-      "current_sha256": "397524bbcd887de8e8574e0bdff303553c3cc3c76d6fa12c55f020624b87ad44",
+      "current_sha256": "4b981f7a230aa4ffdfec12a60f75493d0b629b5122a5c18c5eee7519fa31848b",
       "modification_scope": "Local inference integration; relative imports and owned runtime interfaces; see NOTICE"
     },
     {
