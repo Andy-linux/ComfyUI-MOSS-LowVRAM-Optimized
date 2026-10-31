@@ -63,7 +63,7 @@ Base/SFT各一份FP8 row权重，可选择FP8或16-bit计算。模型清单、�
 
 保留正在使用的 ComfyUI、Torch、CUDA 和核心组件，不要求它们等于某个历史版本。
 SM89 / RTX40 与 SM120 / RTX50 根据 Torch 小版本选择 Triton 的兼容范围；已经满足范围的补丁版和 post 版直接复用。
-例如 Torch 2.14 对应 `triton-windows>=3.8.0.post13,<3.9`，而不是强制等于某个 wheel。
+例如 Torch 2.14 对应 `triton-windows>=3.8.0.post13,<3.9`，范围内版本直接复用。
 SM120 需要支持 Blackwell 的 Torch/CUDA；不会安装 Turing 的旧版扩展。
 
 SM75 / RTX20 使用 `triton-windows>=3.2.0.post13,<3.3`，采用 standalone Triton JIT 与 PyTorch eager，
@@ -73,17 +73,21 @@ SM75 / RTX20 使用 `triton-windows>=3.2.0.post13,<3.3`，采用 standalone Trit
 
 Diffusers 接受 `>=0.41,<1.0`，不再因人为的 `<0.42` 上限排除新版。安装器使用兼容范围和按需依赖解析，已满足范围的版本直接复用。
 Sage 使用上游稳定 ABI wheel，按 CUDA12/13 选择发行物；支持普通 Python>=3.12,<3.15、Torch>=2.10,<3、SM80+。
-已有全局 Sage 优先复用。QK8/PV-FP8 模式要求 SM89+；公共 Flash 需要 SM80+，CK INT8 使用 comfy-kitchen 的 SM75+ 实现。
+已有全局 Sage 优先复用。PV16 CUDA wheel使用SM8x内核；SM120选择Sage QK8/PV FP8（per-warp）或CK INT8，三条默认/加速路径已在5060Ti出图。公共Flash使用PyTorch支持的SM80+实现。
 可选 Turing Flash 仍保留其独立的历史 ABI 限制。两者不改变默认 auto 数值路线。
 完整策略、实测环境和未做实卡验收的范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
 
 显式A8 TE要求SM80+，FP8计算要求SM89+；完整范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
 
 Manager 的“冲突”需要看具体原因。若显示“安全验证待定 / 无法验证兼容性”，这是 Registry 审核状态，
-不是 Torch 或显卡版本不兼容。已有版本因 Registry policy-v0.7 等待复核，跟踪见[上游复核记录](https://github.com/Comfy-Org/registry-backend/issues/311)。
+运行组件兼容性由准备窗口独立检查。已有版本因 Registry policy-v0.7 等待复核，跟踪见[上游复核记录](https://github.com/Comfy-Org/registry-backend/issues/311)。
 遇到“没有可用发布版本”时，用上方完整包安装器更新；不要求降低 Manager 安全等级，不应为此降级 ComfyUI。
 
 升级时保留一份插件安装，避免旧 `moss-optimized`、`ComfyUI-KohakuMOSS` 与新包重复启用。
+
+## 实机验收
+
+[RTX5060Ti / SM120 的0.1.7安装与生成记录](docs/ACCEPTANCE_0.1.7.md)包含实际默认SDPA、Sage FP8和Kitchen INT8的输出及日志摘要。
 
 ## 分享与许可
 

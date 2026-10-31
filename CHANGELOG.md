@@ -2,6 +2,9 @@
 
 ## 0.1.7
 
+- RTX5060Ti / SM120实机完成默认SDPA、Sage QK8/PV FP8、Kitchen INT8三条1024×1024/16步生成。
+- 修正SM120 INT8 FFN与Sage原生内核分派；Sage PV16保留SM8x，Blackwell采用per-warp FP8路径；不适配选项可在准备窗口直接调整。
+
 - 修复 Windows 多 ComfyUI 实例下，venv 的基础 Python 子进程缺少 psutil 导致安装中断的问题；按真实实例定位解释器与节点目录。
 - 安装过程继承 Windows 系统代理和显式代理配置，提供持久化日志；补齐当前解释器的 pip、运行组件与开发文件。
 - 运行依赖使用兼容范围，取消安装时生成的版本等值约束。普通 Python 安装范围扩展到 >=3.12,<3.15；3.14 开发文件使用 PSF 官方 NuGet 归档。

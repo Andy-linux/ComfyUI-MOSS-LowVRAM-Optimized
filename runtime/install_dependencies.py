@@ -159,7 +159,7 @@ def dependency_plan(report=None):
                 requirement = windows_triton_requirement(report)
             except ValueError as exc:
                 error("host_unqualified", str(exc))
-        if sm in (75, 120):
+        if sm == 75:
             plan["warnings"].append({"code": "gpu_unvalidated", "message": f"SM{sm} 依赖可自动准备；完整推理验收范围见环境支持说明。"})
         if not prerequisites.get("python_headers") or not prerequisites.get("python_import_library"):
             if prerequisites.get("embedded_python") and (py312 or py313 or py314):

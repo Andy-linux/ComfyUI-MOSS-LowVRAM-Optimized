@@ -18,7 +18,7 @@
 | RTX40 / Ada、SM89 | 当前主要运行平台，已使用RTX4070TiSUPER 16GB；其他卡按资源与内核条件检查 |
 | RTX20 / Turing、SM75 | Triton 3.2 系列，standalone JIT + eager，不锁 Torch 2.10；历史设备为2080Ti 22GB；当前新宿主组合未实卡复验 |
 | RTX30 | 整工作流支持尚未承诺；按各计算模式的SM要求选择 |
-| RTX50 / Blackwell、SM120 | 跟随宿主 Torch 小版本匹配 Triton；Blackwell 要求 Torch>=2.7、CUDA build>=12.8；完整推理待实卡验收 |
+| RTX50 / Blackwell、SM120 | 跟随宿主 Torch 小版本匹配 Triton；Blackwell 要求 Torch>=2.7、CUDA build>=12.8；RTX5060Ti 16GB已完成默认SDPA、Sage FP8和CK INT8整图验收 |
 | Linux NVIDIA | 依赖准备按Torch小版本选择Triton范围；整工作流待验证 |
 | CPU-only、AMD、Apple Metal、Intel加速器 | 当前不可用 |
 
@@ -32,7 +32,7 @@
 | Kohaku FP8 row计算与共享16-bit模式 | 当前实现要求SM89+ |
 | Original BF16 / FP16 TE | 使用对应浮点权重与计算选项 |
 | auto注意力 | PyTorch SDPA |
-| Sage | Windows x64、普通Python>=3.12,<3.15、Torch>=2.10,<3、CUDA12/13、SM80+；PV FP8需要SM89+；优先复用已有Sage |
+| Sage | Windows x64、普通Python>=3.12,<3.15、Torch>=2.10,<3、CUDA12/13、SM80+；PV16 CUDA wheel限SM8x；SM120使用PV FP8；优先复用已有Sage |
 | 公共 Flash | PyTorch Flash后端、SM80+、FP16/BF16 |
 | CK INT8 | comfy-kitchen、SM75+，显式量化注意力 |
 | Turing Flash | Windows、Python3.12 ABI、Torch>=2.10,<2.11、CUDA>=13,<14、SM75；FP16路径 |
@@ -54,6 +54,6 @@ Prepare根据实际CUDA设备、SM、依赖和所选模型检查配置。未知�
 
 ## 本次兼容更新的验收记录
 
-实际运行数据以 `docs/ACCEPTANCE_0.1.6.md` 为准。只有 SM89 在维护机器上执行完整生成；SM75/SM120 的策略和硬件限制已实现，但不把静态检查冒称为实卡生成验收。
+SM89的完整生成记录见[0.1.6验收](ACCEPTANCE_0.1.6.md)。SM120的安装、模型准备、默认SDPA、Sage FP8及Kitchen INT8完整生成记录见[0.1.7验收](ACCEPTANCE_0.1.7.md)。
 
 SM75 的编译组合算子已在本包 vendored dispatch 中明确排除现代 Inductor，保持原 dtype 的 eager 组合；独立 Triton3.2 和 INT8 GEMM 不关闭，也不全局修改其它 ComfyUI 节点的 torch.compile。该架构的新宿主组合仍需要实卡验收。

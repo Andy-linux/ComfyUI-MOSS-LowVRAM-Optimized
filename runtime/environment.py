@@ -231,7 +231,7 @@ def evaluate_selection(report, selection):
             error("sm75_triton", "SM75 不支持 Triton >=3.3。", "请在匹配的 SM75 宿主中通过 Manager 准备 Triton 3.2，并应用更改。")
         warn("sm75_scope", "SM75（RTX 20 系）本版整流程待复测；建议 W5、TE W8A16 和 attention=auto。")
     elif sm == 120:
-        warn("sm120_unvalidated", "RTX 50 / SM120 整流程尚待验证。")
+        warn("sm120_scope", "RTX5060Ti / SM120 已完成W5、W8A16、SDPA/Sage FP8/CK INT8整图验收；其他配置按各算子能力使用。")
     elif sm == 86:
         warn("sm86_future", "RTX 30 / SM86 适配尚未完成。")
     elif sm and sm != 89:
