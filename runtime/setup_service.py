@@ -10,6 +10,7 @@ from . import catalog
 from .environment import evaluate_selection, inspect_environment
 from .install_dependencies import dependency_plan
 from .dependency_preparation import DependencyPreparation
+from .compatibility import architecture_policy
 from .model_preparation import ModelPreparation, PreparationConflict, relative_name
 
 _HARD_CODES = {"bf16_architecture", "te_a8_architecture", "fp8_architecture",
@@ -128,6 +129,7 @@ class SetupService:
         ready = (not evaluation["errors"] and plan["status"] == "ready"
                  and not dependency_state["restart_required"] and dependency_state["state"] != "running")
         return {"environment": environment, "runtime_ready": ready,
+                "architecture_policy": architecture_policy(environment),
                 "dependency_preparation": dependency_state,
                 "evaluation": evaluation,
                 "assets": self.preparation.summary(files),

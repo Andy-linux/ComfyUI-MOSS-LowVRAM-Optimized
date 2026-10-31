@@ -17,7 +17,7 @@ PACKAGES = {"torch": ("torch",), "triton": ("triton", "triton-windows"),
             "diffusers": ("diffusers",),
             "einops": ("einops",), "xformers": ("xformers",),
             "sageattention": ("sageattention",), "flash_attn": ("flash-attn",)}
-MINIMUMS = {"diffusers": ((0, 41, 0), (0, 42, 0), "diffusers>=0.41.0,<0.42"),
+MINIMUMS = {"diffusers": ((0, 41, 0), (1, 0, 0), "diffusers>=0.41.0,<1.0"),
             "transformers": ((5, 20, 1), (6, 0, 0), "transformers>=5.20.1,<6"),
             "safetensors": ((0, 8, 0), None, "safetensors>=0.8.0"),
             "einops": ((0, 8, 2), None, "einops>=0.8.2"),

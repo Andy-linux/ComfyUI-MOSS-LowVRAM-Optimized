@@ -228,6 +228,12 @@ async function showSetup(node) {
     function environmentDetails(report) {
         const details = element("details"), env = report.environment;
         details.append(element("summary", "环境与可选功能"), element("p", `GPU: ${env.device?.name ?? "未发现 CUDA 设备"} · SM${env.device?.sm ?? "?"} · Python ${env.python_version ?? "?"}${env.python_abi?.free_threaded ? " (free-threaded)" : ""} · Torch ${env.packages?.torch?.version ?? "?"} · CUDA ${env.cuda_build ?? "?"} · Triton ${env.packages?.triton?.version ?? "缺失"}`));
+        const policy = report.architecture_policy;
+        if (policy) {
+            details.append(element("p", `${policy.architecture} · ${policy.execution}`), element("p", policy.note));
+            const range = report.dependency_plan?.steps?.find(step => step.id === "triton")?.requirement;
+            if (range) details.append(element("p", `将准备：${range}；不替换 Torch 或 ComfyUI。`));
+        }
         if (report.evaluation.errors.length) {
             for (const issue of report.dependency_plan?.errors ?? []) details.append(element("p", issue.message));
             for (const step of report.dependency_plan?.steps ?? []) details.append(element("p", step.requirement ?? step.message ?? step.id));

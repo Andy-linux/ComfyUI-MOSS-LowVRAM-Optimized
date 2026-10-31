@@ -15,6 +15,9 @@ import sysconfig
 import tempfile
 import urllib.request
 import zipfile
+from packaging.requirements import Requirement
+from packaging.markers import default_environment
+from .compatibility import windows_triton_requirement, satisfies, architecture_policy
 
 SOURCE = "https://github.com/triton-lang/triton-windows/blob/readme/README.md"
 HEADERS_URL = "https://github.com/woct0rdho/triton-windows/releases/download/v3.0.0-windows.post1/python_3.12.7_include_libs.zip"
@@ -78,27 +81,14 @@ def _prerequisites(report):
 def _linux_requirement(report):
     requirements = report.get("torch_requires")
     if requirements is None:
-        try:
-            requirements = metadata.requires("torch") or []
-        except metadata.PackageNotFoundError:
-            requirements = []
-    # Accept only Torch's exact stable triton pin, never extras or a broad range.
-    pins = []
-    for requirement in requirements:
-        match = re.fullmatch(r"\s*triton\s*(?:\(\s*)?==\s*(\d+\.\d+\.\d+(?:\.post\d+)?)\s*\)?\s*(?:;\s*(.*))?", requirement)
-        if not match:
-            continue
-        marker = match.group(2)
-        if marker:
-            # PyTorch's published Linux marker. Unknown marker grammars fail
-            # closed rather than guessing which dependency branch is active.
-            normalized = marker.replace("'", '"').replace(" ", "")
-            machine = report.get("machine", "")
-            allowed = {'platform_system=="Linux"', 'platform_system=="Linux"andplatform_machine=="x86_64"', 'platform_system=="Linux"andplatform_machine=="aarch64"'}
-            if normalized not in allowed or ('platform_machine==' in normalized and ('"' + machine + '"') not in normalized):
-                continue
-        pins.append(match.group(1))
-    return "triton==" + pins[0] if len(set(pins)) == 1 else None
+        requirements = metadata.requires("torch") or []
+    environment = {**default_environment(), "platform_system": "Linux", "sys_platform": "linux",
+                   "platform_machine": report.get("machine", "x86_64"), "extra": ""}
+    for text in requirements:
+        item = Requirement(text)
+        if item.name == "triton" and (item.marker is None or item.marker.evaluate(environment)):
+            return "triton" + str(item.specifier)
+    return None
 
 
 def _sage_state():
@@ -155,7 +145,7 @@ def dependency_plan(report=None):
             "steps": [], "optional_steps": [], "optional_dependencies": {}, "errors": [],
             "warnings": [], "actions": [MANAGER_ACTION], "source": SOURCE,
             "qualification": "安装阶段依赖准备",
-            "prerequisites": prerequisites}
+            "prerequisites": prerequisites, "architecture_policy": architecture_policy(report)}
     def error(code, message):
         plan["errors"].append({"code": code, "message": message})
     packages = report.get("packages", {})
@@ -175,20 +165,13 @@ def dependency_plan(report=None):
         implementation = str(report.get("python_implementation") or ("cpython" if py312 else "")).lower()
         if _free_threaded(report):
             error("python_free_threaded", "free-threaded Python 不支持此原生扩展，请使用普通带 GIL 的 CPython。")
-        torch_match = re.fullmatch(r"(\d+)\.(\d+)\.\d+(?:\+[^ ]+)?", str(torch.get("version", "")))
-        torch_minor = tuple(map(int, torch_match.groups())) if torch_match else None
-        # Upstream pairs Torch/Triton by minor release, not GPU or patch release.
-        pins = {(2, 10): "3.6.0.post26", (2, 11): "3.6.0.post26",
-                (2, 12): "3.7.1.post27", (2, 13): "3.7.1.post27",
-                (2, 14): "3.8.0.post29"}
         if report.get("machine") not in ("AMD64", "x86_64") or implementation != "cpython" or not (py312 or py313):
             error("python_unsupported", "需要 Windows x64 的普通 CPython 3.12 或 3.13；请使用官方 ComfyUI Portable 或 Desktop。")
-        elif sm == 75 and torch_minor == (2, 10) and py312:
-            requirement = "triton-windows==3.2.0.post21"
-        elif sm and sm >= 80 and torch_minor in pins:
-            requirement = "triton-windows==" + pins[torch_minor]
         else:
-            error("host_unqualified", f"当前 Torch {torch.get('version')} / SM{sm} 没有匹配的运行依赖方案。请使用官方 NVIDIA ComfyUI；本插件不会更换宿主 Torch。")
+            try:
+                requirement = windows_triton_requirement(report)
+            except ValueError as exc:
+                error("host_unqualified", str(exc))
         if sm in (75, 120):
             plan["warnings"].append({"code": "gpu_unvalidated", "message": f"SM{sm} 依赖可自动准备；完整推理验收范围见环境支持说明。"})
         if prerequisites.get("compiler_override"):
@@ -214,7 +197,7 @@ def dependency_plan(report=None):
             error("torch_triton_pin_unknown", "请先准备具有明确 Triton 版本要求的 Linux Torch 环境。")
         if not re.fullmatch(r"3\.(?:1[2-9]|[2-9]\d)\.\d+", str(report.get("python_version", ""))):
             error("python_unqualified", "需要 Python >=3.12 的稳定版本。")
-        if sm == 75 and requirement and tuple(map(int, requirement.split("==")[1].split(".")[:2])) >= (3, 3):
+        if sm == 75 and requirement and not satisfies("3.2.0", requirement):
             error("sm75_triton", "当前 Torch 要求的 Triton 已移除 SM75 支持，请准备兼容宿主。")
         if not prerequisites.get("python_headers") or not prerequisites.get("c_compiler"):
             error("linux_build_prerequisites", "Linux 缺少 Python 开发头文件或 C 编译器；请由宿主图形软件管理器/管理员准备。")
@@ -224,15 +207,29 @@ def dependency_plan(report=None):
     if triton.get("shadow_conflict"):
         error("triton_shadow", "当前 Triton 存在重复安装，请通过 ComfyUI 环境维护流程处理后重启。")
     if requirement:
-        expected = requirement.split("==")[1]
-        if triton.get("status") == "missing" and not triton.get("version"):
-            plan["steps"].append({"id": "triton", "kind": "pip", "requirement": requirement, "message": "安装与当前 Torch 匹配的固定 Triton wheel。"})
-        elif (triton.get("status") != "available" or
-              str(triton.get("version", "")).split(".")[:2] != expected.split(".")[:2] or
-              triton.get("distribution") != requirement.split("==")[0]):
-            error("triton_conflict", "当前 Triton 与 Torch 的版本组合不匹配。请在 Manager 更新本节点包并应用更改；不会静默替换已加载的二进制组件。")
+        distribution = Requirement(requirement).name
+        installed = triton.get("status") == "available" and triton.get("distribution") == distribution
+        compatible = installed and satisfies(triton.get("version"), requirement)
+        if not compatible:
+            previous = triton.get("version")
+            plan["steps"].append({"id": "triton", "kind": "pip", "requirement": requirement,
+                                  "message": f"为当前显卡和 Torch 准备 {requirement}" + (f"；当前为 {previous}，完成后需重启。" if previous else "。")})
         elif not prerequisites.get("cuda_compiler") or (platform == "win32" and not prerequisites.get("c_compiler")):
-            error("triton_toolchain_missing", "当前 Triton 缺少编译器组件，请重新完成节点包安装；若仍报错，请修复宿主 Triton 安装。")
+            plan["steps"].append({"id": "triton", "kind": "pip", "requirement": requirement,
+                                  "reinstall": True, "message": "补齐当前 Triton wheel 的编译器文件，完成后重启。"})
+    required = Path(__file__).resolve().parents[1] / "requirements.txt"
+    for text in required.read_text(encoding="utf-8").splitlines():
+        text = text.strip()
+        if not text or text.startswith("#"):
+            continue
+        item = Requirement(text)
+        try:
+            current = metadata.version(item.name)
+        except metadata.PackageNotFoundError:
+            current = None
+        if current is None or not satisfies(current, text):
+            plan["steps"].append({"id": "package_" + item.name, "kind": "package", "requirement": text,
+                                  "message": "补齐节点依赖 " + text})
     sage, optional_steps = _sage_plan(report)
     plan["optional_dependencies"]["sageattention"] = sage
     if sage["status"] == "conflict":
@@ -321,6 +318,32 @@ def _verify_sage():
     subprocess.run([sys.executable, "-c", script], check=True, timeout=60)
 
 
+def _install_requirement(step):
+    requirement = step["requirement"]
+    item = Requirement(requirement)
+    command = [sys.executable, "-s", "-m", "pip", "install", "--disable-pip-version-check"]
+    if step["kind"] == "pip":
+        if item.name not in ("triton", "triton-windows") or item.url:
+            raise RuntimeError("Invalid Triton requirement")
+        command += ["--no-deps", "--only-binary=:all:"]
+    if step.get("reinstall"):
+        command.append("--force-reinstall")
+    # These are the user's existing host versions, not compatibility requirements.
+    protected = ("torch", "torchvision", "torchaudio", "comfy-kitchen", "comfy-aimdo",
+                 "comfyui-frontend-package", "comfyui-manager")
+    versions = []
+    for name in protected:
+        try:
+            versions.append(name + "==" + metadata.version(name))
+        except metadata.PackageNotFoundError:
+            pass
+    with tempfile.TemporaryDirectory(prefix="moss-host-") as directory:
+        constraints = Path(directory) / "preserve-host.txt"
+        constraints.write_text("\n".join(versions), encoding="utf-8")
+        command += ["--constraint", str(constraints), "--index-url", "https://pypi.org/simple", requirement]
+        subprocess.run(command, check=True, timeout=600)
+
+
 def execute_plan(plan):
     """Prepare the detected interpreter without replacing its Torch installation."""
     fresh = dependency_plan()
@@ -333,11 +356,8 @@ def execute_plan(plan):
         for step in fresh["steps"]:
             if step["kind"] == "python_headers":
                 _install_headers(step)
-            elif step["kind"] == "pip":
-                requirement = step["requirement"]
-                if not re.fullmatch(r"(?:triton|triton-windows)==\d+\.\d+\.\d+(?:\.post\d+)?", requirement):
-                    raise RuntimeError("Invalid dependency requirement")
-                subprocess.run([sys.executable, "-m", "pip", "install", "--no-deps", "--only-binary=:all:", "--index-url", "https://pypi.org/simple", requirement], check=True, timeout=600)
+            elif step["kind"] in ("pip", "package"):
+                _install_requirement(step)
             else:
                 raise RuntimeError("Unknown install step")
             changed = True

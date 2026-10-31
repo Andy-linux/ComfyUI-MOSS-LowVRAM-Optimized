@@ -4,6 +4,7 @@ Pillow
 einops>=0.8.2
 safetensors>=0.8.0
 transformers>=5.20.1,<6
-diffusers>=0.41.0,<0.42
+diffusers>=0.41.0,<1.0
 accelerate
 comfy-kitchen>=0.2.37
+packaging>=20

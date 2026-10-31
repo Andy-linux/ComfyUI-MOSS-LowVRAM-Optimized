@@ -74,9 +74,7 @@ print(json.dumps({'python': sys.executable, 'root': str(root.resolve()), 'port':
     if ([System.IO.Path]::GetFullPath($source) -ne [System.IO.Path]::GetFullPath($destination)) {
         Get-ChildItem -LiteralPath $source -Force | Where-Object { $_.Name -notin @('.git', '__pycache__', 'node.zip', 'models.local.json') } | Copy-Item -Destination $destination -Recurse -Force
     }
-    Write-Host '正在安装节点所需的 Python 依赖……'
-    & $Python -s -m pip install --disable-pip-version-check -r (Join-Path $destination 'requirements.txt')
-    if ($LASTEXITCODE -ne 0) { throw 'Python 依赖安装未完成。请保留此窗口的错误信息，确认网络后重新运行安装器；不会重装 ComfyUI。' }
+    Write-Host '正在准备节点运行组件，保留当前 ComfyUI 与 Torch……'
     & $Python -s (Join-Path $destination 'install.py')
     if ($LASTEXITCODE -ne 0) { throw 'MOSS 运行环境尚未准备完成。详细原因已显示在窗口中，不能把此状态视为安装成功。' }
     Show-Message 'MOSS 安装完成。现在关闭并重新启动 ComfyUI，刷新网页，再拖入同文件夹中的 example_workflows\00_moss_lowvram.json。准备向导会自动打开，按提示确认模型下载后即可运行。'

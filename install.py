@@ -1,15 +1,13 @@
 """Prepare the current ComfyUI interpreter from Manager or the setup dialog."""
 import argparse
-import importlib.util
 import json
 from pathlib import Path
 import sys
 
 
 def main(argv=None):
-    spec = importlib.util.spec_from_file_location("moss_install_dependencies", Path(__file__).resolve().parent / "runtime/install_dependencies.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from runtime import install_dependencies as module
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--result-file", type=Path)
