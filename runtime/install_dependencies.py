@@ -79,7 +79,7 @@ def _prerequisites(report):
 
 
 def _linux_requirement(report):
-    return windows_triton_requirement(report).replace("triton-windows", "triton")
+    return windows_triton_requirement(report).replace("triton-windows", "triton").replace(".post13", "")
 
 
 def _sage_state(record):

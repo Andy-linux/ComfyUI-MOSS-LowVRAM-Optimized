@@ -17,12 +17,12 @@ try {
     if (-not $Python -or -not $ComfyRoot) {
         $instances = @()
         $probe = Join-Path $source 'tools\inspect_comfy_process.py'
-        $processes = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -match '^python(w)?\.exe$' -and $_.CommandLine -match '\bmain\.py\b' })
+        $processes = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -match '^python(w)?\.exe$' -and $_.CommandLine -match '\bmain\.py\b' -and $_.ExecutablePath })
         foreach ($process in $processes) {
             # A Windows venv launcher owns a base-Python child with the same command.
             if ($processes.ProcessId -contains $process.ParentProcessId) { continue }
             $start = New-Object System.Diagnostics.ProcessStartInfo
-            $start.FileName = $process.ExecutablePath
+            $start.FileName = Join-Path (Split-Path $process.ExecutablePath) 'python.exe'
             $start.Arguments = '-s "' + $probe + '" ' + $process.ProcessId
             $start.UseShellExecute = $false
             $start.CreateNoWindow = $true
