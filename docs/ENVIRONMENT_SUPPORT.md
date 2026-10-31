@@ -32,7 +32,7 @@
 | Kohaku FP8 row计算与共享16-bit模式 | 当前实现要求SM89+ |
 | Original BF16 / FP16 TE | 使用对应浮点权重与计算选项 |
 | auto注意力 | PyTorch SDPA |
-| Sage | 固定wheel与精确匹配的Windows Python3.12 / SM89宿主 |
+| Sage | SM89、Windows、Python3.12/3.13；上游稳定ABI wheel支持Torch>=2.10,<3与CUDA13，安装后检查原生扩展导入 |
 | Turing Flash | 固定独立资产与精确Windows SM75 ABI，FP16限定路径 |
 | VAE | FP32精度边界 |
 

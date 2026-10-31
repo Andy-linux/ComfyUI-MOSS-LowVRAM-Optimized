@@ -77,7 +77,7 @@ print(json.dumps({'python': sys.executable, 'root': str(root.resolve()), 'port':
     Write-Host '正在准备节点运行组件，保留当前 ComfyUI 与 Torch……'
     & $Python -s (Join-Path $destination 'install.py')
     if ($LASTEXITCODE -ne 0) { throw 'MOSS 运行环境尚未准备完成。详细原因已显示在窗口中，不能把此状态视为安装成功。' }
-    Show-Message 'MOSS 安装完成。现在关闭并重新启动 ComfyUI，刷新网页，再拖入同文件夹中的 example_workflows\00_moss_lowvram.json。准备向导会自动打开，按提示确认模型下载后即可运行。'
+    Show-Message 'MOSS 安装完成。现在关闭并重新启动 ComfyUI，刷新网页，再拖入同文件夹中的 example_workflows\00_moss_lowvram.json。准备向导会自动打开。选择已有本地模型即可运行；缺少模型时只勾选需要的文件下载。'
 } catch {
     Write-Host $_.Exception.Message -ForegroundColor Red
     if (-not $NonInteractive) { [void][System.Windows.Forms.MessageBox]::Show($_.Exception.Message, 'MOSS 尚未安装完成', 'OK', 'Error') }

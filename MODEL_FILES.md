@@ -1,10 +1,10 @@
 # 模型与离线导出
 
-## 在界面准备
+## 本地使用与可选下载是两条独立路径
 
-导入 [00工作流](example_workflows/00_moss_lowvram.json)，在配置节点选择系列、DiT、TE与VAE，点击
-**Prepare / check selected configuration**，确认计划后准备资源。
-默认选择SFT W5、Sumomo INT8 TE v2 / W8A16和原MOSS VAE。
+模型文件不随节点包安装，不要求下载任何不使用的模型系列、精度或编码器。
+在 [00工作流](example_workflows/00_moss_lowvram.json)中选择系列、存储格式和实际计算方式，然后从下拉框选择自己的文件。
+也可保持 `auto`，按所选类型的常见文件名在标准目录及子目录中查找。
 
 | ComfyUI目录 | 用途 |
 | --- | --- |
@@ -12,8 +12,15 @@
 | `models/text_encoders/` | 文本编码器 |
 | `models/vae/` | VAE |
 
-支持 `extra_model_paths.yaml` 注册目录。匹配文件经过完整SHA256校验后原位复用；Original TE按计划准备完整目录。
-INT8 TE v2推荐别名为 `moss-image-qwen35-int8-convrot-v2.safetensors`，以区分旧v1。
+支持 `extra_model_paths.yaml` 注册目录、子文件夹、自定义文件名。已有本地模型直接加载，
+**不需要进入 Prepare，不需要下载凭证，不要求与本项目推荐文件的 SHA256 相等**。
+相同后缀不代表模型格式相同；文件的架构、量化格式仍必须匹配所选加载方式。
+各阶段按需加载；完整生成需要对应 DiT、TE 和 VAE，只运行编码节点不要求另外两类权重。
+
+缺文件时可使用可选下载助手：在准备窗口展开下载区，勾选需要的文件，再点击“下载勾选项目”。
+默认不勾选，支持单独下载 DiT、TE、VAE 或 Original TE bundle 内所需文件。
+只校验通过助手下载的字节，不覆盖已有文件；运行环境准备不阻塞独立模型下载。
+Original TE 真正执行时仍需要完整分片、index/config 与配套 tokenizer。
 
 ## 可选资产
 
@@ -45,8 +52,8 @@ W5/W6来自[Andylinux/MOSS-Image-SFT-W5A8-W6A8](https://huggingface.co/Andylinux
 使用ComfyUI同一Python，从插件目录执行并明确指定所需asset：
 
 ```sh
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets sft_w5 te_int8 vae --dry-run
-python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets sft_w5 te_int8 vae
+python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets vae --dry-run
+python tools/download_models.py --models-dir /path/to/ComfyUI/models --assets vae
 ```
 
 `--verify-only`校验本地文件。下载先写临时文件，大小与SHA256匹配后写入目标；目标文件系统需支持硬链接，如NTFS或ext4。

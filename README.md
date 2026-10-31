@@ -13,7 +13,9 @@
 
 重启完成后，按键盘 **F5 / Ctrl+R 刷新网页**。准备向导会自动打开。
 如果显示 **准备运行环境**，点击它，再点击 **重启并继续**；插件会为这个 ComfyUI 的 Python 补齐 Triton 和必要开发文件，不更换 Torch。
-环境就绪后点击 **确认下载 / 校验**。看到 **准备完成**，关闭窗口并点击顶部 **运行**。
+已有模型时，在向导或配置节点选择本地文件即可，**不要求下载记录或推荐文件的哈希**。
+没有所需模型时展开 **可选下载助手**，只勾选需要的文件再下载；例如仅下载 VAE，不会附带下载 DiT 和文本编码器。
+运行环境与模型分别准备。对应输入齐全后关闭窗口并点击顶部 **运行**。
 
 首次生成包含内核编译。以后再次打开同一个工作流，无需重复安装或下载。
 
@@ -23,7 +25,7 @@
 保持 ComfyUI 打开，安装器会识别它实际使用的 Python 和节点目录；有多个实例时会让你选择。
 安装完成后关闭并重新启动 ComfyUI、刷新网页，再拖入包内 `example_workflows/00_moss_lowvram.json`，继续上面的准备向导。
 
-这个入口不依赖插件市场，不安装第二个 Manager；仍需要网络下载 Python 依赖和模型。
+这个入口不依赖插件市场，不安装第二个 Manager；缺少的 Python 依赖需要网络，模型不随插件安装。
 Windows Desktop、Windows Portable 和源码部署使用同一套节点和准备向导。
 Desktop 自带 Manager；Portable / 源码部署不保证已启用 Manager，不能靠一个 JSON 安装 Manager。
 
@@ -47,7 +49,11 @@ Base建议50步。切换系列保留提示词、seed与采样参数；需要时�
 ## 模型与目录
 
 模型使用ComfyUI的 `models/diffusion_models/`、`models/text_encoders/`、`models/vae/`，并识别已注册的 `extra_model_paths.yaml`。
-Prepare会校验并复用匹配文件，只下载当前所选组合缺少的资源。Original TE按完整目录准备分片、配置和tokenizer。
+本地模型由 ComfyUI 的目录检索接口查找，支持子文件夹、手动选择的名称和已有额外目录。
+推理不依赖下载清单、固定文件大小或 SHA256 记录；模型格式由实际加载器检查。
+DiT、文本编码器、VAE 分别按执行阶段加载：只执行文本编码时不要求另外两类文件。
+可选下载助手按文件勾选，仅对其实际下载的字节做 SHA256 校验，不覆盖已有本地文件。
+Original TE 使用完整的分片、配置和配套 tokenizer 目录，不能把单个分片当作整个编码器。
 
 Base/SFT各一份FP8 row权重，可选择FP8或16-bit计算。模型清单、来源、目录及离线导出见[MODEL_FILES.md](MODEL_FILES.md)。
 
@@ -63,7 +69,8 @@ SM75 / RTX20 使用 `triton-windows>=3.2.0.post13,<3.3`，采用 standalone Trit
 便携 Python 3.12/3.13 缺少开发文件时，按实际解释器补齐。
 
 Diffusers 接受 `>=0.41,<1.0`，不再因人为的 `<0.42` 上限排除新版。安装器保存宿主当前核心组件版本，
-普通依赖安装不得顺带替换 Torch。可选 Sage/Turing 二进制仍遵守它们自身的 ABI 条件，不影响默认 auto 路线。
+普通依赖安装不得顺带替换 Torch。SM89 的 Sage 使用上游稳定 ABI wheel，支持 Python3.12/3.13、Torch>=2.10,<3、CUDA13；不会为了可选 Sage 强制降级 Torch。
+可选 Turing Flash 仍保留其独立的历史 ABI 限制。两者不改变默认 auto 数值路线。
 完整策略、实测环境和未做实卡验收的范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
 
 显式A8 TE要求SM80+，FP8计算要求SM89+；完整范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
@@ -76,7 +83,7 @@ Manager 的“冲突”需要看具体原因。若显示“安全验证待定 / 
 
 ## 分享与许可
 
-分享00 JSON或带工作流metadata的输出PNG，接收者导入后通过Manager安装节点，再准备模型。
+分享00 JSON或带工作流metadata的输出PNG。接收者安装节点后选择自己的模型；只下载所缺的组件，不要求同步整套权重。
 
 正式包名为 `kohaku-moss-lowvram-optimized`。代码遵循[KohakuMoss License1.0](LICENSE)，保留Kohaku品牌与组件归属。
 权重及依赖采用各自许可，见[NOTICE](NOTICE)、[组件说明](THIRD_PARTY_NOTICES.md)和[来源清单](LICENSE_PROVENANCE.json)。

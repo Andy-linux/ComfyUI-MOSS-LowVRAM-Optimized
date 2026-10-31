@@ -2,6 +2,10 @@
 
 ## 0.1.6
 
+- 模型权重与环境准备分离。通过 ComfyUI 注册目录读取自备文件，推理不再强制要求推荐哈希或 Prepare 下载记录。
+- 下载助手按文件勾选，默认不选；可只下载部分组件。已有文件不覆盖，模型按实际执行阶段加载。
+- Sage 稳定ABI wheel采用上游兼容范围，保留最新Torch下的可选加速，不把历史验收版本当成安装门槛。
+
 - 运行依赖改为按显卡和 Torch 小版本选择兼容范围，复用范围内的 Triton patch/post 版本；不更换宿主 Torch、ComfyUI 或核心组件。
 - SM75 保留 Triton 3.2 standalone JIT 路线，取消无关的 Torch 2.10 精确限制；SM89/SM120 跟随现代 Torch 的上游配对。
 - 接受新版 Diffusers，不再因 `<0.42` 上限带动 Hugging Face Hub 降级。向导可补齐缺失的普通依赖和不匹配的 Triton。
