@@ -25,6 +25,8 @@ class PreparationConflict(RuntimeError):
 
 
 def relative_name(value):
+    if isinstance(value, str):
+        value = value.replace("\\", "/")
     if (not isinstance(value, str) or not value or "\\" in value or ":" in value
             or "\x00" in value or value.startswith("/")
             or any(part in ("", ".", "..") for part in value.split("/"))):
