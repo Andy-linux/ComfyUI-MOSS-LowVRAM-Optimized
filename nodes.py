@@ -69,7 +69,7 @@ class MOSSOptimizedSessionLoader:
             "model":(list(_MODELS),{"tooltip":"W5/W6/W8 使用原整数量化码；位数越高，权重占用越大，画面可能变化。4 GB 的 W6/W8 逐层搬运部分权重，耗时受 PCIe 影响。"}), 
             "profile":(list(_PROFILES),{"default":"6 GB","tooltip":"4/6/8/12/16 GB 对应 3.5/5.5/7.5/11.5/15.5 GiB 进程分配限额。cudaMallocAsync 限制申请字节，内存池 reserved 可更大；不是整卡专用显存硬上限。不改变尺寸和步数。"}), 
             "text_encoder":(list(_TEXT),{"tooltip":"旧 INT8 ConvRot 实际为 W8A16；旧 W4A8 GPTQ 保留原 W4存储+A16 路径。新带 W8A8/W4A8 标签的选项执行真实 INT8 GEMM，数值会变化。Original 加载原始浮点权重，auto 内存策略使用 ring。所有 conditioning 输出为 FP16。"}), 
-            "attention":(list(_ATTENTION),{"tooltip":"auto/Flash/cuDNN 不额外量化 Q/K/V。Sage 的 QK8 为 Q/K INT8；PV16 路径的 V 使用 FP16，PV FP8 量化 P/V。fast 使用专用 V 缩放和混合累加；H128 匹配旋转可能减轻部分误差。Sage/CK 可能改变文字、人脸和构图，不能视为普遍无损。本轮新增 Sage/CK/cuDNN 适配限 SM89。"}), 
+            "attention":(list(_ATTENTION),{"tooltip":"auto/Flash/cuDNN 不额外量化 Q/K/V。Sage 的 QK8 为 Q/K INT8；PV16 路径的 V 使用 FP16，PV FP8 量化 P/V。fast 使用专用 V 缩放和混合累加；H128 匹配旋转可能减轻部分误差。Sage/CK 可能改变文字、人脸和构图，不能视为普遍无损。Sage/CK/cuDNN 按实际 SM 与后端能力选择；默认 auto 保持 PyTorch SDPA。"}), 
             "qkv_backend":(["auto","shared","native","register","register3"],{"tooltip":"auto 按显卡和工作集选路径。shared 共享 A8 量化；native 合并投影；register 融合写回；register3 使用独立 Q/K/V 输出。W5/6G/Flash 实测 register3 小幅提速，其他组合未普遍验证；4G 长图请保持 auto，以启用完整容量策略。"}), 
             "ffn_tile":(["auto",0,2048],{"tooltip":"auto 优先整段计算，容量紧张才分块；0 强制整段；2048 降低激活峰值，通常增加耗时。"}), 
             "host_arena":("BOOLEAN",{"default":True,"tooltip":"复用 W5/W6 packed 存储，或 W8/6G、8G 的原 INT8 CPU arena。W8 arena 约 4.43 GiB 系统内存，首次组装有成本；必要 GPU 上传仍保留。4G 流式路径总是复用原码。"}),

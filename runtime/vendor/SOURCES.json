@@ -2535,7 +2535,7 @@
     },
     {
       "path": "qkv_reuse_input.py",
-      "current_sha256": "cbad7b826fa5d70e25a7ebc63cb4e3484d078675a4d5aed31449ea18657dc0c1",
+      "current_sha256": "2811f3cee6bbd47adb1b3d78f6104e7c6c2a535540e4bfda966ef91ab16c1480",
       "formatting_before_sha256": "592c19cfb6ff91e048913ede25bcc387be640107ba4631a57ab575316f43adda",
       "modification_scope": "Existing local inference integration. Formatting only: removed E702 semicolon style warnings; ast.dump(include_attributes=False) exactly equal before/after; no kernel or arithmetic change."
     },

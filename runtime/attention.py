@@ -1,4 +1,4 @@
-"""Explicit Ada attention choices. Dense geometry and complete K/V are preserved.
+"""Explicit CUDA attention choices. Dense geometry and complete K/V are preserved.
 
 Sage choices add Q/K (and optionally P/V) quantization and are never silently
 selected by the numerically conservative auto mode. Backend failure propagates.

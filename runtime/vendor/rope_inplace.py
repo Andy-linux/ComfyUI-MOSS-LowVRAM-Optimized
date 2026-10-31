@@ -4,6 +4,7 @@ The original kernel owns disjoint (token,head) rows and loads each complete row
 before either store. Fixed launch, never repeated autotuning of mutable inputs.
 Only fresh independent Q/K output storages owned by register3 are admitted.
 """
+from packaging.version import Version
 import torch
 
 CONFIG={"ROWS":16,"warps":4}
@@ -31,7 +32,7 @@ def qk_norm_rope_inplace(q,k,q_weight,k_weight,pos,bands,eps):
         raise ValueError("In-place wrapper is qualified only for SM89 or measured SM75")
     if capability==(7,5):
         import triton
-        if str(triton.__version__).split(".")[:2]!=["3","2"]:
+        if not Version("3.2") <= Version(triton.__version__) < Version("3.3"):
             raise ValueError("Measured SM75 in-place wrapper requires uniform Triton3.2")
     n,h,_=q.shape
     qr=torch.empty(n*h,device=q.device,dtype=torch.float32)

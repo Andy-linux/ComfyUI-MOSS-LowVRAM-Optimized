@@ -11,6 +11,7 @@ Not qualified/default until per-architecture INT32, output, attention and image 
 
 import threading
 import types
+from packaging.version import Version
 import torch
 import triton
 import triton.language as tl
@@ -248,7 +249,7 @@ def project(
             "Private-input Q reuse is qualified only for SM89 or measured SM75"
         )
     if capability == (7, 5) and (
-        bits != 5 or str(triton.__version__).split(".")[:2] != ["3", "2"]
+        bits != 5 or not Version("3.2") <= Version(triton.__version__) < Version("3.3")
     ):
         raise ValueError(
             "SM75 private-input Q reuse requires measured W5 and uniform Triton3.2"

@@ -51,7 +51,7 @@ def architecture_policy(report):
         return {"architecture": f"SM{sm} / Blackwell", "triton": "match Torch minor; Triton>=3.3",
                 "execution": "INT8 GEMM + Triton JIT; no Turing binaries",
                 "default": "W5 INT8 GEMM / TE W8A16 ring / FP16 boundary / SDPA / FP32 VAE",
-                "note": "默认使用通用 ring 编码与 SDPA，不套用仅在 Ada 测得的驻留和注意力优化。"}
+                "note": "默认使用 ring 编码与 SDPA；可显式选择 Sage、公共 Flash 和 CK INT8。"}
     return {"architecture": f"SM{sm}", "triton": "match Torch minor",
             "execution": "hardware-supported arithmetic", "default": "W5 / W8A16 / SDPA",
             "note": "按实际算子能力检查，不把版本号相等当成硬件能力。"}
