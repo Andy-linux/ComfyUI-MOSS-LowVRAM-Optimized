@@ -22,6 +22,8 @@ class AttentionBackend:
         minimum = 75 if backend == "ck_int8" else 89 if backend.startswith("sage_fp8") else 80
         if sm < minimum:
             raise ValueError(f"{backend} requires SM{minimum} or newer; detected SM{sm}")
+        if backend in ("sage_fp16", "sage_fp16_rot") and not 80 <= sm < 90:
+            raise ValueError("Sage CUDA PV16 wheels contain SM8x kernels; select Sage QK8 / PV FP8 or CK INT8 on this GPU.")
         if head_group not in (0, 8, 12, 24):
             raise ValueError("head_group must be 0, 8, 12 or 24")
         self.backend, self.head_group = backend, head_group
@@ -50,7 +52,7 @@ class AttentionBackend:
                 fn_name = "sageattn_qk_int8_pv_fp16_cuda"
                 self.kw = {"qk_quant_gran": "per_thread", "pv_accum_dtype": "fp32"}
             elif backend in ("sage_fp8", "sage_fp8_fast", "sage_fp8_rot"):
-                fn_name = "sageattn_qk_int8_pv_fp8_cuda"
+                fn_name = "sageattn_qk_int8_pv_fp8_cuda_sm90" if 90 <= sm < 100 else "sageattn_qk_int8_pv_fp8_cuda"
                 self.kw = {
                     "qk_quant_gran": "per_thread",
                     "pv_accum_dtype": "fp32+fp32"

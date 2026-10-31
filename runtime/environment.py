@@ -274,6 +274,8 @@ def evaluate_selection(report, selection):
         minimum = 75 if attention == "ck_int8" else 89 if attention.startswith("sage_fp8") else 80
         if sm < minimum:
             error("attention_architecture", f"{attention} 需要 SM{minimum}+，当前 SM{sm}。", "请选择该显卡支持的计算方式。")
+        if attention in ("sage_fp16", "sage_fp16_rot") and not 80 <= sm < 90:
+            error("attention_architecture", "Sage CUDA PV16 安装包提供 SM8x 内核；当前显卡可选 Sage QK8 / PV FP8 或 CK INT8。", "选择 Sage QK8 / PV FP8、CK INT8 或 auto。")
         if attention.startswith("sage_"):
             d = deps.get("sageattention", {})
             if d.get("status", "missing") in ("missing", "incompatible"):
