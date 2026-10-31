@@ -53,3 +53,5 @@ Prepare根据实际CUDA设备、SM、依赖和所选模型检查配置。未知�
 ## 本次兼容更新的验收记录
 
 实际运行数据以 `docs/ACCEPTANCE_0.1.6.md` 为准。只有 SM89 在维护机器上执行完整生成；SM75/SM120 的策略和硬件限制已实现，但不把静态检查冒称为实卡生成验收。
+
+SM75 的编译组合算子已在本包 vendored dispatch 中明确排除现代 Inductor，保持原 dtype 的 eager 组合；独立 Triton3.2 和 INT8 GEMM 不关闭，也不全局修改其它 ComfyUI 节点的 torch.compile。该架构的新宿主组合仍需要实卡验收。

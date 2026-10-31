@@ -105,6 +105,11 @@ def _pattern(args) -> tuple:
     return tuple(keys)
 
 
+@cache
+def _standalone_turing(device: torch.device) -> bool:
+    return device.type == "cuda" and torch.cuda.get_device_capability(device) == (7, 5)
+
+
 def _fresh(fn: Callable, tag: str) -> Callable:
     """A copy of `fn` with its own code object (named `<name>_<tag>`), hence its own
     Dynamo cache."""
@@ -170,6 +175,9 @@ class CompiledOp:
         """The runner of `args`' call pattern (compiled on first use), with the build
         failure translation of `__call__`."""
         key = _pattern(args)
+        if _standalone_turing(key[0]):
+            # Triton 3.2 JIT kernels remain active; modern Inductor is not used on SM75.
+            return self.eager
         run = self.runners.get(key)
         if run is None:
             run = self.runners[key] = partial(self._run, key, self._compile(key))

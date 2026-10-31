@@ -2089,12 +2089,14 @@
     {
       "path": "kohaku_src/kohakumoss_kernels/backends/compile/ops.py",
       "historical_copy_sha256": "3fad2981a33755419b3c81772dd340b54bf46ab85eaddc3d5b68e949f8dd359f",
-      "current_sha256": "3fad2981a33755419b3c81772dd340b54bf46ab85eaddc3d5b68e949f8dd359f"
+      "current_sha256": "b6ddebec3781e28f53aece7c88983e819228efae86f31ef8962235fc5a4947ba",
+      "local_change": "SM75 keeps standalone Triton 3.2 kernels; compiled compositions use their original dtype-preserving eager body without invoking modern Inductor. Other devices retain the upstream compiler."
     },
     {
       "path": "kohaku_src/kohakumoss_kernels/backends/compile/__init__.py",
       "historical_copy_sha256": "0cf4f19f59f0459eca42718b2fec22258296df637453707bc8be786f57db0cf2",
-      "current_sha256": "0cf4f19f59f0459eca42718b2fec22258296df637453707bc8be786f57db0cf2"
+      "current_sha256": "c383a639740fdbc62bdfdbd3a817dd7fef10d0ec18a9c5fffb40f62fd854ae61",
+      "local_change": "SM75 keeps standalone Triton 3.2 kernels; compiled compositions use their original dtype-preserving eager body without invoking modern Inductor. Other devices retain the upstream compiler."
     },
     {
       "path": "kohaku_src/kohakumoss_kernels/backends/eager/attention.py",

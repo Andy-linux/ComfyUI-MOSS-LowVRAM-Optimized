@@ -23,6 +23,8 @@ def check(device: torch.device) -> None:
         if not toolchain.ok:
             raise RuntimeError(toolchain.detail)
         return
+    if device.type == "cuda" and torch.cuda.get_device_capability(device) == (7, 5):
+        raise RuntimeError("SM75 uses standalone Triton 3.2 kernels and eager compositions, not modern Inductor")
     if not installed("triton"):
         raise RuntimeError(f"inductor on {device.type} needs triton")
     why = status.probe("triton", device)
