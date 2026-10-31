@@ -223,7 +223,8 @@ async function showSetup(node) {
         copy.disabled = !reviewedReport || checking;
         const waitingRestart = Boolean(reviewedReport?.dependency_preparation?.restart_required);
         const hasOptionalPreparation = Boolean(reviewedReport?.dependency_plan.optional_steps?.length);
-        prepare.hidden = !reviewedReport || (reviewedReport.runtime_ready && !hasOptionalPreparation) || waitingRestart || reviewedReport.dependency_plan.status === "unsupported";
+        const hasRuntimePreparation = Boolean(reviewedReport?.dependency_plan.steps?.length);
+        prepare.hidden = !reviewedReport || (!hasRuntimePreparation && !hasOptionalPreparation) || waitingRestart || reviewedReport.dependency_plan.status === "unsupported";
         prepare.textContent = reviewedReport?.runtime_ready ? "准备可选加速组件" : "准备运行环境";
         prepare.disabled = busy || checking;
         restart.hidden = !waitingRestart;
@@ -284,18 +285,30 @@ async function showSetup(node) {
             reviewedReport = report; reviewedSelection = JSON.stringify(selection(node));
             const warnings = compatibilityWarnings(report);
             const waitingRestart = report.dependency_preparation.restart_required;
-            body.replaceChildren(element("h3", report.runtime_ready ? "运行环境已就绪" : waitingRestart ? "环境已准备，请重启并继续" : "先准备运行环境"));
+            const selectionBlocked = !report.runtime_ready && !waitingRestart && report.dependency_plan.status === "ready";
+            body.replaceChildren(element("h3", report.runtime_ready ? "运行环境已就绪" : waitingRestart ? "环境已准备，请重启并继续" : selectionBlocked ? "调整当前计算选项" : "先准备运行环境"));
             if (waitingRestart) {
                 body.append(element("p", "点击“重启并继续”。工作流将被保留，重新连接后自动打开本向导。"));
             } else if (!report.runtime_ready) {
                 if (report.dependency_plan.status === "unsupported") {
                     for (const issue of report.dependency_plan.errors) body.append(element("p", issue.message));
                     body.append(link("查看当前环境的安装说明", "https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/blob/main/docs/INSTALLATION_GUIDE.md"));
-                } else {
+                } else if (!selectionBlocked) {
                     body.append(element("p", "点击“准备运行环境”，自动为当前 ComfyUI 补齐缺少的运行组件；不更换 Python、Torch 或模型配置。"));
                     for (const step of report.dependency_plan.steps) body.append(element("p", step.requirement ?? step.message));
                 }
                 for (const issue of report.evaluation.errors) body.append(element("p", issue.message));
+                if (selectionBlocked && report.evaluation.errors.some(issue => ["attention_architecture", "flash_architecture"].includes(issue.code))) {
+                    const row = element("label", "选择当前显卡可用的注意力后端： ");
+                    const choose = element("select"); choose.setAttribute("aria-label", "注意力后端");
+                    choose.style.cssText = "padding:8px;background:#303a46;color:#fff;border:1px solid #617080;border-radius:5px;font:inherit";
+                    const placeholder = element("option", "请选择"); placeholder.value = ""; choose.append(placeholder);
+                    for (const item of report.options.attention.filter(item => item.enabled)) {
+                        const option = element("option", item.label ?? item.value); option.value = item.value; choose.append(option);
+                    }
+                    choose.onchange = async () => { if (!choose.value) return; setValue(node, "attention", choose.value); invalidate(node); await render(); };
+                    row.append(choose); body.append(row);
+                }
             }
             body.append(environmentDetails(report), element("h3", "本地模型（与环境准备独立）"));
             body.append(element("p", "已有模型可直接选择并运行，无须使用下载助手或取得校验记录。支持 ComfyUI 标准目录、子文件夹和 extra_model_paths.yaml。文件格式必须与所选存储方式匹配。"));
