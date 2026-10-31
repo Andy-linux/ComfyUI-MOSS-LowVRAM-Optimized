@@ -8,6 +8,14 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import quote
 from urllib.request import Request, urlopen
 
+def configure_proxy():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("moss_download_network", Path(__file__).resolve().parents[1] / "runtime/network.py")
+    network = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(network)
+    network.configure_proxy()
+
+
 DEFAULT_MANIFEST = Path(__file__).resolve().parents[1] / "model_manifest.json"
 
 
@@ -73,6 +81,7 @@ def verify(path, row, progress=None):
 
 
 def install(row, root, progress=None, *, verify_only=False):
+    configure_proxy()
     target, url = checked_file(row, root)
     if verify(target, row, progress):
         return {"path": str(target), "status": "VERIFIED_EXISTING"}

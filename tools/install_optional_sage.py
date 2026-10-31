@@ -8,9 +8,10 @@ import argparse, hashlib, importlib.metadata, io, json, shutil, stat, sys, tempf
 from pathlib import Path
 from packaging.version import Version
 
-URL = "https://github.com/woct0rdho/SageAttention/releases/download/v2.2.0-windows.post6/sageattention-2.2.0%2Bcu130torch2.10.0andhigher.post6-cp310-abi3-win_amd64.whl"
-SHA256 = "1635283f5c01ec3cda58a784d0d7eabbcaffaf9511d1b263db4750e1ed7958bb"
-BYTES = 16656067
+import importlib.util
+spec = importlib.util.spec_from_file_location("moss_sage_artifacts", Path(__file__).resolve().parents[1] / "runtime/sage_artifacts.py")
+artifacts = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(artifacts)
 
 
 def prepare(wheel, node_root):
@@ -18,9 +19,13 @@ def prepare(wheel, node_root):
     if sys.platform != "win32" or sys.version_info < (3, 10):
         raise RuntimeError("This qualified wheel requires Windows / Python >=3.10")
     import torch
-    version = Version(torch.__version__)
-    if not Version("2.10") <= version < Version("3") or str(torch.version.cuda).split(".")[0] != "13":
-        raise RuntimeError("The upstream stable-ABI wheel requires Torch>=2.10,<3 with CUDA major 13")
+    version = Version(importlib.metadata.version("torch"))
+    if not Version("2.10") <= version < Version("3"):
+        raise RuntimeError("Sage stable ABI requires Torch>=2.10,<3")
+    record = artifacts.artifact(torch.version.cuda)
+    if not record:
+        raise RuntimeError("Sage wheel requires CUDA build >=12,<14")
+    URL, SHA256, BYTES = record["url"], record["sha256"], record["bytes"]
     data = wheel.read_bytes()
     if len(data) != BYTES:
         raise ValueError("Unexpected wheel byte size")
@@ -34,8 +39,8 @@ def prepare(wheel, node_root):
         "url": URL,
         "sha256": SHA256,
         "wheel_bytes": BYTES,
-        "torch": "2.10.0+cu130",
-        "scope": "Optional SM89 attention; no global dependency changes",
+        "torch_compatibility": ">=2.10,<3",
+        "scope": "Optional CUDA attention; shared stable ABI",
     }
     with zipfile.ZipFile(io.BytesIO(data)) as archive:
         names = archive.namelist()
@@ -67,7 +72,7 @@ def prepare(wheel, node_root):
         if (
             not target.is_dir()
             or not recorded.is_file()
-            or json.loads(recorded.read_text()) != provenance
+            or json.loads(recorded.read_text(encoding="utf-8")).get("sha256") != provenance["sha256"]
             or not all((target / name).is_file() for name in required)
         ):
             raise FileExistsError(
