@@ -48,7 +48,7 @@ class MOSSOptimizedConfiguration(MOSSOptimizedSessionLoader):
     def configure(self, **kwargs):
         # The legacy loader owns caching, lifetime, final environment validation
         # and construction. No intermediate configuration node is required.
-        from .runtime.setup_service import default_service
+        from .runtime.local_models import runtime_checkpoints
         resolved = resolve_configuration(kwargs)
-        resolved.update(default_service().preparation.runtime_checkpoints(kwargs))
+        resolved.update(runtime_checkpoints(kwargs))
         return self.load_session(**resolved)

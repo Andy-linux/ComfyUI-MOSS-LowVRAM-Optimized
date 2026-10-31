@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from . import catalog
+from .local_models import inspect_models
 from .environment import evaluate_selection, inspect_environment
 from .install_dependencies import dependency_plan
 from .dependency_preparation import DependencyPreparation
@@ -135,13 +136,12 @@ class SetupService:
                 "assets": self.preparation.summary(files),
                 "options": hardware_options(selection, environment),
                 "defaults": catalog.checkpoint_defaults(selection), "models": models,
+                "local_models": [{k: v for k, v in row.items() if k != "_path"} for row in inspect_models(selection)],
                 "dependency_plan": plan}
 
-    def download(self, selection, repair_files=None):
-        selection = validate_selection(selection)
-        if not self.inspect(selection)["runtime_ready"]:
-            raise ValueError("请先点击“准备运行环境”，完成重启后再下载模型。")
-        return self.preparation.start(selection, repair_files=repair_files)
+    def download(self, selection, repair_files=None, selected_files=None):
+        return self.preparation.start(validate_selection(selection), repair_files=repair_files,
+                                      selected_files=selected_files)
 
     def job(self, job_id):
         return self.preparation.get(job_id)
@@ -189,7 +189,7 @@ def default_service():
 
 
 def _request_body(body, *, inspect=False):
-    allowed = {"selection", "verify"} if inspect else {"selection", "repair_files"}
+    allowed = {"selection", "verify"} if inspect else {"selection", "repair_files", "selected_files"}
     if not isinstance(body, dict) or set(body) - allowed or "selection" not in body:
         raise ValueError("仅接受 selection 配置；不接受 URL、自定义清单或下载路径。")
     return validate_selection(body["selection"])
@@ -234,7 +234,7 @@ def register_setup_routes(service=None):
         try:
             body = await request.json()
             selection = _request_body(body)
-            return web.json_response(await asyncio.to_thread(get_service().download, selection, body.get("repair_files", [])))
+            return web.json_response(await asyncio.to_thread(get_service().download, selection, body.get("repair_files", []), body.get("selected_files")))
         except PreparationConflict as exc:
             return web.json_response({"error": str(exc)}, status=409)
         except (ValueError, OSError) as exc:

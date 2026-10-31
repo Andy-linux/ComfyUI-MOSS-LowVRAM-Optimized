@@ -16,6 +16,8 @@ ASSETS = {
     "base_fp8": ("diffusion_models", ("moss_image_base_kohaku_fp8_row.safetensors",)),
     "sft_fp8": ("diffusion_models", ("moss_image_sft_kohaku_fp8_row.safetensors",)),
     "te_int8": ("text_encoders", ("moss-image-qwen35-int8-convrot-v2.safetensors", "moss-image-qwen35-int8-convrot.safetensors", "qwen3.5_9b_int8_convrot.safetensors")),
+    "te_int8_comfy": ("text_encoders", ("qwen3.5_9b_int8_convrot.safetensors",)),
+    "vae_flux2_small": ("vae", ("flux2-vae_small.safetensors",)),
     "te_w4": ("text_encoders", ("qwen3.5_9b_w4a8_gptq.safetensors",)),
     "te_original": ("text_encoders", ("qwen3.5_9b_bf16.safetensors", "MOSS-Image-Base/text_encoder", "MOSS-Image-SFT/text_encoder")),
     "vae": ("vae", ("moss-image-vae.safetensors", "moss_image_vae.safetensors")),
@@ -74,6 +76,12 @@ def resolve_asset(asset_id, selected="auto"):
         path = _registered(category, name)
         if path:
             return path
+    import folder_paths
+    for relative in folder_paths.get_filename_list(category):
+        if Path(relative).name in names:
+            path = _registered(category, relative)
+            if path:
+                return path
     raise FileNotFoundError(
         f"Missing {asset_id}: put {names[0]} in ComfyUI/models/{category}, "
         "or select an existing checkpoint. See MODEL_FILES.md and "

@@ -59,9 +59,13 @@ function structuralChoices(node, changed) {
     const tw = widget(node, "te_compute");
     tw.options.values = teOps;
     if (!teOps.includes(tw.value)) tw.value = teOps[0];
-    if (["model_family", "dit_storage"].includes(changed)) setValue(node, "dit_checkpoint", PINNED_NAMES[`${value(node, "model_family")}/${dw.value}`]);
-    if (changed === "te_storage") setValue(node, "te_checkpoint", PINNED_NAMES[value(node, "te_storage")]);
-    if (changed === "vae_asset") setValue(node, "vae_checkpoint", PINNED_NAMES[value(node, "vae_asset")]);
+    const resetRecommended = field => {
+        const current = value(node, field);
+        if (current === "auto" || Object.values(PINNED_NAMES).includes(current)) setValue(node, field, "auto");
+    };
+    if (["model_family", "dit_storage"].includes(changed)) resetRecommended("dit_checkpoint");
+    if (changed === "te_storage") resetRecommended("te_checkpoint");
+    if (changed === "vae_asset") resetRecommended("vae_checkpoint");
 }
 function serviceError(path, code) {
     if (code === 404 && path.includes("/jobs/")) return "准备任务已失效。请刷新检查，再确认准备。";
@@ -135,7 +139,11 @@ async function inspect(node) {
         if (node._mossInspectSerial !== serial || key !== JSON.stringify(selection(node))) return null;
         node._mossSetupReport = report;
         node.properties ??= {};
-        node.properties.models = Array.isArray(report.models) ? report.models : [];
+        node.properties.models = [];
+        for (const local of report.local_models ?? []) {
+            const w = widget(node, local.field);
+            if (w) w.options.values = [...new Set(["auto", ...local.choices, w.value])];
+        }
         for (const [field, options] of Object.entries(report.options ?? report.capabilities?.options ?? {})) {
             const w = widget(node, field);
             if (!w || !Array.isArray(options)) continue;
@@ -145,7 +153,7 @@ async function inspect(node) {
         }
         const errors = report.evaluation.errors;
         const warnings = compatibilityWarnings(report);
-        status(node, !report.runtime_ready ? "运行环境待准备，点击下方按钮" : report.assets.ready ? "已就绪，可以运行" : "模型待准备，点击下方按钮", errors.map(e => e.message).join("\n") || warnings.join("\n") || "打开准备窗口查看环境与模型状态。");
+        status(node, !report.runtime_ready ? "运行环境待准备，点击下方按钮" : report.assets.ready ? "已就绪，可以运行" : "所选模型未齐；可自行放置或使用可选下载", errors.map(e => e.message).join("\n") || warnings.join("\n") || "打开准备窗口查看环境与模型状态。");
         return report;
     })().finally(() => { if (node._mossInspectPending === pending) node._mossInspectPending = null; });
     node._mossInspectPending = pending;
@@ -190,7 +198,7 @@ async function copyEnvironmentInfo(report, container) {
         container.replaceChildren(element("p", "请选中下方环境信息复制。"), field); field.focus?.(); field.select?.();
     }
 }
-const fileStatus = value => ({ queued: "等待准备", running: "准备中", complete: "准备完成", failed: "准备失败", cancelled: "已取消", ready: "已就绪", missing: "待下载", candidate: "已有文件待校验", unverified: "待校验", mismatch: "需替换", custom: "自选文件", publish_pending: "暂无下载源", error: "需要处理", downloading: "下载中", verifying: "校验中" }[value] ?? value ?? "待检查");
+const fileStatus = value => ({ queued: "等待准备", running: "准备中", complete: "准备完成", failed: "准备失败", cancelled: "已取消", ready: "已就绪", local: "本地文件", missing: "待下载", candidate: "已有文件待校验", unverified: "待校验", mismatch: "需替换", custom: "自选文件", publish_pending: "暂无下载源", error: "需要处理", downloading: "下载中", verifying: "校验中" }[value] ?? value ?? "待检查");
 async function showSetup(node) {
     if (node._mossSetupDialog?.open) return;
     clearTimeout(node._mossInspectTimer);
@@ -200,9 +208,10 @@ async function showSetup(node) {
     const heading = element("h2", "MOSS · 配置与准备"), body = element("div"), progress = element("pre"), actions = element("div");
     progress.style.cssText = "white-space:pre-wrap;overflow-wrap:anywhere";
     actions.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;margin-top:18px";
-    const refresh = element("button", "重新检查"), copy = element("button", "复制环境信息"), download = element("button", "确认下载 / 校验"), close = element("button", "关闭");
+    const refresh = element("button", "重新检查"), copy = element("button", "复制环境信息"), download = element("button", "下载勾选项目"), close = element("button", "关闭");
     const prepare = element("button", "准备运行环境"), restart = element("button", "重启并继续");
     let busy = false, checking = false, closed = false, reviewedSelection = null, reviewedRepairs = [], reviewedReport = null;
+    const reviewedDownloads = new Set();
     const diagnostics = element("div");
     dialog.append(heading, body, progress, diagnostics, actions); actions.append(prepare, restart, download, refresh, copy, close);
     for (const button of actions.children) button.style.cssText = "padding:9px 14px;border:1px solid #617080;border-radius:6px;background:#303a46;color:#fff;cursor:pointer;font:inherit";
@@ -213,12 +222,16 @@ async function showSetup(node) {
         refresh.disabled = busy || checking;
         copy.disabled = !reviewedReport || checking;
         const waitingRestart = Boolean(reviewedReport?.dependency_preparation?.restart_required);
-        prepare.hidden = !reviewedReport || reviewedReport.runtime_ready || waitingRestart || reviewedReport.dependency_plan.status === "unsupported";
+        const hasOptionalPreparation = Boolean(reviewedReport?.dependency_plan.optional_steps?.length);
+        prepare.hidden = !reviewedReport || (reviewedReport.runtime_ready && !hasOptionalPreparation) || waitingRestart || reviewedReport.dependency_plan.status === "unsupported";
+        prepare.textContent = reviewedReport?.runtime_ready ? "准备可选加速组件" : "准备运行环境";
         prepare.disabled = busy || checking;
         restart.hidden = !waitingRestart;
         restart.disabled = busy || checking;
-        download.hidden = !reviewedReport?.runtime_ready;
-        download.disabled = busy || checking || !reviewedReport?.runtime_ready || Boolean(reviewedReport.assets.ready) || reviewedReport.assets.files.length === 0;
+        download.hidden = !reviewedReport?.assets.files.some(file => file.url && !file.ready);
+        download.disabled = busy || checking || reviewedDownloads.size === 0;
+        const selectedBytes = (reviewedReport?.assets.files ?? []).filter(file => reviewedDownloads.has(file.destination)).reduce((sum, file) => sum + (file.size_bytes ?? 0), 0);
+        download.textContent = reviewedDownloads.size ? `下载勾选项目（${reviewedDownloads.size} 项 · ${bytes(selectedBytes)}）` : "先勾选需要下载的文件";
     }
     function managerHelp(container) {
         const button = element("button", "打开 Manager"), message = element("p", "在 Manager 完成 MOSS 节点包安装，按提示应用更改或重启，再重新检查。");
@@ -262,7 +275,7 @@ async function showSetup(node) {
     }
     async function render() {
         if (busy || checking || closed) return;
-        checking = true; reviewedReport = null; reviewedSelection = null; reviewedRepairs = []; controls();
+        checking = true; reviewedReport = null; reviewedSelection = null; reviewedRepairs = []; reviewedDownloads.clear(); controls();
         progress.textContent = "正在检查环境与模型…";
         try {
             const report = await inspect(node);
@@ -284,25 +297,43 @@ async function showSetup(node) {
                 }
                 for (const issue of report.evaluation.errors) body.append(element("p", issue.message));
             }
-            body.append(environmentDetails(report), element("h3", "模型准备"));
-            const plan = report.assets, files = plan.files;
-            body.append(element("p", `总大小 ${bytes(plan.total_bytes)} · 待下载 ${bytes(plan.missing_bytes)}`));
-            for (const file of files) {
-                const row = element("div"); row.style.cssText = "padding:8px 0;border-bottom:1px solid #555;overflow-wrap:anywhere";
-                row.append(element("strong", `${file.name ?? file.asset_id} · ${fileStatus(file.status)} · ${bytes(file.size_bytes)}`));
-                if (file.resolved_name) row.append(element("div", `已复用：${file.resolved_name}`));
-                if (file.status === "candidate") row.append(element("div", "确认准备后校验已有文件；匹配时直接复用。"));
-                if (file.repair_action === "quarantine_then_download") row.append(element("strong", "确认后将旧文件保留到同目录 .moss_lowvram_rejected，再下载替代文件。"));
-                else if (["error", "mismatch", "custom", "publish_pending"].includes(file.status) && file.message) row.append(element("div", file.message));
-                const info = element("details"); info.append(element("summary", "文件与来源"), element("p", file.destination ?? ""));
-                if (file.url) info.append(link("固定来源", file.url));
-                if (file.sha256) info.append(element("p", `SHA256: ${file.sha256}`));
-                for (const rejected of file.candidate_mismatches ?? []) info.append(element("p", `已保留：${rejected.name} · ${rejected.reason}`));
-                row.append(info); body.append(row);
+            body.append(environmentDetails(report), element("h3", "本地模型（与环境准备独立）"));
+            body.append(element("p", "已有模型可直接选择并运行，无须使用下载助手或取得校验记录。支持 ComfyUI 标准目录、子文件夹和 extra_model_paths.yaml。文件格式必须与所选存储方式匹配。"));
+            for (const local of report.local_models ?? []) {
+                const row = element("label");
+                row.style.cssText = "display:grid;grid-template-columns:120px 1fr;gap:10px;margin:12px 0;align-items:center";
+                row.append(element("span", local.label));
+                const choose = element("select"); choose.setAttribute("aria-label", local.label + "文件");
+                choose.style.cssText = "min-width:0;padding:8px;background:#303a46;color:#fff;border:1px solid #617080;border-radius:5px;font:inherit";
+                for (const name of [...new Set(["auto", ...local.choices, local.selected])]) {
+                    const option = element("option", name === "auto" ? "自动查找所选类型的本地模型" : name);
+                    option.value = name; choose.append(option);
+                }
+                choose.value = local.selected;
+                choose.onchange = async () => { setValue(node, local.field, choose.value); invalidate(node); await render(); };
+                row.append(choose); body.append(row, element("p", local.ready ? `${local.filename}：已找到，可直接加载。` : local.message));
             }
+            const plan = report.assets, files = plan.files;
+            const downloads = element("details"); downloads.open = !plan.ready;
+            downloads.append(element("summary", "可选下载助手 · 按文件勾选，不下载其它组件"));
+            downloads.append(element("p", "无需下载整套模型。只勾选需要的文件；也可关闭窗口，自行下载后放入对应模型目录。下载不要求先完成运行环境准备。已有本地模型不会被替换。"));
+            for (const file of files.filter(file => file.url && !file.ready)) {
+                const row = element("div"); row.style.cssText = "padding:10px 0;border-bottom:1px solid #555;overflow-wrap:anywhere";
+                const label = element("label"), check = element("input");
+                check.type = "checkbox"; check.value = file.destination;
+                check.setAttribute("aria-label", "下载 " + file.name); check.style.marginRight = "10px";
+                check.onchange = () => { if (check.checked) reviewedDownloads.add(file.destination); else reviewedDownloads.delete(file.destination); controls(); };
+                label.append(check, element("strong", `${file.name ?? file.asset_id} · ${bytes(file.size_bytes)}`)); row.append(label);
+                if (file.repair_action) row.append(element("p", "确认后保留旧文件，再下载所选版本。"));
+                const info = element("details"); info.append(element("summary", "文件与来源"), element("p", file.destination ?? ""));
+                if (file.url) info.append(link("下载来源", file.url));
+                if (file.sha256) info.append(element("p", `下载校验 SHA256: ${file.sha256}`));
+                row.append(info); downloads.append(row);
+            }
+            if (!files.some(file => file.url && !file.ready)) downloads.append(element("p", "所选本地模型已存在，或该自选文件没有推荐下载地址；无须下载。"));
+            body.append(downloads);
             reviewedRepairs = files.filter(f => f.repair_action === "quarantine_then_download").map(f => f.destination);
-            download.textContent = reviewedRepairs.length ? "确认保留旧文件并下载替代文件" : "确认下载 / 校验";
-            progress.textContent = !report.runtime_ready ? "运行环境就绪后才会下载模型。" : plan.ready ? "准备完成。关闭本窗口，点击 ComfyUI 的“运行”生成图片。" : "确认下方大小与来源后，点击“确认下载 / 校验”。";
+            progress.textContent = report.runtime_ready && plan.ready ? "运行环境和所选本地模型已就绪。关闭窗口，点击“运行”。" : report.runtime_ready ? "运行环境已就绪。选择已有模型，或按需下载缺失文件；不必下载其它型号。" : "环境与模型分别准备；模型下载可独立使用，开始生成前需两者就绪。";
         } catch (error) {
             if (!closed) { body.replaceChildren(element("h3", "检查未完成")); if (error.mossInstallationMissing) managerHelp(body); progress.textContent = error.message; status(node, "检查未完成，请重试", error.message); }
         } finally { checking = false; controls(); }
@@ -350,7 +381,7 @@ async function showSetup(node) {
         busy = true; controls();
         try {
             if (reviewedSelection !== JSON.stringify(selection(node))) throw new Error("配置已更改，请重新检查后确认准备。");
-            const job = await request("/moss_lowvram/setup/download", { selection: selection(node), repair_files: reviewedRepairs });
+            const job = await request("/moss_lowvram/setup/download", { selection: selection(node), repair_files: reviewedRepairs.filter(name => reviewedDownloads.has(name)), selected_files: [...reviewedDownloads] });
             while (!closed) {
                 const state = await request(`/moss_lowvram/setup/jobs/${encodeURIComponent(job.job_id)}`, undefined, { timeoutMs: 15000 });
                 progress.textContent = `${fileStatus(state.state)}: ${bytes(state.bytes_done)} / ${bytes(state.bytes_total)}\n${(state.files ?? []).map(f => `${f.name ?? f.destination ?? f.asset_id ?? "文件"}: ${fileStatus(f.state ?? f.status)}`).join("\n")}${state.error ? `\n${state.error}` : ""}`;

@@ -153,8 +153,6 @@ def resolve_configuration(values):
     for field, category in (("dit_checkpoint", "diffusion_models"), ("te_checkpoint", "text_encoders"), ("vae_checkpoint", "vae")):
         if result[field] in catalog_checkpoint_choices(category) and result[field] != defaults[field]:
             raise ValueError(f"{field} belongs to a different catalog model; select matching storage/family or its recommended checkpoint")
-    if v["te_storage"] == "Comfy INT8 ConvRot" and result["te_checkpoint"] == "auto":
-        raise ValueError("Comfy INT8 ConvRot requires an explicit checkpoint; auto would select Sumomo")
     return result
 
 

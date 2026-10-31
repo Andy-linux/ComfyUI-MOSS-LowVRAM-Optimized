@@ -168,31 +168,8 @@ class ModelPreparation:
         return category + "/" + path.name
 
     def runtime_checkpoints(self, selection):
-        """Internal only: route catalog inputs to verified actual registered files."""
-        files = self.plan(selection)
-        result = {}
-        fields = {"diffusion_models": "dit_checkpoint", "text_encoders": "te_checkpoint", "vae": "vae_checkpoint"}
-        original = []
-        for item in files:
-            if item["asset_id"] == "te_original":
-                original.append(item)
-                continue
-            if item["ready"] and item["verified"]:
-                result[fields[item["destination"].split("/", 1)[0]]] = str(item["_path"])
-            elif item["_row"] is not None:
-                raise ValueError("Selected catalog model needs Prepare / full SHA256 verification: " + item["name"])
-        if original and all(item["ready"] and item["verified"] for item in original):
-            index = next(item for item in original if item["name"].endswith("model.safetensors.index.json"))
-            bundle = index["_path"].parent.parent
-            for item in original:
-                suffix = bundle_relative(item["_row"])
-                expected = bundle.joinpath(*suffix.parts)
-                if expected != item["_path"]:
-                    raise ValueError("Original TE files must be verified together in one text_encoder/tokenizer bundle")
-            result["te_checkpoint"] = str(index["_path"].parent)
-        elif original and any(item["_row"] is not None for item in original):
-            raise ValueError("Original TE needs Prepare / complete verified text_encoder and tokenizer bundle")
-        return result
+        from .local_models import runtime_checkpoints
+        return runtime_checkpoints(selection)
 
     def checkpoint_defaults(self, selection):
         # Production agrees with catalog; injected manifests remain self-contained
@@ -215,6 +192,8 @@ class ModelPreparation:
     def plan(self, selection):
         ids = catalog.asset_ids_for_selection(selection)
         defaults = self.checkpoint_defaults(selection)
+        from .local_models import inspect_models
+        local = {row["field"]: row for row in inspect_models(selection)}
         files, seen = [], set()
         for asset_id, field in zip(ids, ("dit_checkpoint", "te_checkpoint", "vae_checkpoint")):
             asset = self.assets.get(asset_id)
@@ -223,6 +202,14 @@ class ModelPreparation:
             chosen = selection.get(field, defaults[field])
             chosen = defaults[field] if chosen == "auto" else relative_name(chosen)
             category = {"dit_checkpoint": "diffusion_models", "te_checkpoint": "text_encoders", "vae_checkpoint": "vae"}[field]
+            present = local[field]
+            if present["ready"]:
+                files.append({"asset_id": asset_id, "name": present["filename"],
+                              "destination": category + "/" + chosen, "url": None,
+                              "size_bytes": present["size_bytes"], "sha256": None,
+                              "status": "local", "ready": True, "verified": False,
+                              "message": present["message"], "_path": present["_path"], "_row": None})
+                continue
             # A different explicitly selected filename has no invented provenance.
             if chosen != defaults[field]:
                 path = self._find(category + "/" + chosen)
@@ -316,8 +303,15 @@ class ModelPreparation:
     def inspect(self, selection):
         return self.summary(self.plan(selection))
 
-    def start(self, selection, repair_files=None):
+    def start(self, selection, repair_files=None, selected_files=None):
         files = self.plan(selection)
+        available = {f["destination"] for f in files if f.get("url") and not f["ready"]}
+        if selected_files is not None and (not isinstance(selected_files, list) or any(not isinstance(name, str) for name in selected_files)):
+            raise ValueError("selected_files 必须是准备窗口中勾选的文件名列表。")
+        selected = available if selected_files is None else set(selected_files)
+        if not selected or selected - available:
+            raise ValueError("请勾选要下载的缺失文件；已有本地模型不会被覆盖或强制校验。")
+        files = [f for f in files if f["destination"] in selected]
         repair_files = [] if repair_files is None else repair_files
         if not isinstance(repair_files, list) or any(not isinstance(name, str) for name in repair_files):
             raise ValueError("repair_files 必须是已检查计划内的相对文件名列表。")
