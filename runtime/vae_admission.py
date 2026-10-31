@@ -6,6 +6,7 @@ increase. VAE compute code and explicit backend settings are not modified;
 workspace availability and official OOM/tiled fallback can still change results.
 """
 import math
+from packaging.version import Version
 
 PEAKS={
     "fp32":{(64,64):3106685440,(104,78):5658270208},
@@ -37,8 +38,8 @@ def install(vae,*,device,precision,artifact_name):
     target_bytes=target_model_bytes(model)
     source_bytes=vae.patcher.model_size()
     qualified=(tuple(torch.cuda.get_device_capability(device))==(8,9)
-               and torch.__version__=="2.10.0+cu130"
-               and torch.backends.cudnn.version()==91200
+               and Version("2.10") <= Version(torch.__version__) < Version("2.11")
+               and 91200 <= torch.backends.cudnn.version() < 91300
                and artifact_name=="moss-image-vae.safetensors"
                and type(model) is AutoencoderKL and model.bn is not None and list(model.ps)==[2,2]
                and vae.latent_channels==128

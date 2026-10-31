@@ -9,15 +9,16 @@ from pathlib import Path
 import hashlib
 import json
 import sys
+from packaging.version import Version
 
 
 class TuringFP16Backend:
     def __init__(self, device, vendor=None):
         import torch
-        if os.name != "nt" or sys.version_info[:2] != (3,12):
+        if os.name != "nt" or not (3, 12) <= sys.version_info[:2] < (3, 13):
             raise RuntimeError("Turing binary requires Windows CPython3.12")
-        if torch.__version__.split("+")[0] != "2.10.0" or torch.version.cuda != "13.0":
-            raise RuntimeError("Turing binary qualified with torch2.10.0+cu130 only")
+        if not Version("2.10") <= Version(torch.__version__) < Version("2.11") or not Version("13") <= Version(torch.version.cuda or "0") < Version("14"):
+            raise RuntimeError("Turing binary requires Torch>=2.10,<2.11 and CUDA>=13,<14")
         self.device=torch.device(device)
         if self.device.type != "cuda":
             raise ValueError("Explicit CUDA device required")

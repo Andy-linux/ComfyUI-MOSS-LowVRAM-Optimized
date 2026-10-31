@@ -20,6 +20,7 @@ import tempfile
 import urllib.parse
 import urllib.request
 import zipfile
+from packaging.version import Version
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "optional_binary_manifest.json"
@@ -171,8 +172,8 @@ def plan(report):
     torch = report.get("packages", {}).get("torch", {})
     eligible = (report.get("platform") == "win32" and report.get("machine") in ("AMD64", "x86_64") and
                 re.fullmatch(r"3\.12\.\d+", str(report.get("python_version", ""))) and
-                torch.get("status") == "available" and torch.get("version") == "2.10.0+cu130" and
-                report.get("cuda_build") == "13.0" and report.get("cuda_available") and
+                torch.get("status") == "available" and Version("2.10") <= Version(torch.get("version", "0")) < Version("2.11") and
+                Version("13") <= Version(report.get("cuda_build") or "0") < Version("14") and report.get("cuda_available") and
                 (report.get("device") or {}).get("sm") == 75)
     if not eligible:
         return {"status": "skipped", "reason": "可选Turing仅覆盖Windows x64/Python3.12/Torch2.10+cu130/SM75；当前宿主跳过，auto不依赖此包。", "required_for_auto": False}, []
@@ -187,10 +188,10 @@ def plan(report):
 
 
 def validate_host():
-    if sys.platform != "win32" or sys.version_info[:2] != (3, 12) or platform.machine() not in ("AMD64", "x86_64") or metadata.version("torch") != "2.10.0+cu130":
-        raise RuntimeError("Turing preparation requires exact Windows x64/Python3.12/Torch2.10+cu130")
+    if sys.platform != "win32" or not (3, 12) <= sys.version_info[:2] < (3, 13) or platform.machine() not in ("AMD64", "x86_64") or not Version("2.10") <= Version(metadata.version("torch")) < Version("2.11"):
+        raise RuntimeError("Turing preparation requires Windows x64, Python 3.12 ABI, Torch>=2.10,<2.11, CUDA13")
     torch = importlib.import_module("torch")
-    if torch.version.cuda != "13.0" or not torch.cuda.is_available() or tuple(torch.cuda.get_device_capability(0)) != (7, 5):
+    if not Version("13") <= Version(torch.version.cuda or "0") < Version("14") or not torch.cuda.is_available() or tuple(torch.cuda.get_device_capability(0)) != (7, 5):
         raise RuntimeError("Turing preparation requires the selected CUDA13.0 SM75 host")
 
 

@@ -22,10 +22,9 @@ def _binary_sha256(binary):
 
 class FlashFP16Backend:
     def __init__(self, device, vendor=None, dll_directory=None):
-        if torch.cuda.get_device_capability(device) != (8, 9):
-            raise RuntimeError(
-                "This backend/runtime pair is qualified only on SM89; SM75 needs independent qualification"
-            )
+        capability = torch.cuda.get_device_capability(device)
+        if capability < (8, 0):
+            raise RuntimeError("Public Flash attention requires SM80+; SM75 uses its Turing backend")
         self.device = torch.device(device)
         if self.device.index is None:
             self.device = torch.device(self.device.type, torch.cuda.current_device())
@@ -35,7 +34,7 @@ class FlashFP16Backend:
         binary = self.vendor / "xformers/flash_attn_3/_C.pyd"
         self.dll_handle = None
         self.closed = False
-        if not binary.is_file():
+        if capability != (8, 9) or not binary.is_file():
             self._init_public_flash()
             return
         if "xformers" in sys.modules:

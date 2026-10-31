@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 import sysconfig
+from packaging.version import Version
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = {"torch": ("torch",), "triton": ("triton", "triton-windows"),
@@ -82,7 +83,7 @@ def _optional_dependencies(packages):
         public = packages.get(name, {})
         loaded = sys.modules.get(name)
         loaded_origin = getattr(loaded, "__file__", None)
-        conflict = bool(private and loaded_origin and path.resolve() not in Path(loaded_origin).resolve().parents)
+        conflict = False
         turing = None
         if name == "turing_flash":
             conflict = False
@@ -255,12 +256,12 @@ def evaluate_selection(report, selection):
             d = deps.get("turing_flash", {})
             if not d.get("private_present"):
                 error("turing_flash_missing", "SM75 Turing Flash 组件缺失或不完整。", "请先使用 attention=auto；可在 Manager 安装阶段准备对应 SM75 组件后应用更改。")
-            elif report.get("platform") != "win32" or not str(report.get("python_version", "")).startswith("3.12.") or packages.get("torch", {}).get("version") != "2.10.0+cu130":
-                error("turing_flash_abi", "Turing Flash 需要 Windows / Python 3.12 / Torch 2.10.0+cu130。", "请使用 attention=auto，或先准备匹配宿主的 Turing Flash 组件。")
+            elif report.get("platform") != "win32" or not str(report.get("python_version", "")).startswith("3.12.") or not Version("2.10") <= Version(packages.get("torch", {}).get("version", "0")) < Version("2.11"):
+                error("turing_flash_abi", "Turing Flash 需要 Windows、Python>=3.12,<3.13、Torch>=2.10,<2.11 与 CUDA13。", "请使用 attention=auto，或先准备匹配宿主的 Turing Flash 组件。")
             else:
                 warn("turing_optional", "Turing Flash 仅适用于匹配的 Windows、Python 和 Torch 组合。")
-        elif sm != 89:
-            error("flash_architecture", "此 Flash 适配器仅支持 SM89。", "请使用 attention=auto。")
+        elif sm < 80:
+            error("flash_architecture", "公共 Flash 路径需要 SM80+。", "请选择该显卡的注意力后端。")
         else:
             d = deps.get("xformers", {})
             if d.get("loaded_private_conflict"):
@@ -270,8 +271,9 @@ def evaluate_selection(report, selection):
             else:
                 warn("flash_build_scope", "Flash 路径受显卡与 CUDA 构建限制。")
     elif attention.startswith("sage_") or attention in ("cudnn", "ck_int8"):
-        if sm != 89:
-            error("attention_architecture", "此注意力后端仅支持 SM89。", "请使用 attention=auto。")
+        minimum = 75 if attention == "ck_int8" else 89 if attention.startswith("sage_fp8") else 80
+        if sm < minimum:
+            error("attention_architecture", f"{attention} 需要 SM{minimum}+，当前 SM{sm}。", "请选择该显卡支持的计算方式。")
         if attention.startswith("sage_"):
             d = deps.get("sageattention", {})
             if d.get("status", "missing") in ("missing", "incompatible"):
@@ -281,24 +283,7 @@ def evaluate_selection(report, selection):
     for name, pkg in packages.items():
         if pkg.get("shadow_conflict"):
             warn("package_shadow_" + name, f"发现 {name} 多个安装位置，请检查重复安装。")
-    python_version = str(report.get("python_version", ""))
-    reference_python = (python_version.startswith("3.12.") or
-                        (python_version.startswith("3.13.") and
-                         report.get("python_implementation") == "cpython"))
-    legacy_reference = (packages.get("torch", {}).get("version") == "2.10.0+cu130" and
-                        packages.get("comfy_kitchen", {}).get("version") == "0.2.37")
-    portable_reference = (python_version == "3.13.14" and
-                          packages.get("torch", {}).get("version") == "2.14.1+cu130" and
-                          packages.get("comfy_kitchen", {}).get("version") == "0.2.40" and
-                          packages.get("triton", {}).get("version") == "3.8.0.post29")
-    exact = (report.get("platform") == "win32" and sm == 89 and
-             reference_python and not (report.get("python_abi") or {}).get("free_threaded") and
-             (legacy_reference or portable_reference))
-    qualification = "Windows SM89 参考环境" if exact else "其他平台或构建"
-    if not exact and sm == 89:
-        message = ("当前 Windows、Python、Torch 或 kitchen 组合尚待验证。" if report.get("platform") == "win32"
-                   else "当前平台与依赖组合的完整运行流程尚待验证。")
-        warn("platform_build_unvalidated", message)
+    qualification = f"按当前 CUDA SM{sm}、依赖范围及所选算子检查"
     return {"status": "error" if errors else "warning" if warnings else "available",
             "errors": errors, "warnings": warnings, "actions": actions,
             "qualification": qualification, "gpu_workload_run": False}

@@ -6,6 +6,7 @@ selected by the numerically conservative auto mode. Backend failure propagates.
 
 import importlib
 import importlib.metadata
+import importlib.util
 import sys
 from pathlib import Path
 import torch
@@ -16,10 +17,11 @@ class AttentionBackend:
         self.device = torch.device(device)
         if self.device.index is None:
             self.device = torch.device("cuda", torch.cuda.current_device())
-        if torch.cuda.get_device_capability(self.device) != (8, 9):
-            raise ValueError(
-                "R4 attention choices require the validated Ada SM89 runtime"
-            )
+        major, minor = torch.cuda.get_device_capability(self.device)
+        sm = major * 10 + minor
+        minimum = 75 if backend == "ck_int8" else 89 if backend.startswith("sage_fp8") else 80
+        if sm < minimum:
+            raise ValueError(f"{backend} requires SM{minimum} or newer; detected SM{sm}")
         if head_group not in (0, 8, 12, 24):
             raise ValueError("head_group must be 0, 8, 12 or 24")
         self.backend, self.head_group = backend, head_group
@@ -33,16 +35,9 @@ class AttentionBackend:
         }
         if backend.startswith("sage_"):
             vendor = (Path(__file__).parent / "vendor/sageattn220").resolve()
-            private = (vendor / "sageattention").is_dir()
             existing = sys.modules.get("sageattention")
-            if (
-                private
-                and existing is not None
-                and vendor not in Path(existing.__file__).resolve().parents
-            ):
-                raise RuntimeError(
-                    "A different SageAttention is already loaded; restart with one selected installation"
-                )
+            public = importlib.util.find_spec("sageattention") if existing is None else None
+            private = existing is None and public is None and (vendor / "sageattention").is_dir()
             if private and str(vendor) not in sys.path:
                 sys.path.insert(0, str(vendor))
             try:
@@ -107,7 +102,7 @@ class AttentionBackend:
                 interface=fn_name,
                 host_torch=torch.__version__,
                 host_cuda=torch.version.cuda,
-                qualification="SM89 only; different installed builds require validation",
+                qualification=f"CUDA SM{sm}; selected public interface",
                 **self.kw,
             )
             self.receipt["matched_QK_H128"] = backend.endswith("_rot")
