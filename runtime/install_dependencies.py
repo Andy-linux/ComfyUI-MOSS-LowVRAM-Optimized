@@ -111,12 +111,12 @@ def _sage_plan(report):
     torch = report.get("packages", {}).get("torch", {})
     eligible = (report.get("platform") == "win32" and
                 report.get("machine") in ("AMD64", "x86_64") and
-                re.fullmatch(r"3\.12\.\d+", str(report.get("python_version", ""))) and
-                torch.get("status") == "available" and torch.get("version") == "2.10.0+cu130" and
-                report.get("cuda_build") == "13.0" and report.get("cuda_available") and
+                re.fullmatch(r"3\.(?:12|13)\.\d+", str(report.get("python_version", ""))) and
+                torch.get("status") == "available" and satisfies(torch.get("version"), "torch>=2.10,<3") and
+                str(report.get("cuda_build", "")).split(".")[0] == "13" and report.get("cuda_available") and
                 (report.get("device") or {}).get("sm") == 89)
     if not eligible:
-        return {"status": "skipped", "reason": "可选 Sage 准备范围：Windows x64 / Python 3.12 / Torch 2.10+cu130 / SM89；当前请使用 auto。"}, []
+        return {"status": "skipped", "reason": "可选 Sage ABI3 wheel：Windows x64 / Python 3.12–3.13 / Torch>=2.10,<3 / CUDA13 / SM89；不符合时保留宿主现有注意力实现。"}, []
     state = dict(report["sage_installation"]) if "sage_installation" in report else _sage_state()
     state["required_for_auto"] = False
     steps = []

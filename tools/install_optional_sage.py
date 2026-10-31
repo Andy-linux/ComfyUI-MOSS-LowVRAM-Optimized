@@ -6,6 +6,7 @@ Supply a previously downloaded wheel; its identity is verified before extraction
 
 import argparse, hashlib, importlib.metadata, io, json, shutil, stat, sys, tempfile, zipfile
 from pathlib import Path
+from packaging.version import Version
 
 URL = "https://github.com/woct0rdho/SageAttention/releases/download/v2.2.0-windows.post6/sageattention-2.2.0%2Bcu130torch2.10.0andhigher.post6-cp310-abi3-win_amd64.whl"
 SHA256 = "1635283f5c01ec3cda58a784d0d7eabbcaffaf9511d1b263db4750e1ed7958bb"
@@ -16,10 +17,10 @@ def prepare(wheel, node_root):
     """Validate the qualified archive and destination without writing/importing CUDA."""
     if sys.platform != "win32" or sys.version_info < (3, 10):
         raise RuntimeError("This qualified wheel requires Windows / Python >=3.10")
-    if importlib.metadata.version("torch") != "2.10.0+cu130":
-        raise RuntimeError(
-            "Only Torch 2.10.0+cu130 was qualified for this local dependency"
-        )
+    import torch
+    version = Version(torch.__version__)
+    if not Version("2.10") <= version < Version("3") or str(torch.version.cuda).split(".")[0] != "13":
+        raise RuntimeError("The upstream stable-ABI wheel requires Torch>=2.10,<3 with CUDA major 13")
     data = wheel.read_bytes()
     if len(data) != BYTES:
         raise ValueError("Unexpected wheel byte size")
