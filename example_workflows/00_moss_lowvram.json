@@ -56,7 +56,7 @@
           }
         ],
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.5"
+        "ver": "0.1.6"
       },
       "widgets_values": [
         "SFT",
@@ -130,7 +130,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedPairedTextEncode",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.5"
+        "ver": "0.1.6"
       },
       "widgets_values": [
         "A quiet riverside village at sunrise, soft golden light on wooden houses and willow trees, natural colors, detailed photography. 清晨的河畔村庄，金色阳光洒在木屋与垂柳上，宁静自然，细节清晰。",
@@ -221,7 +221,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedSampler",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.5"
+        "ver": "0.1.6"
       },
       "widgets_values": [
         314159265,
@@ -274,7 +274,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedVAEDecode",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.5"
+        "ver": "0.1.6"
       },
       "widgets_values": []
     },
@@ -374,7 +374,7 @@
       "properties": {
         "Node name for S&R": "MOSSOptimizedControls",
         "cnr_id": "kohaku-moss-lowvram-optimized",
-        "ver": "0.1.5"
+        "ver": "0.1.6"
       },
       "widgets_values": [
         "idle"
@@ -400,7 +400,7 @@
         "Node name for S&R": "MarkdownNote"
       },
       "widgets_values": [
-        "<div style=\"font-size:26px;line-height:1.55;padding:14px;color:#f4f4f4\">\n<strong style=\"font-size:32px\">首次使用：安装 → 重启 → 刷新 → 准备 → 运行</strong><br><br>\n<strong>先安装：</strong>点击缺失节点提示的「查看详情 → 安装」，再「应用更改 / 重启」。<br>\n<strong>再刷新：</strong>按键盘 <strong>F5 / Ctrl+R</strong>，准备向导自动打开。默认参数不用修改。<br>\n<strong>最后准备：</strong>按向导补齐运行环境、确认模型下载；显示「准备完成」后点击顶部「运行」。<br><br>\n没有 Manager 或市场打不开？<a href=\"https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized#安装与首次运行\">下载完整包，双击 Install-MOSS.cmd</a>。5 个节点属于同一个 MOSS 包。\n</div>"
+        "<div style=\"font-size:26px;line-height:1.55;padding:14px;color:#f4f4f4\">\n<strong style=\"font-size:32px\">首次使用：安装 → 重启 → 刷新 → 准备 → 运行</strong><br><br>\n<strong>先安装：</strong>点击缺失节点提示的「查看详情 → 安装」，再「应用更改 / 重启」。<br>\n<strong>再刷新：</strong>按键盘 <strong>F5 / Ctrl+R</strong>，准备向导自动打开。默认参数不用修改。<br>\n<strong>最后准备：</strong>按向导补齐运行环境、确认模型下载；显示「准备完成」后点击顶部「运行」。<br><br>\n没有 Manager 或市场打不开？<a href=\"https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized#安装与首次运行\">下载完整包，双击 Install-MOSS.cmd</a>。5 个节点属于同一个 MOSS 包。\n</div>\n\n**Manager 提示“安全验证待定”或没有可用更新？** 这是市场审核状态，不需要降级 ComfyUI。使用上面的完整包安装器即可；不要降低 Manager 安全等级。"
       ],
       "title": "从这里开始 · 安装与首次生成"
     }

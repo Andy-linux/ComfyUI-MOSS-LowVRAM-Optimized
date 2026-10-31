@@ -63,19 +63,31 @@ comfy --workspace "C:\ComfyUI" node install https://github.com/Andy-linux/ComfyU
 
 ## 依赖准备与推理范围
 
-Windows 的普通 CPython 3.12/3.13、SM80+ GPU 按上游 Torch/Triton 小版本关系准备：
-Torch 2.10/2.11 → Triton 3.6，Torch 2.12/2.13 → Triton 3.7，Torch 2.14 → Triton 3.8。
-固定 wheel 来自 PyPI；不把 2.14.0 和 2.14.1 划成两种 GPU 支持范围。
-Python 3.12/3.13 便携版缺少开发文件时，从上游固定校验和的压缩包准备 `include` / `libs`。
-无须另装系统 Python、Visual Studio 或完整 CUDA Toolkit 来使用默认 Triton JIT 路径。
+Windows 普通 CPython 3.12/3.13 的运行组件根据实际显卡和 Torch 小版本准备，不使用 Torch 补丁版本相等作为门槛。
+SM89、SM120 的 Torch 2.10/2.11 对应 Triton 3.6，2.12/2.13 对应 3.7，2.14 对应 3.8，2.15 对应 3.9；
+完整映射与来源见 `runtime/compatibility.py`。每个系列使用下限/上限范围，保留已安装且兼容的 patch/post 版本。
+缺失或跨系列不匹配时，向导列出要准备的组件，用户确认后安装，重启生效。
 
-SM75 保留历史 Python3.12 / Torch2.10 / Triton3.2 组合，不能安装已移除该架构支持的新版 Triton。
-Linux 从当前 Torch 包元数据读取它要求的 Triton 版本；需要已有 Python 开发文件和 C 编译器。
-依赖准备规则不等于所有显卡都已实测，具体见[环境支持](ENVIRONMENT_SUPPORT.md)。
+SM75 固定在仍支持 Turing 的 Triton 3.2 系列，使用 standalone JIT 与 eager PyTorch，不使用本包的 Inductor/torch.compile 路线。
+不因此锁死整个 ComfyUI 或要求 Torch 等于 2.10。这个组合不保证其他节点的 torch.compile 可以使用；
+SM75 也不支持本包的 BF16、FP8 和 A8 TE。默认使用 W5、TE W8A16、auto SDPA 与 FP32 VAE。
+SM120 默认使用通用 ring 编码与 SDPA，不套用仅在 SM89 上测得的驻留预算或可选注意力二进制。
 
-默认注意力使用 PyTorch SDPA，不依赖 Sage 或第三方 Flash。
-可选加速组件保持其原有 ABI 限制，不为装一个可选组件而降级官方宿主。
-来源与许可见[组件说明](../THIRD_PARTY_NOTICES.md)。
+Python 开发文件针对当前解释器补齐；不会把“源码部署”误当成文件齐全，也不会要求再装一套系统 Python。
+安装器使用 PyPI 发行物，保留当前宿主的 Torch、torchvision、torchaudio、comfy-kitchen 与前端组件。
+安装记录里的这些现有版本只是防止安装依赖时被顺带替换，并不是要求所有用户安装同一版本。
+Linux 按现有 Torch 元数据的要求处理 Triton；不擅自打破 Linux Torch 对 Triton 的依赖关系。
+
+默认注意力使用 PyTorch SDPA，不依赖 Sage 或第三方 Flash；可选二进制继续遵守其 ABI 条件。
+依赖准备与实卡验证是两回事，已完成的实际执行范围见[环境支持](ENVIRONMENT_SUPPORT.md)。
+
+## Manager 提示冲突或没有可用更新
+
+先看提示正文。`安全验证待定 / 无法验证兼容性` 表示 Registry 审核状态，而不是已经发现核心依赖冲突。
+本包旧版本收到 `policy-v0.7: reflag-pending-review`，后续版本可能仍等待扫描。
+维护人已提交[官方复核请求](https://github.com/Comfy-Org/registry-backend/issues/311)。
+此时直接使用本指南的完整包安装器更新，不要降级 ComfyUI、重复安装 Manager 或降低其安全等级。
+插件不会伪造 Registry 的 Active 状态；运行环境是否就绪由准备向导独立报告。
 
 ## 模型准备
 

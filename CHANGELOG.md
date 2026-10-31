@@ -1,5 +1,13 @@
 # 更新记录
 
+## 0.1.6
+
+- 运行依赖改为按显卡和 Torch 小版本选择兼容范围，复用范围内的 Triton patch/post 版本；不更换宿主 Torch、ComfyUI 或核心组件。
+- SM75 保留 Triton 3.2 standalone JIT 路线，取消无关的 Torch 2.10 精确限制；SM89/SM120 跟随现代 Torch 的上游配对。
+- 接受新版 Diffusers，不再因 `<0.42` 上限带动 Hugging Face Hub 降级。向导可补齐缺失的普通依赖和不匹配的 Triton。
+- 界面展示实际采用的架构策略；明确 Registry 待审核与实际依赖冲突的区别。完整包更新入口不依赖市场服务。
+- 修复显式 TE 内存模式下 capability 变量未初始化的问题，不改变默认采样算法。
+
 ## 0.1.5
 
 修复首次安装链路，不改变默认模型、采样参数或量化算子。

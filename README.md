@@ -53,15 +53,24 @@ Base/SFT各一份FP8 row权重，可选择FP8或16-bit计算。模型清单、�
 
 ## 兼容要求
 
-Windows 安装器按 **当前 Torch 的小版本**匹配 Triton，不再把 RTX40 固定绑定到 Torch 2.10，
-也不把 Torch 的补丁升级当成不兼容。支持普通 CPython 3.12/3.13，便携解释器缺少的 `include/libs` 自动准备。
-当前官方 Portable 的 Python 3.13 / Torch 2.14.x + CUDA 13 使用 Triton 3.8。
-依赖能够安装与特定显卡完整推理已验收是不同状态，实际验收范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
+保留正在使用的 ComfyUI、Torch、CUDA 和核心组件，不要求它们等于某个历史版本。
+SM89 / RTX40 与 SM120 / RTX50 根据 Torch 小版本选择 Triton 的兼容范围；已经满足范围的补丁版和 post 版直接复用。
+例如 Torch 2.14 对应 `triton-windows>=3.8.0.post13,<3.9`，而不是强制等于某个 wheel。
+SM120 需要支持 Blackwell 的 Torch/CUDA；不会安装 Turing 的旧版扩展。
+
+SM75 / RTX20 使用 `triton-windows>=3.2.0.post13,<3.3`，采用 standalone Triton JIT 与 PyTorch eager，
+不用本包的 torch.compile 路线，也不强制把 Torch 降到 2.10。BF16/FP8 不在 SM75 支持范围内。
+便携 Python 3.12/3.13 缺少开发文件时，按实际解释器补齐。
+
+Diffusers 接受 `>=0.41,<1.0`，不再因人为的 `<0.42` 上限排除新版。安装器保存宿主当前核心组件版本，
+普通依赖安装不得顺带替换 Torch。可选 Sage/Turing 二进制仍遵守它们自身的 ABI 条件，不影响默认 auto 路线。
+完整策略、实测环境和未做实卡验收的范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
 
 显式A8 TE要求SM80+，FP8计算要求SM89+；完整范围见[环境支持](docs/ENVIRONMENT_SUPPORT.md)。
 
-ComfyUI前端1.55.17的Manager详情可能在CUDA宿主上误报CPU/CUDA冲突；已有CUDA宿主可继续正常安装确认，
-以配置节点Prepare的实际 `torch.cuda` / SM检查为准。
+Manager 的“冲突”需要看具体原因。若显示“安全验证待定 / 无法验证兼容性”，这是 Registry 审核状态，
+不是 Torch 或显卡版本不兼容。已有版本因 Registry policy-v0.7 等待复核，跟踪见[上游复核记录](https://github.com/Comfy-Org/registry-backend/issues/311)。
+遇到“没有可用发布版本”时，用上方完整包安装器更新；不要求降低 Manager 安全等级，不应为此降级 ComfyUI。
 
 升级时保留一份插件安装，避免旧 `moss-optimized`、`ComfyUI-KohakuMOSS` 与新包重复启用。
 
