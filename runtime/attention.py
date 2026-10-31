@@ -59,6 +59,8 @@ class AttentionBackend:
                 }
             else:
                 raise ValueError(backend)
+            if sm >= 100:
+                self.kw["qk_quant_gran"] = "per_warp"
             self.fn = getattr(sage, fn_name, None)
             if not callable(self.fn):
                 raise RuntimeError(
