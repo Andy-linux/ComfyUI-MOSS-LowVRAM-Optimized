@@ -317,12 +317,11 @@ class MossSession:
             from .assets import resolve_asset
 
             te_path = resolve_asset(self.config.te_asset, self.config.te_weights)
+            import torch
+            capability = tuple(torch.cuda.get_device_capability(self.config.device))
             memory = self.config.te_memory
             partial_gib = self.config.te_resident_gib
             if memory == "auto":
-                import torch
-
-                capability = tuple(torch.cuda.get_device_capability(self.config.device))
                 qualifies = (
                     self.config.te_mode != "original"
                     and self.config.profile in ("16g", "unlimited")
