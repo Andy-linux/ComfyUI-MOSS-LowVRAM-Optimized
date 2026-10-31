@@ -23,21 +23,19 @@ Each row file supports FP8 or 16-bit activation arithmetic in the node pack. Tex
 
 Total: 10,349,759,704 bytes (about 9.64 GiB). Pipeline memory also includes the text encoder, VAE, activations and runtime buffers.
 
-## Usage / 首次使用
+## Usage
 
-Use the public [MOSS LowVRAM Optimized node pack](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized), version 0.1.5 or newer.
-Download [00_moss_lowvram.json](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest/download/00_moss_lowvram.json) and drag it into ComfyUI.
-Install the single MOSS package from the missing-node prompt, apply changes/restart, then press **F5 / Ctrl+R** to load the new frontend extension.
-The preparation dialog opens automatically. Follow **Prepare runtime → Restart and continue** when needed, then confirm the selected model download.
-Wait for **Ready**, close the dialog and click **Run**. The plugin uses the Python running that ComfyUI, without replacing Torch or requiring a separately installed system Python.
+The node pack and model weights are installed independently. Download only the checkpoint(s) you need; the plugin does not require the other files in this repository.
 
-没有 Manager 或插件市场连接失败时，从 [Releases](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/latest) 下载完整 ZIP。
-保持 ComfyUI 打开，解压并双击 `Install-MOSS.cmd`，确认安装位置。完成后关闭并重新启动 ComfyUI、刷新网页，再拖入同一个工作流。
-这条入口不依赖 Registry，不安装第二个 Manager；Python 依赖和模型仍需要网络下载。
+Place DiT files in `ComfyUI/models/diffusion_models/`, text encoders in `models/text_encoders/`, and VAEs in `models/vae/`. Subfolders and directories registered through `extra_model_paths.yaml` are supported. Select your files in the node dropdowns or preparation dialog. Existing compatible local weights load directly: there is no requirement to use the download helper, match a recommended filename/hash, or possess a preparation receipt.
 
-For these FP8 files, choose **Base** or **SFT**, **Kohaku FP8 row** storage, then FP8 or 16-bit compute in the configuration node and confirm its preparation plan.
-FP8 mode quantizes activations; particular kernel shapes can use a 16-bit arithmetic path. The 16-bit mode reuses the same stored quantized weights with FP16/BF16 activations.
-The node pack currently requires SM89+ for these FP8 modes. Installation support is separate from full inference qualification; see [environment support](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/blob/main/docs/ENVIRONMENT_SUPPORT.md).
+The optional download helper starts with no files selected and downloads only explicitly checked files. For example, you can use your existing DiT and text encoder and download only a VAE. A complete image-generation graph requires its selected DiT, text encoder and VAE; executing only one stage does not require unused components.
+
+Install [MOSS LowVRAM Optimized 0.1.6](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/tag/v0.1.6) and import [00_moss_lowvram.json](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/releases/download/v0.1.6/00_moss_lowvram.json). If Registry review or marketplace access prevents Manager installation, the complete release ZIP includes `Install-MOSS.cmd`: keep ComfyUI running, double-click the installer, confirm the detected instance, then restart ComfyUI and refresh the page. It uses that instance's Python, not an unrelated system interpreter.
+
+Runtime dependencies use compatible ranges and architecture-aware Triton selection. Only the documented SM89 configuration has the current full-image acceptance; SM75 and SM120 policies are not claims of physical testing on those cards. See [environment support](https://github.com/Andy-linux/ComfyUI-MOSS-LowVRAM-Optimized/blob/main/docs/ENVIRONMENT_SUPPORT.md).
+
+Choose Base or SFT, **Kohaku FP8 row** storage, and FP8 or 16-bit arithmetic. Each checkpoint supports both activation modes, so a second copy of the weight file is not needed. FP8 activation quantization changes numerics; 16-bit mode reuses the stored quantized weights rather than recovering the original dense weights. Both modes currently require SM89+ in the node pack.
 
 ## Sources and conversion
 
